@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name_release">리워드앱</string>
+    <string name="app_name_debug">리워드앱 디버그</string>
+</resources>
