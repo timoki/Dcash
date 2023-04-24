@@ -24,11 +24,4 @@ class IntroViewModel @Inject constructor(
 
     private val _splashImage = MutableStateFlow(R.drawable.splash)
     val splashImage = _splashImage.asStateFlow()
-
-    private val _startActivityChannel = Channel<Unit>(Channel.CONFLATED)
-    val startActivityChannel = _startActivityChannel.receiveAsFlow()
-
-    fun startActivity() = viewModelScope.launch {
-        _startActivityChannel.send(Unit)
-    }
 }

@@ -13,7 +13,7 @@ pluginManagement {
 
     resolutionStrategy {
         eachPlugin {
-            logger.quiet("아외안되${requested.id.id}")
+            logger.quiet("requestId${requested.id.id}")
             when (requested.id.id) {
                 "com.android.application" -> useVersion(applicationVersion)
                 "com.android.library" -> useVersion(libraryVersion)

@@ -1,23 +1,23 @@
 package com.dmonster.rewordapp.view.main
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.NavHostFragment
+import com.dmonster.rewordapp.NavigationDirections
 import com.dmonster.rewordapp.R
 import com.dmonster.rewordapp.databinding.ActivityMainBinding
-import com.dmonster.rewordapp.utils.observeInLifecycleStop
 import com.dmonster.rewordapp.utils.observeOnLifecycleDestroy
 import com.dmonster.rewordapp.utils.observeOnLifecycleStop
 import com.google.android.material.transition.MaterialElevationScale
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.onEach
+import kr.timoky.domain.model.navi.NavigateType
 
 @AndroidEntryPoint
 class MainActivity :
@@ -84,9 +84,40 @@ class MainActivity :
 
         navigateToChannel.observeOnLifecycleStop(this@MainActivity) { pair ->
             pair?.let {
-                when (it.first) {
-                    else -> navigateToCompose(it.second)
-                }
+                navigateToCompose(
+                    when (it.first) {
+                        is NavigateType.Login -> {
+                            isBottomAppBarVisible.value = false
+                            NavigationDirections.actionGlobalLoginFragment()
+                        }
+
+                        is NavigateType.Home -> {
+                            isBottomAppBarVisible.value = true
+                            MainActivityDirections.actionMainActivityToHomeFragment()
+                        }
+
+                        is NavigateType.News -> {
+                            isBottomAppBarVisible.value = true
+                            MainActivityDirections.actionMainActivityToNewsFragment()
+                        }
+
+                        is NavigateType.Event -> {
+                            isBottomAppBarVisible.value = true
+                            MainActivityDirections.actionMainActivityToEventFragment()
+                        }
+
+                        is NavigateType.Point -> {
+                            isBottomAppBarVisible.value = true
+                            MainActivityDirections.actionMainActivityToPointFragment()
+                        }
+
+                        is NavigateType.MyPage -> {
+                            isBottomAppBarVisible.value = true
+                            MainActivityDirections.actionMainActivityToMyPageFragment()
+                        }
+                    },
+                    it.second
+                )
             }
         }
     }
@@ -99,16 +130,22 @@ class MainActivity :
 
     }
 
-    private fun navigateToCompose(directions: NavDirections) {
-        currentNavigationFragment?.apply {
-            exitTransition = MaterialElevationScale(false).apply {
-                duration = 300
+    private fun navigateToCompose(directions: NavDirections?, isCloseCurrentStack: Boolean) {
+        directions?.let {
+            currentNavigationFragment?.apply {
+                exitTransition = MaterialElevationScale(false).apply {
+                    duration = 300
+                }
+                reenterTransition = MaterialElevationScale(true).apply {
+                    duration = 300
+                }
             }
-            reenterTransition = MaterialElevationScale(true).apply {
-                duration = 300
-            }
-        }
 
-        navController.navigate(directions)
+            if (isCloseCurrentStack) {
+                navController.popBackStack()
+            }
+
+            navController.navigate(it)
+        }
     }
 }
