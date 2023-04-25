@@ -1,4 +1,4 @@
-package kr.timoky.domain.model
+package com.dmonster.domain.model
 
 sealed class Result<T>(
     val data: T? = null,

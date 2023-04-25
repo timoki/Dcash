@@ -1,16 +1,20 @@
 package com.dmonster.rewordapp.base
 
+import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.createViewModelLazy
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.viewbinding.ViewBinding
 import java.lang.reflect.ParameterizedType
 
-abstract class BaseDialogFragment<VB : ViewBinding, VM : BaseViewModel> :
-    DialogFragment() {
+abstract class BaseDialogFragment<VB : ViewBinding, VM : BaseViewModel> : DialogFragment() {
     abstract fun init()
     open fun initListener() {}
     abstract fun initViewModelCallback()

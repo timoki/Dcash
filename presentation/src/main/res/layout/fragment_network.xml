@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <import type="com.dmonster.domain.type.NetworkState" />
+
+        <variable
+            name="viewModel"
+            type="com.dmonster.rewordapp.view.network.NetworkViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#88000000">
+
+        <TextView
+            android:id="@+id/stateText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:text="@{viewModel.networkState == NetworkState.DISCONNECT_NETWORK ? @string/retry_disabled_network : @string/use_mobile_data}"
+            tools:text="@string/retry_disabled_network"/>
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="48dp"
+            app:layout_constraintTop_toBottomOf="@+id/stateText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text="@{viewModel.networkState == NetworkState.DISCONNECT_NETWORK ? @string/retry : @string/block_off}"
+            tools:text="@string/retry"
+            android:layout_marginTop="20dp"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

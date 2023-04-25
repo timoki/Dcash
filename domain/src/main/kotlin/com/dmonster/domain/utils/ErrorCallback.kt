@@ -1,8 +1,8 @@
-package kr.timoky.domain.utils
+package com.dmonster.domain.utils
 
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
-import kr.timoky.domain.model.base.BaseModel
+import com.dmonster.domain.model.base.BaseModel
 
 class ErrorCallback {
     private val _errorData = Channel<BaseModel>(Channel.CONFLATED)

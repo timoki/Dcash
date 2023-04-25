@@ -6,29 +6,37 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.NavHostFragment
+import com.dmonster.domain.type.NavigateType
+import com.dmonster.domain.type.NetworkState
 import com.dmonster.rewordapp.NavigationDirections
 import com.dmonster.rewordapp.R
 import com.dmonster.rewordapp.databinding.ActivityMainBinding
 import com.dmonster.rewordapp.utils.observeOnLifecycleDestroy
 import com.dmonster.rewordapp.utils.observeOnLifecycleStop
+import com.dmonster.rewordapp.utils.showSnackBar
+import com.dmonster.rewordapp.view.network.NetworkViewModel
 import com.google.android.material.transition.MaterialElevationScale
 import dagger.hilt.android.AndroidEntryPoint
-import kr.timoky.domain.model.navi.NavigateType
 
 @AndroidEntryPoint
 class MainActivity :
     AppCompatActivity(),
     NavController.OnDestinationChangedListener {
 
+    private fun checkViewLifeCycleOwnerResumed() = lifecycle.currentState == Lifecycle.State.RESUMED
+
     private val binding: ActivityMainBinding by lazy {
         DataBindingUtil.setContentView(this, R.layout.activity_main)
     }
 
     private val viewModel: MainViewModel by viewModels()
+
+    private val networkViewModel: NetworkViewModel by viewModels()
 
     private val navHostFragment: NavHostFragment by lazy {
         supportFragmentManager.findFragmentById(R.id.navHostFragmentContainer) as NavHostFragment
@@ -61,16 +69,19 @@ class MainActivity :
                 if (navController.previousBackStackEntry == null || !navController.popBackStack()) {
                     if (System.currentTimeMillis() > backKeyPressedTime + 2000) {
                         backKeyPressedTime = System.currentTimeMillis()
-                        /*showSnackBar(
+                        showSnackBar(
                             this@MainActivity,
                             getString(R.string.main_back_pressed)
-                        )*/
+                        )
                     } else if (System.currentTimeMillis() <= backKeyPressedTime + 2000) {
                         finish()
                     }
                 }
             }
         })
+
+        networkViewModel.register(checkNetworkState = true)
+        initNetworkViewModelCallback()
     }
 
     private fun initViewModelCallback() = with(viewModel) {
@@ -93,31 +104,51 @@ class MainActivity :
 
                         is NavigateType.Home -> {
                             isBottomAppBarVisible.value = true
-                            MainActivityDirections.actionMainActivityToHomeFragment()
+                            NavigationDirections.actionGlobalHomeFragment()
+                            //MainActivityDirections.actionMainActivityToHomeFragment()
                         }
 
                         is NavigateType.News -> {
                             isBottomAppBarVisible.value = true
-                            MainActivityDirections.actionMainActivityToNewsFragment()
+                            NavigationDirections.actionGlobalNewsFragment()
+                            //MainActivityDirections.actionMainActivityToNewsFragment()
                         }
 
                         is NavigateType.Event -> {
                             isBottomAppBarVisible.value = true
-                            MainActivityDirections.actionMainActivityToEventFragment()
+                            NavigationDirections.actionGlobalEventFragment()
+                            //MainActivityDirections.actionMainActivityToEventFragment()
                         }
 
                         is NavigateType.Point -> {
                             isBottomAppBarVisible.value = true
-                            MainActivityDirections.actionMainActivityToPointFragment()
+                            NavigationDirections.actionGlobalPointFragment()
+                            //MainActivityDirections.actionMainActivityToPointFragment()
                         }
 
                         is NavigateType.MyPage -> {
                             isBottomAppBarVisible.value = true
-                            MainActivityDirections.actionMainActivityToMyPageFragment()
+                            NavigationDirections.actionGlobalMyPageFragment()
+                            //MainActivityDirections.actionMainActivityToMyPageFragment()
                         }
                     },
                     it.second
                 )
+            }
+        }
+    }
+
+    private fun initNetworkViewModelCallback() = with(networkViewModel) {
+        currentNetworkState.observeOnLifecycleDestroy(this@MainActivity) {
+            if (checkViewLifeCycleOwnerResumed()) {
+                when (it) {
+                    NetworkState.CONNECT_NETWORK -> {}
+                    else -> {
+                        navController.navigate(
+                            NavigationDirections.actionGlobalNetworkFragment(it)
+                        )
+                    }
+                }
             }
         }
     }

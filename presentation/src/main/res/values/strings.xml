@@ -7,6 +7,14 @@
     <string name="confirm">확인</string>
     <string name="send">전송</string>
     <string name="set_use">사용하기</string>
+    <string name="retry">재시도</string>
+    <string name="main_back_pressed">뒤로가기 버튼을 한번 더 누르면 종료됩니다.</string>
+
+    <!-- 네트워크 -->
+    <string name="retry_disabled_network">연결이 원활하지 않습니다.\n네트워크 연결 상태를 확인하거나\n다시 시도해 주세요.</string>
+    <string name="use_mobile_data">모바일데이터 차단 상태입니다.\n차단을 해제하거나\nWi-Fi를 설정해 주세요.</string>
+    <string name="disabled_network">네트워크 연결이 필요합니다. 확인해 주세요.</string>
+    <string name="block_off">차단해제</string>
 
     <!-- 잠금화면 설정 다이얼로그 -->
     <string name="not_showing_week">일주일간 보지 않기</string>

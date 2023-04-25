@@ -1,8 +1,8 @@
-package kr.timoky.domain.model.navi
+package com.dmonster.domain.model.navi
 
-import kr.timoky.domain.model.base.BaseModel
+import com.dmonster.domain.model.base.BaseModel
 
-data class NavItem(
+data class BottomNavItem(
     val icon: Int,
     val title: String,
     var isChecked: Boolean,

@@ -4,7 +4,7 @@ import com.dmonster.rewordapp.base.BaseFragment
 import com.dmonster.rewordapp.databinding.FragmentLoginBinding
 import com.dmonster.rewordapp.utils.observeInLifecycleStop
 import kotlinx.coroutines.flow.onEach
-import kr.timoky.domain.model.navi.NavigateType
+import com.dmonster.domain.type.NavigateType
 
 class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>() {
     override fun init() {

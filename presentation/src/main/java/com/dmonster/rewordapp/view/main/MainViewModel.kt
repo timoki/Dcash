@@ -6,7 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kr.timoky.domain.model.navi.NavigateType
+import com.dmonster.domain.type.NavigateType
 import javax.inject.Inject
 
 @HiltViewModel

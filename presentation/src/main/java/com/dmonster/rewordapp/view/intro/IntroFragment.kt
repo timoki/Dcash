@@ -1,10 +1,9 @@
 package com.dmonster.rewordapp.view.intro
 
 import android.os.CountDownTimer
-import android.util.Log
 import com.dmonster.rewordapp.base.BaseFragment
 import com.dmonster.rewordapp.databinding.FragmentIntroBinding
-import kr.timoky.domain.model.navi.NavigateType
+import com.dmonster.domain.type.NavigateType
 
 class IntroFragment: BaseFragment<FragmentIntroBinding, IntroViewModel>() {
 
