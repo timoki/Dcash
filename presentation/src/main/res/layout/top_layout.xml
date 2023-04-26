@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="com.dmonster.domain.type.TopMenuType.LeftMenu" />
+
+        <import type="com.dmonster.domain.type.TopMenuType.MiddleMenu" />
+
+        <import type="com.dmonster.domain.type.TopMenuType.RightMenu" />
+
+        <import type="android.view.View" />
+
+        <variable
+            name="viewModel"
+            type="com.dmonster.rewordapp.view.main.TopViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/leftMenuFrame"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:visibility="@{viewModel.leftMenu == LeftMenu.NONE ? View.INVISIBLE : View.VISIBLE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <!-- 로고 -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/leftMenuLogoFrame"
+                android:layout_width="100dp"
+                android:layout_height="0dp"
+                android:paddingStart="20dp"
+                android:visibility="@{viewModel.leftMenu == LeftMenu.LOGO ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/leftMenuLogoIv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/leftMenuBackFrame"
+                android:layout_width="100dp"
+                android:layout_height="0dp"
+                android:visibility="@{viewModel.leftMenu == LeftMenu.BACK ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/leftMenuBack"
+                    android:layout_width="50dp"
+                    android:layout_height="0dp"
+                    android:onClick="@{() -> viewModel.onBackClick()}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ImageView
+                        android:id="@+id/leftMenuBackIv"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:src="@drawable/arrow_back" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <Space
+                    android:layout_width="50dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/leftMenuBack"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- 백버튼 -->
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:visibility="@{viewModel.middleMenu == MiddleMenu.NONE ? View.GONE : View.VISIBLE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/rightMenuFrame"
+            app:layout_constraintStart_toEndOf="@+id/leftMenuFrame"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:leftMenu="@{leftMenuFrame}"
+            app:leftMenuBack="@{leftMenuBackFrame}"
+            app:leftMenuBackIv="@{leftMenuBackIv}"
+            app:leftMenuLogo="@{leftMenuLogoFrame}"
+            app:leftMenuLogoIv="@{leftMenuLogoIv}"
+            app:leftMenuType="@{viewModel.leftMenu}"
+            app:middleMenuType="@{viewModel.middleMenu}"
+            app:rightMenu="@{rightMenuFrame}"
+            app:rightMenuIv="@{rightMenuIv}"
+            app:rightMenuSubIv="@{rightMenuSubIv}"
+            app:rightMenuType="@{viewModel.rightMenu}"
+            app:title="@{viewModel.title}"
+            tools:text="메뉴 타이틀" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/rightMenuFrame"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/rightMenuSubIv"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:onClick="@{() -> viewModel.onRightMenuSubClick()}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/rightMenuIv"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@drawable/sample_icon" />
+
+            <ImageView
+                android:id="@+id/rightMenuIv"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:onClick="@{() -> viewModel.onRightMenuClick()}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@drawable/sample_icon" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:background="@color/line_grey" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

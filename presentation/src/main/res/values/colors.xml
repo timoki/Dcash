@@ -10,4 +10,5 @@
 
     <color name="main_color">#26A8A9</color>
     <color name="default_grey">#999999</color>
+    <color name="line_grey">#C0C0C0</color>
 </resources>

@@ -7,17 +7,12 @@ import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
-import com.dmonster.rewordapp.R
-import com.dmonster.rewordapp.databinding.ActivityLockScreenBinding
-import com.dmonster.rewordapp.databinding.ActivityMainBinding
-import com.dmonster.rewordapp.view.main.MainViewModel
 
 class LockScreen : AppCompatActivity() {
 
-    private val binding: ActivityLockScreenBinding by lazy {
+    /*private val binding: ActivityLockScreenBinding by lazy {
         DataBindingUtil.setContentView(this, R.layout.activity_lock_screen)
-    }
+    }*/
 
     private val viewModel: LockScreenViewModel by viewModels()
 

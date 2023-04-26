@@ -3,91 +3,131 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation"
-    app:startDestination="@id/introFragment">
+    app:startDestination="@id/mainGraph">
 
-    <activity
-        android:id="@+id/MainActivity"
-        android:name="com.dmonster.rewordapp.view.main.MainActivity"
-        android:label="MainActivity"
-        tools:layout="@layout/activity_main" />
-    <fragment
-        android:id="@+id/introFragment"
-        android:name="com.dmonster.rewordapp.view.intro.IntroFragment"
-        android:label="IntroFragment"
-        tools:layout="@layout/fragment_intro" />
-    <fragment
-        android:id="@+id/loginFragment"
-        android:name="com.dmonster.rewordapp.view.login.LoginFragment"
-        android:label="LoginFragment"
-        tools:layout="@layout/fragment_login" />
-    <fragment
-        android:id="@+id/homeFragment"
-        android:name="com.dmonster.rewordapp.view.home.HomeFragment"
-        android:label="HomeFragment"
-        tools:layout="@layout/fragment_home" />
-    <fragment
-        android:id="@+id/newsFragment"
-        android:name="com.dmonster.rewordapp.view.news.NewsFragment"
-        android:label="NewsFragment"
-        tools:layout="@layout/fragment_news" />
-    <fragment
-        android:id="@+id/eventFragment"
-        android:name="com.dmonster.rewordapp.view.event.EventFragment"
-        android:label="EventFragment"
-        tools:layout="@layout/fragment_event" />
-    <fragment
-        android:id="@+id/pointFragment"
-        android:name="com.dmonster.rewordapp.view.point.PointFragment"
-        android:label="PointFragment"
-        tools:layout="@layout/fragment_point" />
-    <fragment
-        android:id="@+id/myPageFragment"
-        android:name="com.dmonster.rewordapp.view.mypage.MyPageFragment"
-        android:label="MyPageFragment"
-        tools:layout="@layout/fragment_mypage" />
-    <dialog
-        android:id="@+id/basicDialog"
-        android:name="com.dmonster.rewordapp.view.dialog.BasicDialog"
-        android:label="BasicDialog"
-        tools:layout="@layout/dialog_basic" />
-    <dialog
-        android:id="@+id/networkFragment"
-        android:name="com.dmonster.rewordapp.view.network.NetworkFragment"
-        android:label="NetworkFragment"
-        tools:layout="@layout/fragment_network">
+    <navigation android:id="@+id/mainGraph"
+        app:startDestination="@id/introFragment">
+        <activity
+            android:id="@+id/MainActivity"
+            android:name="com.dmonster.rewordapp.view.main.MainActivity"
+            android:label="MainActivity"
+            tools:layout="@layout/activity_main" />
 
-        <argument
-            android:name="networkState"
-            android:defaultValue="CONNECT_ERROR"
-            app:argType="com.dmonster.domain.type.NetworkState" />
-    </dialog>
+        <fragment
+            android:id="@+id/introFragment"
+            android:name="com.dmonster.rewordapp.view.intro.IntroFragment"
+            android:label="IntroFragment"
+            tools:layout="@layout/fragment_intro" />
+        <fragment
+            android:id="@+id/loginFragment"
+            android:name="com.dmonster.rewordapp.view.login.LoginFragment"
+            android:label="LoginFragment"
+            tools:layout="@layout/fragment_login" />
+        <dialog
+            android:id="@+id/basicDialog"
+            android:name="com.dmonster.rewordapp.view.dialog.BasicDialog"
+            android:label="BasicDialog"
+            tools:layout="@layout/dialog_basic" />
+        <dialog
+            android:id="@+id/networkFragment"
+            android:name="com.dmonster.rewordapp.view.network.NetworkFragment"
+            android:label="NetworkFragment"
+            tools:layout="@layout/fragment_network">
 
-    <action
-        android:id="@+id/action_global_loginFragment"
-        app:destination="@id/loginFragment"
-        app:popUpTo="@navigation/navigation"
-        app:popUpToInclusive="true" />
-    <action
-        android:id="@+id/action_global_homeFragment"
-        app:destination="@id/homeFragment"
-        app:popUpTo="@navigation/navigation"
-        app:popUpToInclusive="true" />
-    <action
-        android:id="@+id/action_global_basicDialog"
-        app:destination="@id/basicDialog" />
-    <action
-        android:id="@+id/action_global_eventFragment"
-        app:destination="@id/eventFragment" />
-    <action
-        android:id="@+id/action_global_pointFragment"
-        app:destination="@id/pointFragment" />
-    <action
-        android:id="@+id/action_global_myPageFragment"
-        app:destination="@id/myPageFragment" />
-    <action
-        android:id="@+id/action_global_newsFragment"
-        app:destination="@id/newsFragment" />
-    <action
-        android:id="@+id/action_global_networkFragment"
-        app:destination="@id/networkFragment" />
+            <argument
+                android:name="networkState"
+                android:defaultValue="CONNECT_ERROR"
+                app:argType="com.dmonster.domain.type.NetworkState" />
+        </dialog>
+
+        <action
+            android:id="@+id/action_global_basicDialog"
+            app:destination="@id/basicDialog" />
+
+        <action
+            android:id="@+id/action_global_networkFragment"
+            app:destination="@id/networkFragment" />
+
+        <action
+            android:id="@+id/action_global_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@navigation/navigation"
+            app:popUpToInclusive="true" />
+
+        <action
+            android:id="@+id/action_global_homeGraph"
+            app:destination="@id/homeGraph" />
+
+        <action
+            android:id="@+id/action_global_newsGraph"
+            app:destination="@id/newsGraph" />
+
+        <action
+            android:id="@+id/action_global_eventGraph"
+            app:destination="@id/eventGraph" />
+
+        <action
+            android:id="@+id/action_global_pointGraph"
+            app:destination="@id/pointGraph" />
+
+        <action
+            android:id="@+id/action_global_myPageGraph"
+            app:destination="@id/myPageGraph" />
+    </navigation>
+
+    <navigation android:id="@+id/homeGraph"
+        app:startDestination="@id/homeFragment">
+
+        <fragment
+            android:id="@+id/homeFragment"
+            android:name="com.dmonster.rewordapp.view.home.HomeFragment"
+            android:label="HomeFragment"
+            tools:layout="@layout/fragment_home" >
+            <action
+                android:id="@+id/action_homeFragment_to_lockScreenPermissionFragment"
+                app:destination="@id/lockScreenPermissionFragment" />
+        </fragment>
+
+        <fragment
+            android:id="@+id/lockScreenPermissionFragment"
+            android:name="com.dmonster.rewordapp.view.lockscreen.set.LockScreenPermissionFragment"
+            android:label="LockScreenPermissionFragment"
+            tools:layout="@layout/fragment_set_lock_screen" />
+    </navigation>
+
+    <navigation android:id="@+id/newsGraph"
+        app:startDestination="@id/newsFragment">
+        <fragment
+            android:id="@+id/newsFragment"
+            android:name="com.dmonster.rewordapp.view.news.NewsFragment"
+            android:label="NewsFragment"
+            tools:layout="@layout/fragment_news" />
+    </navigation>
+
+    <navigation android:id="@+id/eventGraph"
+        app:startDestination="@id/eventFragment">
+        <fragment
+            android:id="@+id/eventFragment"
+            android:name="com.dmonster.rewordapp.view.event.EventFragment"
+            android:label="EventFragment"
+            tools:layout="@layout/fragment_event" />
+    </navigation>
+
+    <navigation android:id="@+id/pointGraph"
+        app:startDestination="@id/pointFragment">
+        <fragment
+            android:id="@+id/pointFragment"
+            android:name="com.dmonster.rewordapp.view.point.PointFragment"
+            android:label="PointFragment"
+            tools:layout="@layout/fragment_point" />
+    </navigation>
+
+    <navigation android:id="@+id/myPageGraph"
+        app:startDestination="@id/myPageFragment">
+        <fragment
+            android:id="@+id/myPageFragment"
+            android:name="com.dmonster.rewordapp.view.mypage.MyPageFragment"
+            android:label="MyPageFragment"
+            tools:layout="@layout/fragment_mypage" />
+    </navigation>
 </navigation>
