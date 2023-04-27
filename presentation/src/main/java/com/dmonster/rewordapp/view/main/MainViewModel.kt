@@ -1,20 +1,24 @@
 package com.dmonster.rewordapp.view.main
 
 import androidx.lifecycle.viewModelScope
+import com.dmonster.data.local.datastore.DataStoreModule
 import com.dmonster.domain.type.NavigateType
 import com.dmonster.rewordapp.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-
+    private val dataStore: DataStoreModule
 ) : BaseViewModel() {
+
+    var isShowLockScreenPopup = false
 
     val isTopViewVisible = MutableStateFlow(false)
     val isBottomAppBarVisible = MutableStateFlow(false)
@@ -30,13 +34,14 @@ class MainViewModel @Inject constructor(
         _isLoading.emit(false)
     }
 
-    private val _navigateToChannel = MutableStateFlow<Pair<NavigateType, Boolean>?>(null)
+    private val _navigateToChannel = MutableStateFlow<NavigateType?>(null)
     val navigateToChannel = _navigateToChannel.asStateFlow()
 
-    fun fragmentNavigateTo(item: NavigateType, isCloseFragment: Boolean = false) =
-        viewModelScope.launch {
-            _navigateToChannel.value = item to isCloseFragment
+    fun fragmentNavigateTo(item: NavigateType?) = viewModelScope.launch {
+        item?.let {
+            _navigateToChannel.value = it
         }
+    }
 
     private val _setOverlayPermissionChannel = Channel<Unit>(Channel.CONFLATED)
     val setOverlayPermissionChannel = _setOverlayPermissionChannel.receiveAsFlow()
@@ -62,5 +67,22 @@ class MainViewModel @Inject constructor(
 
     fun checkPermission(type: Int) = viewModelScope.launch {
         _checkPermissionChannel.send(type)
+    }
+
+    private val _goPermissionSettingChannel = Channel<Unit>(Channel.CONFLATED)
+    val goPermissionSettingChannel = _goPermissionSettingChannel.receiveAsFlow()
+
+    fun goPermissionSetting() = viewModelScope.launch {
+        _goPermissionSettingChannel.send(Unit)
+    }
+
+    val isUseLockScreen = MutableStateFlow<Boolean>(false)
+
+    fun getUseLockScreen() = viewModelScope.launch {
+        isUseLockScreen.value = dataStore.isUseLockScreen.first()
+    }
+
+    fun setUseLockScreen(isUse: Boolean) = viewModelScope.launch {
+        dataStore.setUseLockScreen(isUse)
     }
 }

@@ -17,6 +17,7 @@ class DataStoreModule(
     private val Context.dataStore by preferencesDataStore("rewordApp.db")
 
     private val mobileDataKey = booleanPreferencesKey("use_mobile_data")
+    private val useLockScreenKey = booleanPreferencesKey("useLockScreen")
 
     val getUserMobileData: Flow<Boolean> = context.dataStore.data
         .catch { exception ->
@@ -35,6 +36,26 @@ class DataStoreModule(
         if (getData != use) {
             context.dataStore.edit { preferences ->
                 preferences[mobileDataKey] = use
+            }
+        }
+    }
+
+    val isUseLockScreen: Flow<Boolean> = context.dataStore.data
+        .catch { e ->
+            if (e is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw e
+            }
+        }.map { preferences ->
+            preferences[useLockScreenKey] ?: false
+        }
+
+    suspend fun setUseLockScreen(use: Boolean) {
+        val getData = isUseLockScreen.first()
+        if (getData != use) {
+            context.dataStore.edit { preferences ->
+                preferences[useLockScreenKey] = use
             }
         }
     }

@@ -70,14 +70,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:onClick="@{() -> viewModel.onBottomMenuClick(1)}"
+                        app:onSingleClick="@{() -> viewModel.onBottomMenuClick(1)}"
                         android:src="@android:drawable/btn_default" />
 
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:onClick="@{() -> viewModel.onBottomMenuClick(2)}"
+                        app:onSingleClick="@{() -> viewModel.onBottomMenuClick(2)}"
                         android:src="@android:drawable/btn_default" />
 
                     <View
@@ -89,14 +89,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:onClick="@{() -> viewModel.onBottomMenuClick(3)}"
+                        app:onSingleClick="@{() -> viewModel.onBottomMenuClick(3)}"
                         android:src="@android:drawable/btn_default" />
 
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:onClick="@{() -> viewModel.onBottomMenuClick(4)}"
+                        app:onSingleClick="@{() -> viewModel.onBottomMenuClick(4)}"
                         android:src="@android:drawable/btn_default" />
                 </LinearLayout>
             </com.google.android.material.bottomappbar.BottomAppBar>
@@ -106,7 +106,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/white"
-                android:onClick="@{() -> viewModel.onBottomMenuClick(0)}"
+                app:onSingleClick="@{() -> viewModel.onBottomMenuClick(0)}"
                 android:visibility="@{viewModel.isBottomAppBarVisible ? View.VISIBLE : View.GONE}"
                 app:layout_anchor="@id/bottomAppbar" />
 

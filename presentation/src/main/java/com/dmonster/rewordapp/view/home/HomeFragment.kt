@@ -10,7 +10,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        mainViewModel.checkPermission(PermissionViewModel.TYPE_LOCK_SCREEN)
+        mainViewModel.apply {
+            if (!isShowLockScreenPopup){
+                checkPermission(PermissionViewModel.TYPE_LOCK_SCREEN)
+                isShowLockScreenPopup = true
+            }
+        }
     }
 
     override fun initViewModelCallback() {

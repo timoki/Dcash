@@ -11,8 +11,10 @@ import com.dmonster.rewordapp.utils.observeInLifecycleDestroy
 import com.dmonster.rewordapp.utils.observeOnLifecycleDestroy
 import com.dmonster.rewordapp.utils.setTransparentStatusBar
 import com.dmonster.rewordapp.utils.showSnackBar
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.onEach
 
+@AndroidEntryPoint
 class NetworkFragment : BaseDialogFragment<FragmentNetworkBinding, NetworkViewModel>() {
 
     private val args: NetworkFragmentArgs by navArgs()

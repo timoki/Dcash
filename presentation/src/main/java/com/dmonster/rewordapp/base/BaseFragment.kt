@@ -16,6 +16,7 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : Fragment() {
     open fun initListener() {}
     abstract fun initViewModelCallback()
     open fun navigationBackStackCallback() {}
+    open fun initMainViewModelCallback() {}
 
     lateinit var binding: VB
     protected lateinit var viewModel: VM
@@ -43,6 +44,7 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : Fragment() {
         init()
         initListener()
         initViewModelCallback()
+        initMainViewModelCallback()
         navigationBackStackCallback()
     }
 }

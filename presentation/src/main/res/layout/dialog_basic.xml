@@ -131,7 +131,7 @@
                 android:background="@color/default_grey"
                 android:text="@{negativeButtonText}"
                 android:visibility="@{isNegativeButtonVisible ? View.VISIBLE : View.GONE}"
-                android:onClick="@{negativeButtonClickListener}"
+                app:onSingleClick="@{negativeButtonClickListener}"
                 tools:text="취소"/>
 
             <com.google.android.material.button.MaterialButton
@@ -144,7 +144,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:text="@{positiveButtonText}"
                 android:visibility="@{isPositiveButtonVisible ? View.VISIBLE : View.GONE}"
-                android:onClick="@{positiveButtonClickListener}"
+                app:onSingleClick="@{positiveButtonClickListener}"
                 android:background="@color/main_color"
                 tools:text="확인"/>
         </androidx.constraintlayout.widget.ConstraintLayout>

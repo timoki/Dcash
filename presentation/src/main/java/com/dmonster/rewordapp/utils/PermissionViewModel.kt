@@ -103,12 +103,12 @@ class PermissionViewModel @Inject constructor(
     private fun addIntroPermission() {
         val permissionsList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             mapOf(
+                Manifest.permission.READ_PHONE_STATE to true,
                 Manifest.permission.POST_NOTIFICATIONS to false,
             )
         } else {
             mapOf(
-                /*Manifest.permission.WRITE_EXTERNAL_STORAGE to true,
-                Manifest.permission.READ_PHONE_STATE to true,*/
+                Manifest.permission.READ_PHONE_STATE to true,
             )
         }
 

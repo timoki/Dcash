@@ -9,19 +9,28 @@ import android.view.Window
 import android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
 import android.view.WindowManager
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.isVisible
 import com.dmonster.rewordapp.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+
+var snackBar: Snackbar? = null
 
 fun showSnackBar(
     activity: Activity,
     message: String
 ) {
+    hideSnackBar()
     val view = activity.findViewById<CoordinatorLayout>(R.id.coordinator)
     val fab = activity.findViewById<FloatingActionButton>(R.id.fab)
-    Snackbar.make(view, message, Snackbar.LENGTH_SHORT)
-        .setAnchorView(fab)
-        .show()
+    snackBar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT).apply {
+        if (fab.isVisible) anchorView = fab
+        show()
+    }
+}
+
+fun hideSnackBar() {
+    if (snackBar != null) snackBar!!.dismiss()
 }
 
 // 상태바 투명하게 바꿔주는 함수

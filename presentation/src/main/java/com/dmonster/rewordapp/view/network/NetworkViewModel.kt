@@ -9,15 +9,15 @@ import android.net.NetworkRequest
 import android.os.Build
 import androidx.lifecycle.viewModelScope
 import com.dmonster.data.local.datastore.DataStoreModule
+import com.dmonster.domain.type.NetworkState
 import com.dmonster.rewordapp.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import com.dmonster.domain.type.NetworkState
-import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 @HiltViewModel

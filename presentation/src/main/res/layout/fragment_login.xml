@@ -54,7 +54,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:background="@color/main_color"
                 android:text="로그인"
-                android:onClick="@{() -> viewModel.loginClick()}"/>
+                app:onSingleClick="@{() -> viewModel.loginClick()}"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

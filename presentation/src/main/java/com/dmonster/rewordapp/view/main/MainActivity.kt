@@ -1,10 +1,12 @@
 package com.dmonster.rewordapp.view.main
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
@@ -24,10 +26,18 @@ import com.dmonster.domain.type.TopMenuType
 import com.dmonster.rewordapp.NavigationDirections
 import com.dmonster.rewordapp.R
 import com.dmonster.rewordapp.databinding.ActivityMainBinding
+import com.dmonster.rewordapp.lockscreen.LockScreenService
 import com.dmonster.rewordapp.utils.*
 import com.dmonster.rewordapp.view.dialog.BasicDialog
-import com.dmonster.rewordapp.view.lockscreen.set.LockScreenPermissionFragment
+import com.dmonster.rewordapp.view.event.EventFragment
+import com.dmonster.rewordapp.view.home.HomeFragment
+import com.dmonster.rewordapp.view.home.HomeFragmentDirections
+import com.dmonster.rewordapp.view.intro.IntroFragment
+import com.dmonster.rewordapp.view.login.LoginFragment
+import com.dmonster.rewordapp.view.mypage.MyPageFragment
 import com.dmonster.rewordapp.view.network.NetworkViewModel
+import com.dmonster.rewordapp.view.news.NewsFragment
+import com.dmonster.rewordapp.view.point.PointFragment
 import com.google.android.material.transition.MaterialElevationScale
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.onEach
@@ -65,13 +75,16 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     private val overLayPermission: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (permissionViewModel.canDrawOverlays()) {
-                //여기서 서비스 실행
-                if (currentNavigationFragment == LockScreenPermissionFragment::class) {
-                    navController.popBackStack()
-                }
+                startLockScreenService()
+                navController.popBackStack()
 
                 return@registerForActivityResult
             }
+        }
+
+    private val settingDetails: ActivityResultLauncher<Intent> =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            permissionViewModel.onActivityResult()
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,15 +106,34 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if (navController.previousBackStackEntry == null || !navController.popBackStack()) {
-                    if (System.currentTimeMillis() > backKeyPressedTime + 2000) {
-                        backKeyPressedTime = System.currentTimeMillis()
-                        showSnackBar(
-                            this@MainActivity, getString(R.string.main_back_pressed)
-                        )
-                    } else if (System.currentTimeMillis() <= backKeyPressedTime + 2000) {
-                        finish()
+                currentNavigationFragment?.let {
+                    // 홈을 제외한 루트 경로면 뒤로가기 시 홈 화면으로 이동
+                    if (it is NewsFragment || it is EventFragment || it is PointFragment || it is MyPageFragment) {
+                        viewModel.fragmentNavigateTo(NavigateType.Home())
+                        return
                     }
+
+                    // 홈 화면 혹은 로그인 화면일 경우 뒤로가기 2번 누르면 앱 종료
+                    if (it is HomeFragment || it is LoginFragment) {
+                        if (System.currentTimeMillis() > backKeyPressedTime + 2000) {
+                            backKeyPressedTime = System.currentTimeMillis()
+                            showSnackBar(
+                                this@MainActivity, getString(R.string.main_back_pressed)
+                            )
+                        } else if (System.currentTimeMillis() <= backKeyPressedTime + 2000) {
+                            finish()
+                        }
+
+                        return
+                    }
+
+                    // 인트로 화면 뒤로가기 시 즉시 종료
+                    if (it is IntroFragment) {
+                        finishAffinity()
+                        return
+                    }
+
+                    navController.popBackStack()
                 }
             }
         })
@@ -110,6 +142,18 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     }
 
     private fun initViewModelCallback() = with(viewModel) {
+        getUseLockScreen()
+
+        isUseLockScreen.observeOnLifecycleStop(this@MainActivity) {
+            val isServiceRunning = LockScreenService.isRunning(this@MainActivity)
+            Log.d("아외안되", "$it / $isServiceRunning")
+            if (it && !isServiceRunning) {
+                startLockScreenService()
+
+                return@observeOnLifecycleStop
+            }
+        }
+
         isLoading.observeOnLifecycleDestroy(this@MainActivity) { show ->
             if (show) {
                 showLoadingDialog()
@@ -118,38 +162,38 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
             }
         }
 
-        navigateToChannel.observeOnLifecycleStop(this@MainActivity) { pair ->
-            pair?.let {
+        navigateToChannel.observeOnLifecycleDestroy(this@MainActivity) { item ->
+            item?.let {
                 navigateToCompose(
-                    when (it.first) {
+                    when (it) {
                         is NavigateType.Login -> {
                             NavigationDirections.actionGlobalLoginFragment()
                         }
 
                         is NavigateType.Home -> {
-                            NavigationDirections.actionGlobalHomeFragment()
+                            NavigationDirections.actionGlobalHomeGraph()
                         }
 
                         is NavigateType.News -> {
-                            NavigationDirections.actionGlobalNewsFragment()
+                            NavigationDirections.actionGlobalNewsGraph()
                         }
 
                         is NavigateType.Event -> {
-                            NavigationDirections.actionGlobalEventFragment()
+                            NavigationDirections.actionGlobalEventGraph()
                         }
 
                         is NavigateType.Point -> {
-                            NavigationDirections.actionGlobalPointFragment()
+                            NavigationDirections.actionGlobalPointGraph()
                         }
 
                         is NavigateType.MyPage -> {
-                            NavigationDirections.actionGlobalMyPageFragment()
+                            NavigationDirections.actionGlobalMyPageGraph()
                         }
 
                         is NavigateType.LockScreenPermission -> {
-                            NavigationDirections.actionGlobalLockScreenPermissionFragment()
+                            HomeFragmentDirections.actionHomeFragmentToLockScreenPermissionFragment()
                         }
-                    }, it.second
+                    }
                 )
             }
         }
@@ -166,23 +210,52 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         }.observeInLifecycleStop(this@MainActivity)
 
         checkPermissionChannel.onEach {
-            if (!permissionViewModel.canDrawOverlays()) {
-                BasicDialog(this@MainActivity, binding.root as ViewGroup?)
-                    .setCancelable(false)
-                    .setTitle(resources.getString(R.string.set_lock_screen))
-                    .setText(String.format(resources.getString(R.string.set_lock_screen_contents), resources.getString(
-                        R.string.app_name)))
-                    .setCheckBox(true, resources.getString(R.string.not_showing_week))
-                    .setNegativeButton(true, resources.getString(R.string.cancel))
-                    .setPositiveButton(true, resources.getString(R.string.set_use)) { view, dialog ->
-                        dialog?.let {
-                            it.dismiss()
+            when (it) {
+                PermissionViewModel.TYPE_LOCK_SCREEN -> {
+                    if (!permissionViewModel.canDrawOverlays()) {
+                        BasicDialog(this@MainActivity, binding.root as ViewGroup?).setCancelable(false)
+                            .setTitle(resources.getString(R.string.set_lock_screen)).setText(
+                                String.format(
+                                    resources.getString(R.string.set_lock_screen_contents),
+                                    resources.getString(
+                                        R.string.app_name
+                                    )
+                                )
+                            ).setCheckBox(true, resources.getString(R.string.not_showing_week))
+                            .setNegativeButton(true, resources.getString(R.string.cancel))
+                            .setPositiveButton(
+                                true, resources.getString(R.string.set_use)
+                            ) { view, dialog ->
+                                dialog?.let {
+                                    it.dismiss()
 
-                            if (!permissionViewModel.canDrawOverlays()) {
-                                fragmentNavigateTo(NavigateType.LockScreenPermission(), false)
-                            }
-                        }
-                    }.show()
+                                    if (!permissionViewModel.canDrawOverlays()) {
+                                        fragmentNavigateTo(NavigateType.LockScreenPermission())
+
+                                        return@setPositiveButton
+                                    }
+
+                                    startLockScreenService()
+                                }
+                            }.show()
+                    }
+                }
+
+                PermissionViewModel.TYPE_INTRO -> {
+                    permissionViewModel.checkPermission(it)
+                }
+            }
+        }.observeInLifecycleStop(this@MainActivity)
+
+        goPermissionSettingChannel.onEach {
+            try {
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                    .setData(Uri.parse("package:${packageName}"))
+                settingDetails.launch(intent)
+            } catch (e: ActivityNotFoundException) {
+                Log.e("REQ_DETAILS_SETTINGS","권한 error -> ${e.printStackTrace()}")
+                val intent = Intent(Settings.ACTION_MANAGE_APPLICATIONS_SETTINGS)
+                settingDetails.launch(intent)
             }
         }.observeInLifecycleStop(this@MainActivity)
     }
@@ -220,9 +293,20 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         }.observeInLifecycleStop(this@MainActivity)
     }
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        permissionViewModel.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
     override fun onDestinationChanged(
         controller: NavController, destination: NavDestination, arguments: Bundle?
     ) {
+        hideSnackBar()
+
         viewModel.apply {
             isTopViewVisible.value = true
             isBottomAppBarVisible.value = true
@@ -274,7 +358,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         }
     }
 
-    private fun navigateToCompose(directions: NavDirections?, isCloseCurrentStack: Boolean) {
+    private fun navigateToCompose(directions: NavDirections?) {
         directions?.let {
             currentNavigationFragment?.apply {
                 exitTransition = MaterialElevationScale(false).apply {
@@ -285,11 +369,22 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
                 }
             }
 
-            if (isCloseCurrentStack) {
-                navController.popBackStack()
-            }
-
             navController.navigate(it)
         }
+    }
+
+    private fun startLockScreenService() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(Intent(this, LockScreenService::class.java))
+        } else {
+            startService(Intent(this, LockScreenService::class.java))
+        }
+
+        viewModel.setUseLockScreen(true)
+    }
+
+    override fun onDestroy() {
+        networkViewModel.unRegister()
+        super.onDestroy()
     }
 }

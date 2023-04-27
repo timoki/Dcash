@@ -15,6 +15,28 @@ import com.dmonster.rewordapp.R
 
 @BindingAdapter(
     value = [
+        "onSingleClick",
+        "interval"
+    ], requireAll = false
+)
+fun onSingleClick(
+    view: View,
+    listener: View.OnClickListener? = null,
+    interval: Long? = null,
+) {
+    if (listener != null) {
+        view.setOnClickListener(object : Listener.OnSingleClickListener(interval ?: 1000L) {
+            override fun onSingleClick(v: View?) {
+                listener.onClick(v)
+            }
+        })
+    } else {
+        view.setOnClickListener(null)
+    }
+}
+
+@BindingAdapter(
+    value = [
         "coilSrc",
         "coilCircularCrop",
     ], requireAll = false
