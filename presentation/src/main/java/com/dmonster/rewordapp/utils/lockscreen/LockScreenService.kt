@@ -1,4 +1,4 @@
-package com.dmonster.rewordapp.lockscreen
+package com.dmonster.rewordapp.utils.lockscreen
 
 import android.app.*
 import android.content.Context
@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
 import com.dmonster.rewordapp.R
 
 class LockScreenService: Service() {
@@ -43,8 +44,12 @@ class LockScreenService: Service() {
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         manager.createNotificationChannel(chan)
 
-        val builder = Notification.Builder(this, NOTIFICATION_CHANNEL_ID)
-            .setContentTitle(getString(R.string.app_name))
+        val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+            .setContentTitle(String.format(getString(R.string.lock_screen_notification_content_title), getString(R.string.app_name)))
+            .setContentText(String.format(getString(R.string.lock_screen_notification_content_text), getString(R.string.app_name)))
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setOngoing(true)
         val notification = builder.build()
 
         // Foreground Service 시작!

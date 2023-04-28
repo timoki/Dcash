@@ -1,4 +1,4 @@
-package com.dmonster.rewordapp.lockscreen
+package com.dmonster.rewordapp.utils.lockscreen
 
 import android.content.BroadcastReceiver
 import android.content.Context

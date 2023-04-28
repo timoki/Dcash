@@ -12,7 +12,9 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".view.lockscreen.LockScreen">
+        tools:context=".view.lockscreen.LockScreen"
+        android:background="@color/default_grey"
+        android:clipChildren="false">
 
         <TextView
             android:layout_width="wrap_content"
@@ -23,8 +25,46 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:text="잠금화면풀기"
             android:textSize="55sp"
-            android:gravity="center"
-            app:onSingleClick="@{() -> viewModel.lockOff()}"/>
+            android:gravity="center"/>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:layout_constraintBottom_toBottomOf="@+id/seekBar"
+            app:layout_constraintTop_toTopOf="@+id/seekBar"
+            app:layout_constraintStart_toStartOf="@+id/seekBar"
+            android:translationX="-9dp"
+            android:background="#55000000">
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:layout_constraintBottom_toBottomOf="@+id/seekBar"
+            app:layout_constraintTop_toTopOf="@+id/seekBar"
+            app:layout_constraintEnd_toEndOf="@+id/seekBar"
+            android:translationX="9dp"
+            android:background="#55000000">
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <SeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:progress="50"
+            android:progressTint="@android:color/transparent"
+            android:thumb="@drawable/lock_button_sample"
+            android:progressBackgroundTint="@android:color/transparent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginHorizontal="70dp"
+            android:layout_marginBottom="100dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

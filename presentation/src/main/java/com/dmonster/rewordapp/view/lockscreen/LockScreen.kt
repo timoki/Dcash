@@ -1,23 +1,27 @@
 package com.dmonster.rewordapp.view.lockscreen
 
+import android.animation.ValueAnimator
 import android.app.ActivityManager
 import android.app.KeyguardManager
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
+import android.widget.SeekBar
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.dmonster.rewordapp.R
 import com.dmonster.rewordapp.databinding.ActivityLockScreenBinding
-import com.dmonster.rewordapp.lockscreen.OnSystemKeyPressedListener
-import com.dmonster.rewordapp.lockscreen.SystemButtonWatcher
-import com.dmonster.rewordapp.utils.observeInLifecycleStop
-import kotlinx.coroutines.flow.onEach
+import com.dmonster.rewordapp.utils.lockscreen.OnSystemKeyPressedListener
+import com.dmonster.rewordapp.utils.lockscreen.SystemButtonWatcher
+import com.dmonster.rewordapp.view.main.MainActivity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class LockScreen : AppCompatActivity() {
 
     private val binding: ActivityLockScreenBinding by lazy {
@@ -26,16 +30,13 @@ class LockScreen : AppCompatActivity() {
 
     private val viewModel: LockScreenViewModel by viewModels()
     private val watcher: SystemButtonWatcher by lazy {
-        SystemButtonWatcher(
-            this,
-            object : OnSystemKeyPressedListener {
-                override fun onPressed() {
-                    Log.d("아외안되", "눌림")
-                    val manager = getSystemService(ACTIVITY_SERVICE) as ActivityManager
-                    manager.moveTaskToFront(taskId, 0)
-                }
+        SystemButtonWatcher(this, object : OnSystemKeyPressedListener {
+            override fun onPressed() {
+                Log.d("아외안되", "눌림")
+                val manager = getSystemService(ACTIVITY_SERVICE) as ActivityManager
+                manager.moveTaskToFront(taskId, 0)
             }
-        )
+        })
     }
 
     private val callback = object : OnBackPressedCallback(true) {
@@ -60,18 +61,75 @@ class LockScreen : AppCompatActivity() {
             keyguardManager.requestDismissKeyguard(this, null)
         } else {
             this.window.addFlags(
-                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
-                        WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
-                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
+                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+            )
         }
 
+        initListener()
         initViewModelCallback()
     }
 
-    fun initViewModelCallback() = with(viewModel) {
-        lockOffChannel.onEach {
-            finish()
-        }.observeInLifecycleStop(this@LockScreen)
+    private fun initListener() = with(binding) {
+        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(view: SeekBar?, progress: Int, fromUser: Boolean) {
+
+            }
+
+            override fun onStartTrackingTouch(view: SeekBar?) {
+
+            }
+
+            override fun onStopTrackingTouch(view: SeekBar?) {
+                view?.let {
+                    if (it.progress <= 0) {
+                        startActivity(
+                            Intent(
+                                this@LockScreen,
+                                MainActivity::class.java
+                            ).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                        )
+
+                        finish()
+                        return
+                    }
+
+                    if (it.progress >= 100) {
+                        finish()
+                        return
+                    }
+
+                    ValueAnimator.ofInt(it.progress, 50).apply {
+                        duration = 100L
+                        addUpdateListener { animator ->
+                            it.progress = animator.animatedValue as Int
+                        }
+
+                        start()
+                    }
+                }
+            }
+        })
+
+        /*seekBar.setOnTouchListener { view, event ->
+            if (event.action == MotionEvent.ACTION_DOWN || event.action == MotionEvent.ACTION_MOVE) {
+                if (
+                    event.x >= seekBar.thumb.bounds.left &&
+                    event.x <= seekBar.thumb.bounds.right &&
+                    event.y <= seekBar.thumb.bounds.bottom &&
+                    event.y >= seekBar.thumb.bounds.top
+                ) {
+                    Log.d("아외안되", "1 / ${event.action}")
+                    false
+                }
+            }
+
+            Log.d("아외안되", "2 / ${event.action}")
+            true
+        }*/
+    }
+
+    private fun initViewModelCallback() = with(viewModel) {
+
     }
 
     override fun onUserLeaveHint() {

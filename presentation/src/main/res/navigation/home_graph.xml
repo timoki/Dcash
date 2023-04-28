@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_homeFragment_to_lockScreenPermissionFragment"
             app:destination="@id/lockScreenPermissionFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_newsDetailFragment"
+            app:destination="@id/newsDetailFragment" />
     </fragment>
 
     <fragment
@@ -20,4 +23,10 @@
         android:name="com.dmonster.rewordapp.view.lockscreen.set.LockScreenPermissionFragment"
         android:label="LockScreenPermissionFragment"
         tools:layout="@layout/fragment_set_lock_screen" />
+
+    <fragment
+        android:id="@+id/newsDetailFragment"
+        android:name="com.dmonster.rewordapp.view.newsDetail.NewsDetailFragment"
+        android:label="NewsDetailFragment"
+        tools:layout="@layout/fragment_news_detail" />
 </navigation>

@@ -6,10 +6,6 @@
         <import type="android.view.View" />
 
         <variable
-            name="viewModel"
-            type="com.dmonster.rewordapp.view.dialog.BasicDialogViewModel" />
-
-        <variable
             name="titleText"
             type="String" />
 

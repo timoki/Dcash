@@ -9,5 +9,15 @@
         android:id="@+id/newsFragment"
         android:name="com.dmonster.rewordapp.view.news.NewsFragment"
         android:label="NewsFragment"
-        tools:layout="@layout/fragment_news" />
+        tools:layout="@layout/fragment_news">
+        <action
+            android:id="@+id/action_newsFragment_to_newsDetailFragment"
+            app:destination="@id/newsDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/newsDetailFragment"
+        android:name="com.dmonster.rewordapp.view.newsDetail.NewsDetailFragment"
+        android:label="NewsDetailFragment"
+        tools:layout="@layout/fragment_news_detail" />
 </navigation>

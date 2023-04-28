@@ -26,8 +26,8 @@ import com.dmonster.domain.type.TopMenuType
 import com.dmonster.rewordapp.NavigationDirections
 import com.dmonster.rewordapp.R
 import com.dmonster.rewordapp.databinding.ActivityMainBinding
-import com.dmonster.rewordapp.lockscreen.LockScreenService
 import com.dmonster.rewordapp.utils.*
+import com.dmonster.rewordapp.utils.lockscreen.LockScreenService
 import com.dmonster.rewordapp.view.dialog.BasicDialog
 import com.dmonster.rewordapp.view.event.EventFragment
 import com.dmonster.rewordapp.view.home.HomeFragment
@@ -37,6 +37,7 @@ import com.dmonster.rewordapp.view.login.LoginFragment
 import com.dmonster.rewordapp.view.mypage.MyPageFragment
 import com.dmonster.rewordapp.view.network.NetworkViewModel
 import com.dmonster.rewordapp.view.news.NewsFragment
+import com.dmonster.rewordapp.view.news.NewsFragmentDirections
 import com.dmonster.rewordapp.view.point.PointFragment
 import com.google.android.material.transition.MaterialElevationScale
 import dagger.hilt.android.AndroidEntryPoint
@@ -192,6 +193,14 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 
                         is NavigateType.LockScreenPermission -> {
                             HomeFragmentDirections.actionHomeFragmentToLockScreenPermissionFragment()
+                        }
+
+                        is NavigateType.NewsDetailFromHome -> {
+                            HomeFragmentDirections.actionHomeFragmentToNewsDetailFragment()
+                        }
+
+                        is NavigateType.NewsDetailFromNews -> {
+                            NewsFragmentDirections.actionNewsFragmentToNewsDetailFragment()
                         }
                     }
                 )
@@ -352,6 +361,17 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
                         middleMenu = TopMenuType.MiddleMenu.TITLE,
                         rightMenu = TopMenuType.RightMenu.NONE,
                         titleText = resources.getString(R.string.set_lock_screen)
+                    )
+                }
+
+                // 백버튼, 아이콘2개
+                R.id.newsDetailFragment -> {
+                    isTopViewVisible.value = true
+                    isBottomAppBarVisible.value = false
+
+                    topViewModel.setTopMenu(
+                        leftMenu = TopMenuType.LeftMenu.BACK,
+                        rightMenu = TopMenuType.RightMenu.POINT_AND_SHARE,
                     )
                 }
             }

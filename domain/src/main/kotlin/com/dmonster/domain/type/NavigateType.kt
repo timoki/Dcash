@@ -54,4 +54,18 @@ sealed class NavigateType : EnumClassProguard {
         override val fragmentName: String
             get() = "lockScreenPermission"
     }
+
+    class NewsDetailFromHome(private val bottomNavItem: BottomNavItem? = null) : NavigateType() {
+        override val getItem: BottomNavItem?
+            get() = bottomNavItem
+        override val fragmentName: String
+            get() = "newsDetailFromHome"
+    }
+
+    class NewsDetailFromNews(private val bottomNavItem: BottomNavItem? = null) : NavigateType() {
+        override val getItem: BottomNavItem?
+            get() = bottomNavItem
+        override val fragmentName: String
+            get() = "newsDetailFromNews"
+    }
 }

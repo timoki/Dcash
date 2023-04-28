@@ -26,7 +26,7 @@ android {
             isJniDebuggable = true
             applicationIdSuffix = ".debug"
             signingConfig = signingConfigs.getByName("debug")
-            resValue("string", "app_name", "@string/app_name_debug")
+            //resValue("string", "app_name", "@string/app_name_debug")
 
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -36,7 +36,7 @@ android {
 
         release {
             isMinifyEnabled = true
-            resValue("string", "app_name", "@string/app_name_release")
+            //resValue("string", "app_name", "@string/app_name_release")
 
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
