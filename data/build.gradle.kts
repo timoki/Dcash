@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.dmonster.rewordapp.data"
+    namespace = "com.dmonster.dcash.data"
     compileSdk = 33
 
     compileOptions {

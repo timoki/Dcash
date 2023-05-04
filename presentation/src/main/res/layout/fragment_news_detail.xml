@@ -6,14 +6,14 @@
 
         <variable
             name="viewModel"
-            type="com.dmonster.rewordapp.view.newsDetail.NewsDetailViewModel" />
+            type="com.dmonster.dcash.view.newsDetail.NewsDetailViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.dmonster.rewordapp.customView.MyWebView
+        <com.dmonster.dcash.customView.MyWebView
             android:id="@+id/webView"
             android:layout_width="0dp"
             android:layout_height="0dp"

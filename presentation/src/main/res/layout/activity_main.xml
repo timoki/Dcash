@@ -12,7 +12,7 @@
 
         <variable
             name="viewModel"
-            type="com.dmonster.rewordapp.view.main.MainViewModel" />
+            type="com.dmonster.dcash.view.main.MainViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

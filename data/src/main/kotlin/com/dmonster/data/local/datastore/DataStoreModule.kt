@@ -14,7 +14,7 @@ import java.io.IOException
 class DataStoreModule(
     private val context: Context
 ) {
-    private val Context.dataStore by preferencesDataStore("rewordApp.db")
+    private val Context.dataStore by preferencesDataStore("dcash.db")
 
     private val mobileDataKey = booleanPreferencesKey("use_mobile_data")
     private val useLockScreenKey = booleanPreferencesKey("useLockScreen")

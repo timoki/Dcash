@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/newsFragment"
-        android:name="com.dmonster.rewordapp.view.news.NewsFragment"
+        android:name="com.dmonster.dcash.view.news.NewsFragment"
         android:label="NewsFragment"
         tools:layout="@layout/fragment_news">
         <action
@@ -17,7 +17,7 @@
 
     <fragment
         android:id="@+id/newsDetailFragment"
-        android:name="com.dmonster.rewordapp.view.newsDetail.NewsDetailFragment"
+        android:name="com.dmonster.dcash.view.newsDetail.NewsDetailFragment"
         android:label="NewsDetailFragment"
         tools:layout="@layout/fragment_news_detail" />
 </navigation>

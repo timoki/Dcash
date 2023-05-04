@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/eventFragment"
-        android:name="com.dmonster.rewordapp.view.event.EventFragment"
+        android:name="com.dmonster.dcash.view.event.EventFragment"
         android:label="EventFragment"
         tools:layout="@layout/fragment_event" />
 </navigation>

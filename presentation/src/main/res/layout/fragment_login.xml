@@ -4,7 +4,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.dmonster.rewordapp.view.login.LoginViewModel" />
+            type="com.dmonster.dcash.view.login.LoginViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

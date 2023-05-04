@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="com.dmonster.rewordapp.view.network.NetworkViewModel" />
+            type="com.dmonster.dcash.view.network.NetworkViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

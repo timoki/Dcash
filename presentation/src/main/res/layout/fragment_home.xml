@@ -4,7 +4,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.dmonster.rewordapp.view.home.HomeViewModel" />
+            type="com.dmonster.dcash.view.home.HomeViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

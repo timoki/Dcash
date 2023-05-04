@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/myPageFragment"
-        android:name="com.dmonster.rewordapp.view.mypage.MyPageFragment"
+        android:name="com.dmonster.dcash.view.mypage.MyPageFragment"
         android:label="MyPageFragment"
         tools:layout="@layout/fragment_mypage" />
 

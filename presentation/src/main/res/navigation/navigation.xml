@@ -18,13 +18,13 @@
 
     <fragment
         android:id="@+id/introFragment"
-        android:name="com.dmonster.rewordapp.view.intro.IntroFragment"
+        android:name="com.dmonster.dcash.view.intro.IntroFragment"
         android:label="IntroFragment"
         tools:layout="@layout/fragment_intro" />
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.dmonster.rewordapp.view.login.LoginFragment"
+        android:name="com.dmonster.dcash.view.login.LoginFragment"
         android:label="LoginFragment"
         tools:layout="@layout/fragment_login">
         <action
@@ -34,12 +34,12 @@
 
     <dialog
         android:id="@+id/basicDialog"
-        android:name="com.dmonster.rewordapp.view.dialog.BasicDialog"
+        android:name="com.dmonster.dcash.view.dialog.BasicDialog"
         android:label="BasicDialog"
         tools:layout="@layout/dialog_basic" />
     <dialog
         android:id="@+id/networkFragment"
-        android:name="com.dmonster.rewordapp.view.network.NetworkFragment"
+        android:name="com.dmonster.dcash.view.network.NetworkFragment"
         android:label="NetworkFragment"
         tools:layout="@layout/fragment_network">
 

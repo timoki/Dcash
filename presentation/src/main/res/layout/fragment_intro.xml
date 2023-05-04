@@ -9,7 +9,7 @@
 
         <variable
             name="viewModel"
-            type="com.dmonster.rewordapp.view.intro.IntroViewModel" />
+            type="com.dmonster.dcash.view.intro.IntroViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

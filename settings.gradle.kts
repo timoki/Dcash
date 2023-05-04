@@ -31,7 +31,7 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "RewordApp"
+rootProject.name = "Dcash"
 include(":presentation")
 include(":data")
 include(":domain")

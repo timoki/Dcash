@@ -1,3 +1,6 @@
+
+import java.util.regex.Pattern
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -7,11 +10,11 @@ plugins {
 }
 
 android {
-    namespace = "com.dmonster.rewordapp"
+    namespace = "com.dmonster.dcash"
     compileSdk = 33
 
     defaultConfig {
-        applicationId = "com.dmonster.rewordapp"
+        applicationId = "com.dmonster.dcash"
         minSdk = 23
         targetSdk = 33
         versionCode = 1
@@ -21,12 +24,14 @@ android {
     }
 
     buildTypes {
-        debug {
+        getByName("debug") {
+            manifestPlaceholders["appName"] = "@string/app_name_debug"
+            manifestPlaceholders["appIcon"] = "@mipmap/ic_launcher"
             isMinifyEnabled = false
             isJniDebuggable = true
             applicationIdSuffix = ".debug"
             signingConfig = signingConfigs.getByName("debug")
-            //resValue("string", "app_name", "@string/app_name_debug")
+            resValue("string", "app_name", "@string/app_name_debug")
 
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -34,15 +39,86 @@ android {
             )
         }
 
-        release {
+        getByName("release") {
+            manifestPlaceholders["appName"] = "@string/app_name_release"
+            manifestPlaceholders["appIcon"] = "@mipmap/ic_launcher"
             isMinifyEnabled = true
-            //resValue("string", "app_name", "@string/app_name_release")
+            resValue("string", "app_name", "@string/app_name_release")
 
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
+    }
+
+    flavorDimensions.add("version")
+
+    productFlavors {
+        create("Dcash") {
+            dimension = "version"
+            applicationId = "com.dmonster.dcash"
+            buildConfigField("String", "STORE_TYPE", "\"playstore\"")
+            buildConfigField("String", "SITE_CODE", "\"Dcash\"")
+        }
+
+        create("DcashOneStore") {
+            dimension = "version"
+            applicationId = "com.dmonster.onestore.dcash"
+            buildConfigField("String", "STORE_TYPE", "\"onestore\"")
+            buildConfigField("String", "SITE_CODE", "\"Dcash\"")
+        }
+
+        all {
+            val sourceSet = sourceSets[this.name]
+            sourceSet.setRoot("src/main/flavor/${sourceSet.name}")
+        }
+    }
+
+    /*productFlavors.all {
+        val props = org.jetbrains.kotlin.konan.properties.Properties()
+        props.load(file("${projectDir}/src/main/flavor/${this.name}/setting.properties").inputStream())
+
+        *//*this.buildConfigField("Boolean", "SOCAL_LOGIN_KAKAO_ENABLE", (props.getProperty("SOCAL_LOGIN_KAKAO_ENABLE", "false") == "true").toString())
+        this.buildConfigField("Boolean", "SOCAL_LOGIN_NAVER_ENABLE", (props.getProperty("SOCAL_LOGIN_NAVER_ENABLE", "false") == "true").toString())
+
+        if (props.getProperty("SOCAL_LOGIN_KAKAO_ENABLE", "false") == "true") {
+            this.buildConfigField("String", "KAKAO_API_KEY", "\"${props.getProperty("KAKAO_API_KEY")}\"")
+            this.manifestPlaceholders["KAKAO_API_KEY"] = props.getProperty("KAKAO_API_KEY")
+        } else {
+            this.buildConfigField("String", "KAKAO_API_KEY", "null")
+        }
+
+        if (props.getProperty("SOCAL_LOGIN_NAVER_ENABLE", "false") == "true") {
+            this.buildConfigField("String", "NAVER_CLIENT_ID", "\"${props.getProperty("NAVER_CLIENT_ID")}\"")
+            this.buildConfigField("String", "NAVER_CLIENT_SECRET", "\"${props.getProperty("NAVER_CLIENT_SECRET")}\"")
+        } else {
+            this.buildConfigField("String", "NAVER_CLIENT_ID", "null")
+            this.buildConfigField("String", "NAVER_CLIENT_SECRET", "null")
+        }
+
+        if (props.getProperty("FCM_ENABLE", "false") == "true") {
+            plugins.apply("com.google.gms.google-services")
+        }*//*
+    }*/
+
+    applicationVariants.all {
+        /*val flavorName = this.productFlavors[0].name
+        val variantName = this.buildType.name
+
+        val props = org.jetbrains.kotlin.konan.properties.Properties()
+        props.load(file("${projectDir}/src/main/flavor/${flavorName}/setting.properties").inputStream())
+        val siteHost = props.getProperty("SITE_HOST")
+        val redirectUrl = props.getProperty("REDIRECT_URL").replace("\${SITE_HOST}", siteHost)
+        val apiHost = if (variantName == "debug" && props.containsKey("API_HOST_DEBUG")) {
+            props.getProperty("API_HOST_DEBUG").replace("\${SITE_HOST}", siteHost)
+        } else {
+            props.getProperty("API_HOST").replace("\${SITE_HOST}", siteHost)
+        }
+
+        this.buildConfigField("String", "SITE_HOST", "\"${siteHost}\"")
+        this.buildConfigField("String", "API_HOST", "\"${apiHost}\"")
+        this.buildConfigField("String", "REDIRECT_URL", "\"${redirectUrl}\"")*/
     }
 
     compileOptions {
@@ -132,4 +208,63 @@ dependencies {
 
 kapt {
     correctErrorTypes = true
+}
+
+fun getCurrentFlavor(task: Task): String {
+    val patter: Pattern =if (task.name.startsWith("process") && task.name.endsWith("GoogleServices"))
+        Pattern.compile("process(\\w+)(Release|Debug)GoogleServices")
+    else if (task.name.contains("assemble"))
+        Pattern.compile("assemble(\\w+)(Release|Debug)")
+    else
+        Pattern.compile("generate(\\w+)(Release|Debug)")
+
+    val match = patter.matcher(task.name)
+
+    return if (match.find())
+        match.group(1).toLowerCase()
+    else
+        ""
+}
+
+fun getCurrentVariant(task: Task): String {
+    val patter: Pattern =if (task.name.startsWith("process") && task.name.endsWith("GoogleServices"))
+        Pattern.compile("process(\\w+)(Release|Debug)GoogleServices")
+    else if (task.name.contains("assemble"))
+        Pattern.compile("assemble(\\w+)(Release|Debug)")
+    else
+        Pattern.compile("generate(\\w+)(Release|Debug)")
+
+    val match = patter.matcher(task.name)
+
+    return if (match.find())
+        match.group(2).toLowerCase()
+    else
+        ""
+}
+
+gradle.taskGraph.beforeTask {
+    if (this.name.endsWith("GoogleServices")) {
+        val flavorName = getCurrentFlavor(this)
+        val variantName = getCurrentVariant(this)
+        val flavorVariant = flavorName + variantName.substring(0, 1).toUpperCase() + variantName.substring(1)
+
+        var googleServiceFile = file("${projectDir}/src/main/flavor/${flavorVariant}/google-services.json")
+
+        if (!googleServiceFile.exists()) {
+            googleServiceFile = file("${projectDir}/src/main/flavor/${flavorName}/google-services.json")
+        }
+
+        copy {
+            print("Switches to $flavorVariant google-services.json")
+            this.from(googleServiceFile.parent)
+            this.include("google-services.json")
+            this.into(".")
+        }
+    }
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java).configureEach {
+    kotlinOptions {
+        freeCompilerArgs = freeCompilerArgs + "-opt-in=kotlin.RequiresOptIn"
+    }
 }
