@@ -24,6 +24,9 @@ android {
     }
 
     buildTypes {
+        val baseUrl: String = project.properties["baseUrl"] as String
+        val baseUrlDebug: String = project.properties["baseUrlDebug"] as String
+
         getByName("debug") {
             manifestPlaceholders["appName"] = "@string/app_name_debug"
             manifestPlaceholders["appIcon"] = "@mipmap/ic_launcher"
@@ -32,6 +35,7 @@ android {
             applicationIdSuffix = ".debug"
             signingConfig = signingConfigs.getByName("debug")
             resValue("string", "app_name", "@string/app_name_debug")
+            buildConfigField("String", "BASE_URL", baseUrlDebug)
 
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -44,6 +48,7 @@ android {
             manifestPlaceholders["appIcon"] = "@mipmap/ic_launcher"
             isMinifyEnabled = true
             resValue("string", "app_name", "@string/app_name_release")
+            buildConfigField("String", "BASE_URL", baseUrl)
 
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -79,7 +84,7 @@ android {
         val props = org.jetbrains.kotlin.konan.properties.Properties()
         props.load(file("${projectDir}/src/main/flavor/${this.name}/setting.properties").inputStream())
 
-        *//*this.buildConfigField("Boolean", "SOCAL_LOGIN_KAKAO_ENABLE", (props.getProperty("SOCAL_LOGIN_KAKAO_ENABLE", "false") == "true").toString())
+        this.buildConfigField("Boolean", "SOCAL_LOGIN_KAKAO_ENABLE", (props.getProperty("SOCAL_LOGIN_KAKAO_ENABLE", "false") == "true").toString())
         this.buildConfigField("Boolean", "SOCAL_LOGIN_NAVER_ENABLE", (props.getProperty("SOCAL_LOGIN_NAVER_ENABLE", "false") == "true").toString())
 
         if (props.getProperty("SOCAL_LOGIN_KAKAO_ENABLE", "false") == "true") {
@@ -99,7 +104,7 @@ android {
 
         if (props.getProperty("FCM_ENABLE", "false") == "true") {
             plugins.apply("com.google.gms.google-services")
-        }*//*
+        }
     }*/
 
     applicationVariants.all {
