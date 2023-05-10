@@ -7,10 +7,11 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.viewModelScope
 import com.dmonster.data.local.datastore.DataStoreModule
-import com.dmonster.domain.type.NetworkState
 import com.dmonster.dcash.base.BaseViewModel
+import com.dmonster.domain.type.NetworkState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -86,14 +87,16 @@ class NetworkViewModel @Inject constructor(
     }
 
     fun changeNetworkState() = viewModelScope.launch {
-        val isDataConn = dataStore.getUserMobileData.first()
+        val isDataConn = dataStore.getPreferencesData(DataStoreModule.MOBILE_DATA).first()
         networkState.value = when {
             isNetworkConn && (isWifiConn || !checkMobileData || (isDataConn && isCellularConn)) -> {
                 NetworkState.CONNECT_NETWORK
             }
+
             isNetworkConn && !isDataConn && isCellularConn -> {
                 NetworkState.CONNECT_NETWORK_BUT_NOT_USE_MOBILE_DATA
             }
+
             else -> {
                 NetworkState.DISCONNECT_NETWORK
             }
@@ -179,6 +182,7 @@ class NetworkViewModel @Inject constructor(
         manager?.unregisterNetworkCallback(cellularNetworkCallback)
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun registerDefaultNetwork() {
         manager?.registerDefaultNetworkCallback(defaultNetworkCallback)
     }
@@ -194,8 +198,8 @@ class NetworkViewModel @Inject constructor(
     }
 
     private fun changeUseMobileDataState() = viewModelScope.launch {
-        val useMobileData = dataStore.getUserMobileData.first()
-        dataStore.putUseMobileData(!useMobileData)
+        val useMobileData = dataStore.getPreferencesData(DataStoreModule.MOBILE_DATA).first()
+        dataStore.putPreferencesData(DataStoreModule.MOBILE_DATA, !useMobileData)
         changeNetworkState()
     }
 

@@ -5,6 +5,7 @@ import com.dmonster.data.local.datastore.DataStoreModule
 import com.dmonster.domain.type.NavigateType
 import com.dmonster.dcash.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -79,10 +80,16 @@ class MainViewModel @Inject constructor(
     val isUseLockScreen = MutableStateFlow<Boolean>(false)
 
     fun getUseLockScreen() = viewModelScope.launch {
-        isUseLockScreen.value = dataStore.isUseLockScreen.first()
+        isUseLockScreen.value = dataStore.getPreferencesData(DataStoreModule.USE_LOCK_SCREEN).first()
     }
 
     fun setUseLockScreen(isUse: Boolean) = viewModelScope.launch {
-        dataStore.setUseLockScreen(isUse)
+        dataStore.putPreferencesData(DataStoreModule.USE_LOCK_SCREEN, isUse)
+    }
+
+    var accessToken = ""
+
+    fun getAccessToken() = viewModelScope.launch {
+        accessToken = dataStore.getPreferencesData(DataStoreModule.ACCESS_TOKEN).first()
     }
 }

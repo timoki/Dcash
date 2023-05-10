@@ -1,8 +1,9 @@
 package com.dmonster.dcash.di
 
 import android.content.Context
-import com.dmonster.data.local.datastore.DataStoreModule
+import com.dmonster.dcash.utils.AppInfo
 import com.dmonster.dcash.view.main.MainActivity
+import com.dmonster.data.utils.ErrorCallback
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,15 +16,17 @@ import javax.inject.Singleton
 object AppModule {
     @Singleton
     @Provides
-    fun provideDataStoreModule(
-        @ApplicationContext context: Context
-    ): DataStoreModule {
-        return DataStoreModule(context)
+    fun provideMainActivity(): MainActivity {
+        return MainActivity()
     }
 
     @Singleton
     @Provides
-    fun provideMainActivity(): MainActivity {
-        return MainActivity()
+    fun provideAppInfo(@ApplicationContext context: Context): AppInfo = AppInfo(context)
+
+    @Singleton
+    @Provides
+    fun provideErrorCallback(): ErrorCallback {
+        return ErrorCallback()
     }
 }

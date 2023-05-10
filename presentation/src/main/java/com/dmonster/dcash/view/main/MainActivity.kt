@@ -403,6 +403,11 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         viewModel.setUseLockScreen(true)
     }
 
+    fun getAccessToken(): String {
+        viewModel.getAccessToken()
+        return viewModel.accessToken
+    }
+
     override fun onDestroy() {
         networkViewModel.unRegister()
         super.onDestroy()
