@@ -13,6 +13,8 @@ import androidx.core.view.isVisible
 import com.dmonster.dcash.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import okhttp3.Cache
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 var snackBar: Snackbar? = null
 
@@ -82,4 +84,16 @@ fun getNavigationBarHeight(context: Context): Int {
         return resources.getDimensionPixelSize(resourceId)
     }
     return 0
+}
+
+fun Cache.clearMalformedUrls(): Cache {
+    // corrupt 된 캐시 삭제하기
+    val urlIterator = urls()
+    while (urlIterator.hasNext()) {
+        if (urlIterator.next().toHttpUrlOrNull() == null) {
+            urlIterator.remove()
+        }
+    }
+
+    return this
 }

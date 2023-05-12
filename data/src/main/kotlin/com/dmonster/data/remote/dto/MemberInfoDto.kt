@@ -9,4 +9,4 @@ data class MemberInfoDto(
     @SerializedName("mt_name") val mt_name: String? = null,
     @SerializedName("mt_wdate") val mt_wdate: String? = null,
     @SerializedName("mt_type") val mt_type: Int? = null,
-) : BaseResponse()
+) : BaseResponse<MemberInfoDto>()

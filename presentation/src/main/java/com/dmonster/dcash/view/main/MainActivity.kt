@@ -2,6 +2,7 @@ package com.dmonster.dcash.view.main
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -20,6 +21,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.NavHostFragment
+import com.dmonster.data.local.datastore.DataStoreModule
+import com.dmonster.data.utils.ErrorCallback
 import com.dmonster.domain.type.NavigateType
 import com.dmonster.domain.type.NetworkState
 import com.dmonster.domain.type.TopMenuType
@@ -27,6 +30,7 @@ import com.dmonster.dcash.NavigationDirections
 import com.dmonster.dcash.R
 import com.dmonster.dcash.databinding.ActivityMainBinding
 import com.dmonster.dcash.utils.*
+import com.dmonster.dcash.utils.StaticData.tokenData
 import com.dmonster.dcash.utils.lockscreen.LockScreenService
 import com.dmonster.dcash.view.dialog.BasicDialog
 import com.dmonster.dcash.view.event.EventFragment
@@ -39,9 +43,13 @@ import com.dmonster.dcash.view.network.NetworkViewModel
 import com.dmonster.dcash.view.news.NewsFragment
 import com.dmonster.dcash.view.news.NewsFragmentDirections
 import com.dmonster.dcash.view.point.PointFragment
+import com.dmonster.domain.model.Result
 import com.google.android.material.transition.MaterialElevationScale
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedListener {
@@ -59,6 +67,12 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     private val permissionViewModel: PermissionViewModel by viewModels()
 
     private val topViewModel: TopViewModel by viewModels()
+
+    @Inject
+    lateinit var dataStore: DataStoreModule
+
+    @Inject
+    lateinit var errorCallback: ErrorCallback
 
     private val navHostFragment: NavHostFragment by lazy {
         supportFragmentManager.findFragmentById(R.id.navHostFragmentContainer) as NavHostFragment
@@ -96,6 +110,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         initNetworkViewModelCallback()
         initPermissionViewModelCallback()
         initTopViewModelCallback()
+        initErrorCallback()
     }
 
     private fun init() {
@@ -147,7 +162,6 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 
         isUseLockScreen.observeOnLifecycleStop(this@MainActivity) {
             val isServiceRunning = LockScreenService.isRunning(this@MainActivity)
-            Log.d("아외안되", "$it / $isServiceRunning")
             if (it && !isServiceRunning) {
                 startLockScreenService()
 
@@ -302,6 +316,16 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         }.observeInLifecycleStop(this@MainActivity)
     }
 
+    private fun initErrorCallback() = with(errorCallback) {
+        errorData.onEach {
+
+        }.observeInLifecycleDestroy(this@MainActivity)
+
+        tokenExpiration.onEach {
+
+        }.observeInLifecycleDestroy(this@MainActivity)
+    }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -403,13 +427,39 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         viewModel.setUseLockScreen(true)
     }
 
-    fun getAccessToken(): String {
-        viewModel.getAccessToken()
-        return viewModel.accessToken
-    }
-
     override fun onDestroy() {
         networkViewModel.unRegister()
         super.onDestroy()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        Log.d("아외안되", "$newConfig")
+    }
+
+    fun getNewAccessToken() {
+        tokenData.value.refreshToken?.let {
+            viewModel.getAccessToken(it).observeOnLifecycleStop(this) { result ->
+                when (result) {
+                    is Result.Loading -> {
+
+                    }
+
+                    is Result.Success -> {
+                        result.data?.let { token ->
+                            tokenData.value = token
+                        }
+                    }
+
+                    is Result.Error -> {
+
+                    }
+
+                    is Result.NetworkError -> {
+
+                    }
+                }
+            }
+        }
     }
 }

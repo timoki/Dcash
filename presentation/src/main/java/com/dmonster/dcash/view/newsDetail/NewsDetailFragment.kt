@@ -22,7 +22,7 @@ class NewsDetailFragment : BaseFragment<FragmentNewsDetailBinding, NewsDetailVie
 
             setOnScrollChangeListener { view, scrollX, scrollY, oldScrollX, oldScrollY ->
                 showSnackBar(requireActivity(), "현재 위치 : $scrollY / 전체 크기 : ${mContentsHeight - mComputeVerticalScrollExtent - mPaddingOffset}")
-                Log.d("아외안되", "$scrollY / $mContentsHeight / $mComputeVerticalScrollOffset / $mComputeVerticalScrollExtent / $mPaddingOffset")
+                //Log.d("아외안되", "$scrollY / $mContentsHeight / $mComputeVerticalScrollOffset / $mComputeVerticalScrollExtent / $mPaddingOffset")
             }
         }
     }

@@ -28,7 +28,6 @@ class SystemButtonWatcher(
     inner class InnerReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent?) {
             intent?.let {
-                Log.d("아외안되", "${it.action}")
                 listener.onPressed()
             }
         }

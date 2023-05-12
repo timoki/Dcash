@@ -2,20 +2,21 @@ package com.dmonster.data.repository.datasource
 
 import com.dmonster.data.remote.dto.MemberInfoDto
 import com.dmonster.data.remote.dto.TokenDto
+import com.dmonster.data.remote.dto.base.BaseResponse
 import retrofit2.Response
 
 interface RemoteDataSource {
     suspend fun requestLogin(
         id: String, pw: String
-    ): Response<TokenDto>
+    ): Response<BaseResponse<TokenDto>>
 
     suspend fun getAccessToken(
         refreshToken: String
-    ): Response<TokenDto>
+    ): Response<BaseResponse<TokenDto>>
 
     suspend fun changeRefreshToken(
         refreshToken: String
-    ): Response<TokenDto>
+    ): Response<BaseResponse<TokenDto>>
 
-    suspend fun getMemberInfo(): Response<MemberInfoDto>
+    suspend fun getMemberInfo(): Response<BaseResponse<MemberInfoDto>>
 }

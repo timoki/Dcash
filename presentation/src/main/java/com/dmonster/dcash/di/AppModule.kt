@@ -4,6 +4,7 @@ import android.content.Context
 import com.dmonster.dcash.utils.AppInfo
 import com.dmonster.dcash.view.main.MainActivity
 import com.dmonster.data.utils.ErrorCallback
+import com.dmonster.dcash.utils.TokenManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,5 +29,11 @@ object AppModule {
     @Provides
     fun provideErrorCallback(): ErrorCallback {
         return ErrorCallback()
+    }
+
+    @Singleton
+    @Provides
+    fun provideTokenManager(): TokenManager {
+        return TokenManager()
     }
 }

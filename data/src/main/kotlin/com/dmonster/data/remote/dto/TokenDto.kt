@@ -6,4 +6,4 @@ import com.google.gson.annotations.SerializedName
 data class TokenDto(
     @SerializedName("accessToken") val accessToken: String? = null,
     @SerializedName("refreshToken") val refreshToken: String? = null,
-) : BaseResponse()
+) : BaseResponse<TokenDto>()

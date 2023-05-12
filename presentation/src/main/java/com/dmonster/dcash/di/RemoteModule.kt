@@ -1,5 +1,7 @@
 package com.dmonster.dcash.di
 
+import android.content.Context
+import android.util.Log
 import com.dmonster.data.remote.api.LoginAPIService
 import com.dmonster.data.remote.api.MemberAPIService
 import com.dmonster.data.remote.api.TokenAPIService
@@ -7,15 +9,31 @@ import com.dmonster.data.repository.datasource.RemoteDataSource
 import com.dmonster.data.repository.datasource.impl.RemoteDataSourceImpl
 import com.dmonster.dcash.BuildConfig
 import com.dmonster.dcash.utils.AppInfo
+import com.dmonster.dcash.utils.StaticData
+import com.dmonster.dcash.utils.StaticData.tokenData
+import com.dmonster.dcash.utils.TokenManager
+import com.dmonster.dcash.utils.clearMalformedUrls
 import com.dmonster.dcash.view.main.MainActivity
+import com.dmonster.domain.usecase.GetAccessTokenUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
+import okhttp3.Authenticator
+import okhttp3.Cache
 import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import okhttp3.Route
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.File
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -58,37 +76,71 @@ object RemoteModule {
         client: OkHttpClient,
         gsonConverterFactory: GsonConverterFactory,
     ): Retrofit {
-        return Retrofit.Builder().baseUrl(BuildConfig.BASE_URL).client(client)
-            .addConverterFactory(gsonConverterFactory).build()
+        return Retrofit.Builder()
+            .baseUrl(BuildConfig.BASE_URL)
+            .client(client)
+            .addConverterFactory(gsonConverterFactory)
+            .build()
     }
 
     @Singleton
     @Provides
     fun provideOkHttpClient(
+        @ApplicationContext context: Context,
         logging: HttpLoggingInterceptor,
         deviceHeaderInfo: String,
         appInfo: AppInfo,
-        mainActivity: MainActivity
+        authenticator: Authenticator
     ): OkHttpClient = OkHttpClient.Builder().apply {
-        addInterceptor(logging)
         addInterceptor { chain ->
-            val response = chain.request().newBuilder()
-                .addHeader("Authorization", mainActivity.getAccessToken())
-                .removeHeader("User-Agent").addHeader("X-Device-Info", deviceHeaderInfo)
-                .addHeader("User-Agent", appInfo.getUserAgent()).build()
+            val response = chain.request().newBuilder().apply {
+                /*val accessToken = tokenData.value.accessToken
+                if (!accessToken.isNullOrEmpty()) {
+                    addHeader("Authorization", "Bearer $accessToken")
+                }*/
+                removeHeader("User-Agent").addHeader("X-Device-Info", deviceHeaderInfo)
+                addHeader("User-Agent", appInfo.getUserAgent())
+            }.build()
             chain.proceed(response)
         }
+        addInterceptor(logging)
+        cache(
+            Cache(
+                directory = File(context.cacheDir, "http_cache"),
+                maxSize = 50L * 1024L * 1024L
+            ).clearMalformedUrls()
+        )
+        connectTimeout(30, TimeUnit.SECONDS)
+        readTimeout(30, TimeUnit.SECONDS)
+        authenticator(authenticator)
     }.build()
-
 
     @Singleton
     @Provides
     fun provideLoggingInterceptor(): HttpLoggingInterceptor = HttpLoggingInterceptor().apply {
         level = if (BuildConfig.DEBUG) {
-            HttpLoggingInterceptor.Level.BODY
+            HttpLoggingInterceptor.Level.HEADERS
         } else {
             HttpLoggingInterceptor.Level.NONE
         }
+    }
+
+    @Singleton
+    @Provides
+    fun provideAuthenticator(
+        tokenManager: TokenManager
+    ): Authenticator = Authenticator { route, response ->
+        if (tokenData.value.refreshToken != null) {
+            tokenManager.getAccessToken()
+
+            val newToken = tokenData.value.accessToken
+
+            response.request.newBuilder()
+                .header("Authorization", "$newToken")
+                .build()
+        }
+
+        null
     }
 
     @Singleton

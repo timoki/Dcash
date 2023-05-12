@@ -1,7 +1,7 @@
 package com.dmonster.data.remote.api
 
 import com.dmonster.data.remote.dto.TokenDto
-import com.dmonster.data.remote.dto.base.BaseData
+import com.dmonster.data.remote.dto.base.BaseResponse
 import retrofit2.Response
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -17,5 +17,5 @@ interface LoginAPIService {
     suspend fun userLogin(
         @Field("mt_id") mt_id: String,
         @Field("mt_pwd") mt_pwd: String,
-    ): Response<TokenDto>
+    ): Response<BaseResponse<TokenDto>>
 }

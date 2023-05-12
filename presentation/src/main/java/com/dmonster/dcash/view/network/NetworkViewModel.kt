@@ -87,7 +87,7 @@ class NetworkViewModel @Inject constructor(
     }
 
     fun changeNetworkState() = viewModelScope.launch {
-        val isDataConn = dataStore.getPreferencesData(DataStoreModule.MOBILE_DATA).first()
+        val isDataConn = dataStore.isMobileData.first()
         networkState.value = when {
             isNetworkConn && (isWifiConn || !checkMobileData || (isDataConn && isCellularConn)) -> {
                 NetworkState.CONNECT_NETWORK
@@ -198,8 +198,8 @@ class NetworkViewModel @Inject constructor(
     }
 
     private fun changeUseMobileDataState() = viewModelScope.launch {
-        val useMobileData = dataStore.getPreferencesData(DataStoreModule.MOBILE_DATA).first()
-        dataStore.putPreferencesData(DataStoreModule.MOBILE_DATA, !useMobileData)
+        val useMobileData = dataStore.isMobileData.first()
+        dataStore.putUseMobileData(!useMobileData)
         changeNetworkState()
     }
 

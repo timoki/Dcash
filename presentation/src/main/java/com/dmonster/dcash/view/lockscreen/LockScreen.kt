@@ -32,7 +32,6 @@ class LockScreen : AppCompatActivity() {
     private val watcher: SystemButtonWatcher by lazy {
         SystemButtonWatcher(this, object : OnSystemKeyPressedListener {
             override fun onPressed() {
-                Log.d("아외안되", "눌림")
                 val manager = getSystemService(ACTIVITY_SERVICE) as ActivityManager
                 manager.moveTaskToFront(taskId, 0)
             }
@@ -134,11 +133,9 @@ class LockScreen : AppCompatActivity() {
 
     override fun onUserLeaveHint() {
         super.onUserLeaveHint()
-        Log.d("아외안되", "onUserLeaveHint")
     }
 
     override fun onPause() {
-        Log.d("아외안되", "onPause")
         val manager = getSystemService(ACTIVITY_SERVICE) as ActivityManager
         manager.moveTaskToFront(taskId, 0)
         taskId

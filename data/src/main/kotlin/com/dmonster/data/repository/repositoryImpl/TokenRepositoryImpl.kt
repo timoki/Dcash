@@ -23,7 +23,7 @@ class TokenRepositoryImpl @Inject constructor(
         val response = remoteDataSource.getAccessToken(refreshToken)
 
         if (response.isSuccessful) {
-            response.body()?.let {
+            response.body()?.data?.let {
                 if (!it.isSuccess()) {
                     errorCallback.postErrorData(it)
                 }
@@ -45,7 +45,7 @@ class TokenRepositoryImpl @Inject constructor(
         val response = remoteDataSource.changeRefreshToken(refreshToken)
 
         if (response.isSuccessful) {
-            response.body()?.let {
+            response.body()?.data?.let {
                 if (!it.isSuccess()) {
                     errorCallback.postErrorData(it)
                 }

@@ -2,7 +2,7 @@ package com.dmonster.data.remote.dto.base
 
 import com.google.gson.annotations.SerializedName
 
-open class BaseResponse {
+open class BaseResponse<T> {
     @SerializedName("result")
     val result: String? = null
 
@@ -17,6 +17,9 @@ open class BaseResponse {
 
     @SerializedName("dataType")
     val dataType: String? = null
+
+    @SerializedName("data")
+    val data: T? = null
 
     fun isSuccess(): Boolean {
         return result == "SUCCESS"

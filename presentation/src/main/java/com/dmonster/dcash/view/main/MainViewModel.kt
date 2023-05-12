@@ -1,23 +1,39 @@
 package com.dmonster.dcash.view.main
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.dmonster.data.local.datastore.DataStoreModule
 import com.dmonster.domain.type.NavigateType
 import com.dmonster.dcash.base.BaseViewModel
+import com.dmonster.domain.model.MemberInfoModel
+import com.dmonster.domain.model.Result
+import com.dmonster.domain.model.TokenModel
+import com.dmonster.domain.usecase.GetAccessTokenUseCase
+import com.dmonster.domain.usecase.GetMemberInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import okhttp3.internal.concurrent.TaskQueue
+import java.util.LinkedList
+import java.util.Queue
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val dataStore: DataStoreModule
+    private val dataStore: DataStoreModule,
+    private val getMemberInfoUseCase: GetMemberInfoUseCase,
+    private val getAccessTokenUseCase: GetAccessTokenUseCase
 ) : BaseViewModel() {
+
+    val userInfo = MutableStateFlow<MemberInfoModel?>(null)
 
     var isShowLockScreenPopup = false
 
@@ -80,16 +96,26 @@ class MainViewModel @Inject constructor(
     val isUseLockScreen = MutableStateFlow<Boolean>(false)
 
     fun getUseLockScreen() = viewModelScope.launch {
-        isUseLockScreen.value = dataStore.getPreferencesData(DataStoreModule.USE_LOCK_SCREEN).first()
+        isUseLockScreen.value = dataStore.isUseLockScreen.first()
     }
 
     fun setUseLockScreen(isUse: Boolean) = viewModelScope.launch {
-        dataStore.putPreferencesData(DataStoreModule.USE_LOCK_SCREEN, isUse)
+        dataStore.putUseLockScreen(isUse)
     }
 
-    var accessToken = ""
+    fun getMemberInfo(): StateFlow<Result<MemberInfoModel>> =
+        getMemberInfoUseCase.invoke()
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = Result.Loading()
+            )
 
-    fun getAccessToken() = viewModelScope.launch {
-        accessToken = dataStore.getPreferencesData(DataStoreModule.ACCESS_TOKEN).first()
-    }
+    fun getAccessToken(refreshToken: String): StateFlow<Result<TokenModel>> =
+        getAccessTokenUseCase.invoke(refreshToken)
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = Result.Loading()
+            )
 }
