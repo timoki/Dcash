@@ -1,14 +1,24 @@
 package com.dmonster.domain.type
 
+import com.dmonster.domain.model.NewsModel
+import com.dmonster.domain.model.dialog.BasicDialogModel
 import com.dmonster.domain.model.navi.BottomNavItem
 
 sealed class NavigateType : EnumClassProguard {
-    abstract val getItem: BottomNavItem?
+    open val getItem: BottomNavItem? = null
     abstract val fragmentName: String
 
-    class Login(private val bottomNavItem: BottomNavItem? = null) : NavigateType() {
-        override val getItem: BottomNavItem?
-            get() = bottomNavItem
+    class BasicDialog(
+        private val model: BasicDialogModel
+    ) : NavigateType() {
+        override val fragmentName: String
+            get() = "basicDialog"
+
+        val getModel: BasicDialogModel
+            get() = model
+    }
+
+    class Login : NavigateType() {
         override val fragmentName: String
             get() = "login"
     }
@@ -48,24 +58,23 @@ sealed class NavigateType : EnumClassProguard {
             get() = "myPage"
     }
 
-    class LockScreenPermission(private val bottomNavItem: BottomNavItem? = null) : NavigateType() {
-        override val getItem: BottomNavItem?
-            get() = bottomNavItem
+    class LockScreenPermission : NavigateType() {
         override val fragmentName: String
             get() = "lockScreenPermission"
     }
 
-    class NewsDetailFromHome(private val bottomNavItem: BottomNavItem? = null) : NavigateType() {
-        override val getItem: BottomNavItem?
-            get() = bottomNavItem
+    class NewsDetailFromHome : NavigateType() {
         override val fragmentName: String
             get() = "newsDetailFromHome"
     }
 
-    class NewsDetailFromNews(private val bottomNavItem: BottomNavItem? = null) : NavigateType() {
-        override val getItem: BottomNavItem?
-            get() = bottomNavItem
+    class NewsDetailFromNews(
+        private val model: NewsModel
+    ) : NavigateType() {
         override val fragmentName: String
             get() = "newsDetailFromNews"
+
+        val getModel: NewsModel
+            get() = model
     }
 }

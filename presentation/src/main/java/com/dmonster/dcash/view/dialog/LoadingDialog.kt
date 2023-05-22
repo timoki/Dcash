@@ -18,4 +18,28 @@ class LoadingDialog(
     }
 
     private var dialog: AlertDialog? = null
+
+    val isShowing: Boolean
+        get() {
+            dialog?.let {
+                return it.isShowing
+            }
+
+            return false
+        }
+
+    fun create(): AlertDialog {
+        builder.setView(binding.root)
+        dialog = builder.create()
+
+        return dialog!!
+    }
+
+    fun show() {
+        create().show()
+    }
+
+    fun dismiss() {
+        dialog?.dismiss()
+    }
 }

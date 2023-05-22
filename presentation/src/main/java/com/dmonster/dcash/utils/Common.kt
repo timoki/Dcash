@@ -11,10 +11,13 @@ import android.view.WindowManager
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
 import com.dmonster.dcash.R
+import com.dmonster.dcash.view.dialog.basic.BasicDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import okhttp3.Cache
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+
+var dialog: BasicDialog? = null
 
 var snackBar: Snackbar? = null
 
@@ -36,7 +39,11 @@ fun hideSnackBar() {
 }
 
 // 상태바 투명하게 바꿔주는 함수
-fun setTransparentStatusBar(window: Window, rootView: View? = null, isLightStatusBar: Boolean = true) {
+fun setTransparentStatusBar(
+    window: Window,
+    rootView: View? = null,
+    isLightStatusBar: Boolean = true
+) {
     window.apply {
         @Suppress("DEPRECATION")
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
@@ -56,7 +63,10 @@ fun setTransparentStatusBar(window: Window, rootView: View? = null, isLightStatu
             setDecorFitsSystemWindows(!isLightStatusBar)
             if (isLightStatusBar) {
                 // 상태바 내부 Contents Color 초기화
-                decorView.windowInsetsController?.setSystemBarsAppearance(0, APPEARANCE_LIGHT_STATUS_BARS)
+                decorView.windowInsetsController?.setSystemBarsAppearance(
+                    0,
+                    APPEARANCE_LIGHT_STATUS_BARS
+                )
                 rootView?.setPadding(0, 0, 0, getNavigationBarHeight(context))
             } else {
                 // 상태바 내부 Contents Color 세팅

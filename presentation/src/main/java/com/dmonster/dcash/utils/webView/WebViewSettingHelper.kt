@@ -1,16 +1,27 @@
 package com.dmonster.dcash.utils.webView
 
+import android.webkit.WebChromeClient
 import android.webkit.WebView
+import android.webkit.WebViewClient
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class WebViewSettingHelper {
+class WebViewSettingHelper(
+    private val webClient: WebClient,
+    private val chromeClient: ChromeClient
+) {
 
-    private val webClient = WebClient()
-    private val chromeClient = ChromeClient()
+    private val _showDialog = Channel<Unit>(Channel.CONFLATED)
+    val showDialog = _showDialog.receiveAsFlow()
 
     fun init(view: WebView?) {
         view?.let { webView ->
-            webView.webViewClient = webClient
-            webView.webChromeClient = chromeClient
+            webView.webViewClient = webClient.init(this)
+            webView.webChromeClient = chromeClient.init(this)
 
             webView.settings.loadWithOverviewMode = true // WebView 화면크기에 맞추도록 설정 - setUseWideViewPort 와 같이 써야함
             webView.settings.useWideViewPort = true // wide viewport 설정 - setLoadWithOverviewMode 와 같이 써야함
@@ -25,5 +36,9 @@ class WebViewSettingHelper {
 
             webView.settings.domStorageEnabled = true // 로컬 스토리지
         }
+    }
+
+    fun showDialog() = CoroutineScope(Dispatchers.Main).launch {
+        _showDialog.send(Unit)
     }
 }

@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(
+internal class LoginViewModel @Inject constructor(
     private val requestLoginUseCase: RequestLoginUseCase
 ) : BaseViewModel() {
 
@@ -41,10 +41,11 @@ class LoginViewModel @Inject constructor(
         login().collect { result ->
             when (result) {
                 is Result.Loading -> {
-
+                    showLoadingDialog()
                 }
 
                 is Result.Success -> {
+                    hideLoadingDialog()
                     result.data?.let {
                         StaticData.tokenData.value = it
                         _loginSuccessChannel.send(Unit)
@@ -52,11 +53,11 @@ class LoginViewModel @Inject constructor(
                 }
 
                 is Result.Error -> {
-
+                    hideLoadingDialog()
                 }
 
                 is Result.NetworkError -> {
-
+                    hideLoadingDialog()
                 }
             }
         }

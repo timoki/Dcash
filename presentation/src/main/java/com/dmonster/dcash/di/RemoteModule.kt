@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.dmonster.data.remote.api.LoginAPIService
 import com.dmonster.data.remote.api.MemberAPIService
+import com.dmonster.data.remote.api.NewsAPIService
 import com.dmonster.data.remote.api.TokenAPIService
 import com.dmonster.data.repository.datasource.RemoteDataSource
 import com.dmonster.data.repository.datasource.impl.RemoteDataSourceImpl
@@ -60,14 +61,22 @@ object RemoteModule {
 
     @Singleton
     @Provides
+    fun provideNewsAPIService(
+        retrofit: Retrofit
+    ): NewsAPIService = retrofit.create(NewsAPIService::class.java)
+
+    @Singleton
+    @Provides
     fun provideRemoteDataSource(
         loginAPIService: LoginAPIService,
         tokenAPIService: TokenAPIService,
         memberAPIService: MemberAPIService,
+        newsAPIService: NewsAPIService
     ): RemoteDataSource = RemoteDataSourceImpl(
         loginAPIService,
         tokenAPIService,
         memberAPIService,
+        newsAPIService,
     )
 
     @Singleton
@@ -94,10 +103,10 @@ object RemoteModule {
     ): OkHttpClient = OkHttpClient.Builder().apply {
         addInterceptor { chain ->
             val response = chain.request().newBuilder().apply {
-                /*val accessToken = tokenData.value.accessToken
+                val accessToken = tokenData.value.accessToken
                 if (!accessToken.isNullOrEmpty()) {
                     addHeader("Authorization", "Bearer $accessToken")
-                }*/
+                }
                 removeHeader("User-Agent").addHeader("X-Device-Info", deviceHeaderInfo)
                 addHeader("User-Agent", appInfo.getUserAgent())
             }.build()
@@ -112,14 +121,14 @@ object RemoteModule {
         )
         connectTimeout(30, TimeUnit.SECONDS)
         readTimeout(30, TimeUnit.SECONDS)
-        authenticator(authenticator)
+        //authenticator(authenticator)
     }.build()
 
     @Singleton
     @Provides
     fun provideLoggingInterceptor(): HttpLoggingInterceptor = HttpLoggingInterceptor().apply {
         level = if (BuildConfig.DEBUG) {
-            HttpLoggingInterceptor.Level.HEADERS
+            HttpLoggingInterceptor.Level.BODY
         } else {
             HttpLoggingInterceptor.Level.NONE
         }

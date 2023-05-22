@@ -7,7 +7,7 @@ import com.dmonster.dcash.utils.PermissionViewModel
 import com.dmonster.dcash.utils.observeInLifecycleStop
 import kotlinx.coroutines.flow.onEach
 
-class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
+internal class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     override fun init() {
         binding.viewModel = viewModel

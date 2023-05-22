@@ -19,5 +19,12 @@
         android:id="@+id/newsDetailFragment"
         android:name="com.dmonster.dcash.view.newsDetail.NewsDetailFragment"
         android:label="NewsDetailFragment"
-        tools:layout="@layout/fragment_news_detail" />
+        tools:layout="@layout/fragment_news_detail">
+
+        <argument
+            android:name="model"
+            android:defaultValue="@null"
+            app:argType="com.dmonster.domain.model.NewsModel"
+            app:nullable="true" />
+    </fragment>
 </navigation>

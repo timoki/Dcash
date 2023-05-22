@@ -6,13 +6,14 @@ import com.dmonster.dcash.base.BaseFragment
 import com.dmonster.dcash.databinding.FragmentLoginBinding
 import com.dmonster.dcash.utils.StaticData
 import com.dmonster.dcash.utils.observeInLifecycleStop
+import com.dmonster.dcash.utils.observeOnLifecycleDestroy
 import com.dmonster.dcash.utils.observeOnLifecycleStop
 import com.dmonster.domain.model.Result
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
-class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>() {
+internal class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>() {
     override fun init() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
@@ -23,20 +24,24 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>() {
             mainViewModel.getMemberInfo().observeOnLifecycleStop(viewLifecycleOwner) { result ->
                 when (result) {
                     is Result.Loading -> {
+                        showLoadingDialog()
                         Log.d("아외안되", "Loading")
                     }
 
                     is Result.Success -> {
+                        hideLoadingDialog()
                         Log.d("아외안되", "Success / ${result.data}")
                         mainViewModel.userInfo.value = result.data
                         mainViewModel.fragmentNavigateTo(NavigateType.Home())
                     }
 
                     is Result.Error -> {
+                        hideLoadingDialog()
                         Log.d("아외안되", "Error / ${result.message}")
                     }
 
                     is Result.NetworkError -> {
+                        hideLoadingDialog()
                         Log.d("아외안되", "NetworkError / ${result.message}")
                     }
                 }

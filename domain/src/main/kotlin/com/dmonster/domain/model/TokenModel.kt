@@ -6,6 +6,6 @@ data class TokenModel(
     val accessToken: String? = null,
     val refreshToken: String? = null,
 ) : BaseModel {
-    override val key: Int
+    override val key: Long
         get() = 0
 }

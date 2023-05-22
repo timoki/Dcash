@@ -9,6 +9,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
 import coil.load
 import coil.transform.CircleCropTransformation
+import coil.transform.RoundedCornersTransformation
 import com.airbnb.lottie.LottieAnimationView
 import com.dmonster.domain.type.TopMenuType
 import com.dmonster.dcash.R
@@ -48,6 +49,27 @@ fun setImageResource(
 
     view.load(drawableRes) {
         if (circularCrop) transformations(CircleCropTransformation())
+    }
+}
+
+@BindingAdapter(
+    value = [
+        "coilSrc",
+        "coilCircularCrop",
+        "coilRoundedCorner",
+    ], requireAll = false
+)
+fun setImageResource(
+    view: ImageView,
+    image: String?,
+    circularCrop: Boolean = false,
+    coilRoundedCorner: Boolean = false,
+) {
+    if (image == null) return
+
+    view.load(image) {
+        if (circularCrop) transformations(CircleCropTransformation())
+        if (coilRoundedCorner) transformations(RoundedCornersTransformation())
     }
 }
 

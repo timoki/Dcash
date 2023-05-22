@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class HomeViewModel @Inject constructor(
+internal class HomeViewModel @Inject constructor(
 
 ) : BaseViewModel() {
     private val _onClickChannel = Channel<Unit>(Channel.CONFLATED)

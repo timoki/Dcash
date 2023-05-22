@@ -2,8 +2,10 @@ package com.dmonster.data.repository.datasource.impl
 
 import com.dmonster.data.remote.api.LoginAPIService
 import com.dmonster.data.remote.api.MemberAPIService
+import com.dmonster.data.remote.api.NewsAPIService
 import com.dmonster.data.remote.api.TokenAPIService
 import com.dmonster.data.remote.dto.MemberInfoDto
+import com.dmonster.data.remote.dto.NewsDto
 import com.dmonster.data.remote.dto.TokenDto
 import com.dmonster.data.remote.dto.base.BaseResponse
 import com.dmonster.data.repository.datasource.RemoteDataSource
@@ -14,6 +16,7 @@ class RemoteDataSourceImpl @Inject constructor(
     private val loginAPIService: LoginAPIService,
     private val tokenAPIService: TokenAPIService,
     private val memberAPIService: MemberAPIService,
+    private val newsAPIService: NewsAPIService,
 ) : RemoteDataSource {
     override suspend fun requestLogin(id: String, pw: String): Response<BaseResponse<TokenDto>> {
         return loginAPIService.userLogin(id, pw)
@@ -29,5 +32,9 @@ class RemoteDataSourceImpl @Inject constructor(
 
     override suspend fun getMemberInfo(): Response<BaseResponse<MemberInfoDto>> {
         return memberAPIService.getMemberInfo()
+    }
+
+    override suspend fun getNewsList(): Response<BaseResponse<List<NewsDto>>> {
+        return newsAPIService.getNewsList()
     }
 }

@@ -9,7 +9,7 @@ import androidx.viewbinding.ViewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import java.lang.reflect.ParameterizedType
 
-abstract class BaseBottomSheetDialogFragment<VB : ViewBinding, VM : BaseViewModel> :
+internal abstract class BaseBottomSheetDialogFragment<VB : ViewBinding, VM : BaseViewModel> :
     BottomSheetDialogFragment() {
     abstract fun init()
     open fun initListener() {}

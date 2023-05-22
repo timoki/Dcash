@@ -1,5 +1,7 @@
 package com.dmonster.domain.model.base
 
-interface BaseModel {
-    val key: Int
+import java.io.Serializable
+
+interface BaseModel : Serializable {
+    val key: Long
 }

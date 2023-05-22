@@ -52,6 +52,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
+        style="@style/AlertDialogTheme"
+        android:background="@android:color/transparent"
         tools:background="#88000000">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -107,6 +109,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="-5dp"
                     android:layout_marginTop="20dp"
+                    style="@style/Theme.Dcash"
+                    app:useMaterialThemeColors="false"
                     android:minWidth="0dp"
                     android:minHeight="0dp"
                     android:text="@{checkBoxText}"
@@ -116,7 +120,6 @@
                     app:layout_constraintTop_toBottomOf="@+id/subject"
                     tools:text="일주일간 보지 않기" />
             </androidx.constraintlayout.widget.ConstraintLayout>
-
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="0dp"

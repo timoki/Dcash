@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class PermissionViewModel @Inject constructor(
+internal class PermissionViewModel @Inject constructor(
     private val application: Application
 ) : BaseViewModel() {
 

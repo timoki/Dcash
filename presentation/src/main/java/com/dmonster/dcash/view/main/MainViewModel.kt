@@ -1,17 +1,15 @@
 package com.dmonster.dcash.view.main
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.dmonster.data.local.datastore.DataStoreModule
-import com.dmonster.domain.type.NavigateType
 import com.dmonster.dcash.base.BaseViewModel
 import com.dmonster.domain.model.MemberInfoModel
 import com.dmonster.domain.model.Result
 import com.dmonster.domain.model.TokenModel
+import com.dmonster.domain.type.NavigateType
 import com.dmonster.domain.usecase.GetAccessTokenUseCase
 import com.dmonster.domain.usecase.GetMemberInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -21,9 +19,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import okhttp3.internal.concurrent.TaskQueue
-import java.util.LinkedList
-import java.util.Queue
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,17 +34,6 @@ class MainViewModel @Inject constructor(
 
     val isTopViewVisible = MutableStateFlow(false)
     val isBottomAppBarVisible = MutableStateFlow(false)
-
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading = _isLoading.asStateFlow()
-
-    fun showLoadingDialog() = viewModelScope.launch {
-        _isLoading.emit(true)
-    }
-
-    fun hideLoadingDialog() = viewModelScope.launch {
-        _isLoading.emit(false)
-    }
 
     private val _navigateToChannel = MutableStateFlow<NavigateType?>(null)
     val navigateToChannel = _navigateToChannel.asStateFlow()

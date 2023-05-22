@@ -8,31 +8,33 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
-import android.view.ViewGroup
+import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.NavHostFragment
 import com.dmonster.data.local.datastore.DataStoreModule
 import com.dmonster.data.utils.ErrorCallback
-import com.dmonster.domain.type.NavigateType
-import com.dmonster.domain.type.NetworkState
-import com.dmonster.domain.type.TopMenuType
 import com.dmonster.dcash.NavigationDirections
 import com.dmonster.dcash.R
+import com.dmonster.dcash.base.BaseActivity
 import com.dmonster.dcash.databinding.ActivityMainBinding
-import com.dmonster.dcash.utils.*
+import com.dmonster.dcash.utils.PermissionViewModel
 import com.dmonster.dcash.utils.StaticData.tokenData
+import com.dmonster.dcash.utils.dialog
+import com.dmonster.dcash.utils.hideSnackBar
 import com.dmonster.dcash.utils.lockscreen.LockScreenService
-import com.dmonster.dcash.view.dialog.BasicDialog
+import com.dmonster.dcash.utils.observeInLifecycleDestroy
+import com.dmonster.dcash.utils.observeInLifecycleStop
+import com.dmonster.dcash.utils.observeOnLifecycleDestroy
+import com.dmonster.dcash.utils.observeOnLifecycleStop
+import com.dmonster.dcash.utils.showSnackBar
+import com.dmonster.dcash.view.dialog.basic.BasicDialog
 import com.dmonster.dcash.view.event.EventFragment
 import com.dmonster.dcash.view.home.HomeFragment
 import com.dmonster.dcash.view.home.HomeFragmentDirections
@@ -44,23 +46,21 @@ import com.dmonster.dcash.view.news.NewsFragment
 import com.dmonster.dcash.view.news.NewsFragmentDirections
 import com.dmonster.dcash.view.point.PointFragment
 import com.dmonster.domain.model.Result
+import com.dmonster.domain.model.dialog.BasicDialogModel
+import com.dmonster.domain.type.NavigateType
+import com.dmonster.domain.type.NetworkState
+import com.dmonster.domain.type.TopMenuType
 import com.google.android.material.transition.MaterialElevationScale
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedListener {
+class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(
+    R.layout.activity_main
+), NavController.OnDestinationChangedListener {
 
-    private fun checkViewLifeCycleOwnerResumed() = lifecycle.currentState == Lifecycle.State.RESUMED
-
-    private val binding: ActivityMainBinding by lazy {
-        DataBindingUtil.setContentView(this, R.layout.activity_main)
-    }
-
-    private val viewModel: MainViewModel by viewModels()
+    override val viewModel: MainViewModel by viewModels()
 
     private val networkViewModel: NetworkViewModel by viewModels()
 
@@ -102,21 +102,11 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
             permissionViewModel.onActivityResult()
         }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        init()
-        initViewModelCallback()
-        initNetworkViewModelCallback()
-        initPermissionViewModelCallback()
-        initTopViewModelCallback()
-        initErrorCallback()
-    }
-
-    private fun init() {
-        binding.lifecycleOwner = this
+    override fun init() {
         binding.viewModel = viewModel
         binding.topView.viewModel = topViewModel
+
+        dialog = BasicDialog()
 
         navController.addOnDestinationChangedListener(this)
 
@@ -157,7 +147,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         networkViewModel.register(checkNetworkState = true)
     }
 
-    private fun initViewModelCallback() = with(viewModel) {
+    override fun initViewModelCallback(): Unit = with(viewModel) {
         getUseLockScreen()
 
         isUseLockScreen.observeOnLifecycleStop(this@MainActivity) {
@@ -169,18 +159,14 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
             }
         }
 
-        isLoading.observeOnLifecycleDestroy(this@MainActivity) { show ->
-            if (show) {
-                showLoadingDialog()
-            } else {
-                hideLoadingDialog()
-            }
-        }
-
         navigateToChannel.observeOnLifecycleDestroy(this@MainActivity) { item ->
             item?.let {
                 navigateToCompose(
                     when (it) {
+                        is NavigateType.BasicDialog -> {
+                            NavigationDirections.actionGlobalLoginFragment()
+                        }
+
                         is NavigateType.Login -> {
                             NavigationDirections.actionGlobalLoginFragment()
                         }
@@ -214,7 +200,9 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
                         }
 
                         is NavigateType.NewsDetailFromNews -> {
-                            NewsFragmentDirections.actionNewsFragmentToNewsDetailFragment()
+                            NewsFragmentDirections.actionNewsFragmentToNewsDetailFragment(
+                                it.getModel
+                            )
                         }
                     }
                 )
@@ -236,31 +224,62 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
             when (it) {
                 PermissionViewModel.TYPE_LOCK_SCREEN -> {
                     if (!permissionViewModel.canDrawOverlays()) {
-                        BasicDialog(this@MainActivity, binding.root as ViewGroup?).setCancelable(false)
-                            .setTitle(resources.getString(R.string.set_lock_screen)).setText(
-                                String.format(
+                        navigateToCompose(NavigationDirections.actionGlobalBasicDialog(
+                            model = BasicDialogModel(
+                                titleText = resources.getString(R.string.set_lock_screen),
+                                text = String.format(
                                     resources.getString(R.string.set_lock_screen_contents),
                                     resources.getString(
                                         R.string.app_name
                                     )
-                                )
-                            ).setCheckBox(true, resources.getString(R.string.not_showing_week))
-                            .setNegativeButton(true, resources.getString(R.string.cancel))
-                            .setPositiveButton(
-                                true, resources.getString(R.string.set_use)
-                            ) { view, dialog ->
-                                dialog?.let {
-                                    it.dismiss()
-
-                                    if (!permissionViewModel.canDrawOverlays()) {
-                                        fragmentNavigateTo(NavigateType.LockScreenPermission())
-
-                                        return@setPositiveButton
-                                    }
-
+                                ),
+                                isCheckBoxVisible = true,
+                                checkBoxText = resources.getString(R.string.not_showing_week),
+                                isNegativeButtonVisible = true,
+                                negativeButtonText = resources.getString(R.string.cancel),
+                                isPositiveButtonVisible = true,
+                                positiveButtonText = resources.getString(R.string.set_use),
+                            ),
+                            positiveClickListener = {
+                                if (!permissionViewModel.canDrawOverlays()) {
+                                    fragmentNavigateTo(NavigateType.LockScreenPermission())
+                                } else {
                                     startLockScreenService()
                                 }
-                            }.show()
+                            },
+                            negativeClickListener = {
+
+                            }
+                        ))
+                            /*dialog?.let { dialog ->
+                                dialog.setFragmentManager(currentNavigationFragment?.childFragmentManager)
+                                    .setCancel(false)
+                                    .setTitle(resources.getString(R.string.set_lock_screen)).setText(
+                                        String.format(
+                                            resources.getString(R.string.set_lock_screen_contents),
+                                            resources.getString(
+                                                R.string.app_name
+                                            )
+                                        )
+                                    ).setCheckBox(true, resources.getString(R.string.not_showing_week))
+                                    .setNegativeButton(true, resources.getString(R.string.cancel))
+                                    .setPositiveButton(
+                                        true, resources.getString(R.string.set_use)
+                                    ) { _, _ ->
+                                        dialog.dismiss()
+
+                                        if (!permissionViewModel.canDrawOverlays()) {
+                                            fragmentNavigateTo(NavigateType.LockScreenPermission())
+
+                                            return@setPositiveButton
+                                        }
+
+                                        startLockScreenService()
+                                    }.setOnDismissListener {
+                                        currentNavigationFragment?.childFragmentManager?.beginTransaction()?.remove(dialog)
+                                    }
+                                    .show()
+                            }*/
                     }
                 }
 
@@ -272,18 +291,18 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 
         goPermissionSettingChannel.onEach {
             try {
-                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                    .setData(Uri.parse("package:${packageName}"))
+                val intent =
+                    Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.parse("package:${packageName}"))
                 settingDetails.launch(intent)
             } catch (e: ActivityNotFoundException) {
-                Log.e("REQ_DETAILS_SETTINGS","권한 error -> ${e.printStackTrace()}")
+                Log.e("REQ_DETAILS_SETTINGS", "권한 error -> ${e.printStackTrace()}")
                 val intent = Intent(Settings.ACTION_MANAGE_APPLICATIONS_SETTINGS)
                 settingDetails.launch(intent)
             }
         }.observeInLifecycleStop(this@MainActivity)
     }
 
-    private fun initNetworkViewModelCallback() = with(networkViewModel) {
+    override fun initNetworkViewModelCallback(): Unit = with(networkViewModel) {
         currentNetworkState.observeOnLifecycleDestroy(this@MainActivity) {
             if (checkViewLifeCycleOwnerResumed()) {
                 when (it) {
@@ -298,11 +317,11 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         }
     }
 
-    private fun initPermissionViewModelCallback() = with(permissionViewModel) {
+    override fun initPermissionViewModelCallback() = with(permissionViewModel) {
 
     }
 
-    private fun initTopViewModelCallback() = with(topViewModel) {
+    override fun initTopViewModelCallback(): Unit = with(topViewModel) {
         onBackClickChannel.onEach {
             navController.popBackStack()
         }.observeInLifecycleStop(this@MainActivity)
@@ -316,7 +335,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         }.observeInLifecycleStop(this@MainActivity)
     }
 
-    private fun initErrorCallback() = with(errorCallback) {
+    override fun initErrorCallback(): Unit = with(errorCallback) {
         errorData.onEach {
 
         }.observeInLifecycleDestroy(this@MainActivity)
@@ -327,9 +346,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         permissionViewModel.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -429,6 +446,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 
     override fun onDestroy() {
         networkViewModel.unRegister()
+        dialog = null
         super.onDestroy()
     }
 

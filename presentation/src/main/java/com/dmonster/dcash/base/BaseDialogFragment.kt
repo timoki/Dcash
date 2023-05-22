@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.createViewModelLazy
 import androidx.viewbinding.ViewBinding
+import com.dmonster.dcash.R
 import java.lang.reflect.ParameterizedType
 
 abstract class BaseDialogFragment<VB : ViewBinding, VM : BaseViewModel> : DialogFragment() {
@@ -30,7 +31,11 @@ abstract class BaseDialogFragment<VB : ViewBinding, VM : BaseViewModel> : Dialog
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         binding = inflateMethod.invoke(null, inflater, container, false) as VB
-        viewModel = createViewModelLazy(classVM.kotlin, { viewModelStore }).value
+        try {
+            viewModel = createViewModelLazy(classVM.kotlin, { viewModelStore }).value
+        } catch (e: Exception) {
+            //throw e
+        }
         return binding.root
     }
 
@@ -41,5 +46,10 @@ abstract class BaseDialogFragment<VB : ViewBinding, VM : BaseViewModel> : Dialog
         initListener()
         initViewModelCallback()
         navigationBackStackCallback()
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setStyle(STYLE_NO_TITLE, R.style.AlertDialogTheme)
     }
 }
