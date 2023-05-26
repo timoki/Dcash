@@ -1,18 +1,26 @@
 package com.dmonster.dcash.utils
 
+import android.content.res.ColorStateList
+import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.RawRes
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
+import androidx.databinding.InverseBindingAdapter
 import coil.load
 import coil.transform.CircleCropTransformation
 import coil.transform.RoundedCornersTransformation
 import com.airbnb.lottie.LottieAnimationView
 import com.dmonster.domain.type.TopMenuType
 import com.dmonster.dcash.R
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 
 @BindingAdapter(
     value = [
@@ -48,6 +56,22 @@ fun setImageResource(
     if (drawableRes == null) return
 
     view.load(drawableRes) {
+        if (circularCrop) transformations(CircleCropTransformation())
+    }
+}
+
+@BindingAdapter(
+    value = [
+        "coilSrc",
+        "coilCircularCrop",
+    ], requireAll = false
+)
+fun setImageResource(
+    view: ImageView, drawable: Drawable?, circularCrop: Boolean = false
+) {
+    if (drawable == null) return
+
+    view.load(drawable) {
         if (circularCrop) transformations(CircleCropTransformation())
     }
 }
@@ -202,4 +226,39 @@ fun setTopMenu(
             }
         }
     }
+}
+
+@BindingAdapter(
+    value = [
+        "tabInputLayoutHintColor",
+        "textInputEditText"
+    ]
+)
+fun tabInputLayoutHintColor(
+    view: TextInputLayout,
+    @ColorRes color: Int,
+    textInputEditText: String
+) {
+    if (textInputEditText.isNullOrEmpty()) {
+        view.defaultHintTextColor = ColorStateList.valueOf(
+            ContextCompat.getColor(
+                view.context,
+                R.color.text_color_hint
+            )
+        )
+    } else {
+        view.defaultHintTextColor = ColorStateList.valueOf(
+            ContextCompat.getColor(
+                view.context,
+                color
+            )
+        )
+    }
+
+    view.hintTextColor = ColorStateList.valueOf(
+        ContextCompat.getColor(
+            view.context,
+            color
+        )
+    )
 }

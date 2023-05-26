@@ -1,6 +1,6 @@
 package com.dmonster.data.utils
 
-import com.dmonster.data.remote.dto.base.BaseResponse
+import com.dmonster.data.remote.dto.response.base.BaseResponse
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 

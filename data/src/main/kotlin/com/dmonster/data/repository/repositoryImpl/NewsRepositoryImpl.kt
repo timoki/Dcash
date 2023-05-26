@@ -6,12 +6,13 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.dmonster.data.local.database.MyDatabase
+import com.dmonster.data.remote.dto.request.NewsRequest
 import com.dmonster.data.repository.datasource.LocalDataSource
 import com.dmonster.data.repository.datasource.RemoteDataSource
 import com.dmonster.data.repository.mediator.NewsListMediator
 import com.dmonster.data.utils.ErrorCallback
 import com.dmonster.data.utils.ObjectMapper.toModel
-import com.dmonster.domain.model.NewsModel
+import com.dmonster.domain.model.paging.news.NewsListModel
 import com.dmonster.domain.repository.NewsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -27,17 +28,33 @@ class NewsRepositoryImpl @Inject constructor(
 ) : NewsRepository {
 
     @OptIn(ExperimentalPagingApi::class)
-    override fun getNewsList(): Flow<PagingData<NewsModel>> {
+    override fun getNewsList(
+        row: Int,
+        search_filter: String?,
+        search_value: String?,
+        search_sdate: String?,
+        search_edate: String?,
+        search_order: String?,
+    ): Flow<PagingData<NewsListModel>> {
         return Pager(
             config = PagingConfig(
-                pageSize = 20,
-                prefetchDistance = 10
+                pageSize = row,
+                prefetchDistance = 1,
+                initialLoadSize = 1
             ),
             remoteMediator = NewsListMediator(
                 remoteDataSource = remoteDataSource,
                 localDataSource = localDataSource,
                 database = database,
-                errorCallback = errorCallback
+                errorCallback = errorCallback,
+                newsRequest = NewsRequest(
+                    row,
+                    search_filter,
+                    search_value,
+                    search_sdate,
+                    search_edate,
+                    search_order
+                )
             )
         ) {
             localDataSource.getNewsList()

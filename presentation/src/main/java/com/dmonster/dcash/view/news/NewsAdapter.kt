@@ -6,9 +6,9 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.dmonster.dcash.databinding.ItemNewsListBinding
-import com.dmonster.domain.model.NewsModel
+import com.dmonster.domain.model.paging.news.NewsListModel
 
-internal class NewsAdapter : PagingDataAdapter<NewsModel, NewsAdapter.ViewHolder>(diffUtil) {
+internal class NewsAdapter : PagingDataAdapter<NewsListModel, NewsAdapter.ViewHolder>(diffUtil) {
 
     private var listener: ItemListener? = null
 
@@ -27,32 +27,34 @@ internal class NewsAdapter : PagingDataAdapter<NewsModel, NewsAdapter.ViewHolder
             holder.bind(getItem(position) ?: return, it)
         }
     }
-    
+
     inner class ViewHolder(
         private val binding: ItemNewsListBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(
-            model: NewsModel,
-            listener: ItemListener
+            model: NewsListModel, listener: ItemListener
         ) {
             binding.data = model
             binding.listener = listener
         }
     }
-    
+
     companion object {
-        val diffUtil = object : DiffUtil.ItemCallback<NewsModel>() {
-            override fun areItemsTheSame(oldItem: NewsModel, newItem: NewsModel): Boolean {
+        val diffUtil = object : DiffUtil.ItemCallback<NewsListModel>() {
+            override fun areItemsTheSame(oldItem: NewsListModel, newItem: NewsListModel): Boolean {
                 return oldItem.guid == newItem.guid
             }
 
-            override fun areContentsTheSame(oldItem: NewsModel, newItem: NewsModel): Boolean {
+            override fun areContentsTheSame(
+                oldItem: NewsListModel,
+                newItem: NewsListModel
+            ): Boolean {
                 return oldItem == newItem
             }
         }
     }
 
     interface ItemListener {
-        fun onRootClick(item: NewsModel)
+        fun onRootClick(item: NewsListModel)
     }
 }

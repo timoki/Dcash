@@ -12,13 +12,13 @@ internal class IntroViewModel @Inject constructor(
 
 ): BaseViewModel() {
 
-    private val _isLottieUse = MutableStateFlow(true)
+    private val _isLottieUse = MutableStateFlow(false)
     val isLottieUse = _isLottieUse.asStateFlow()
 
     private val _lottieImage = MutableStateFlow(R.raw.splash_test)
     val lottieImage = _lottieImage.asStateFlow()
 
-    private val _splashImage = MutableStateFlow(R.drawable.splash)
+    private val _splashImage = MutableStateFlow(R.drawable.intro)
     val splashImage = _splashImage.asStateFlow()
 
     fun requestGetConfigData() {

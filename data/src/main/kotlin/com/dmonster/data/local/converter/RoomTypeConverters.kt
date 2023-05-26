@@ -1,7 +1,7 @@
 package com.dmonster.data.local.converter
 
 import androidx.room.TypeConverter
-import com.dmonster.data.remote.dto.NewsDto
+import com.dmonster.data.remote.dto.response.news.NewsDto
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 

@@ -2,22 +2,20 @@ package com.dmonster.data.local.dao.paging
 
 import androidx.paging.PagingSource
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.dmonster.data.local.entity.paging.news.NewsEntity
-import retrofit2.http.DELETE
+import com.dmonster.data.local.entity.paging.news.NewsListEntity
 
 @Dao
 interface NewsDao {
     @Query(
-        "SELECT * FROM news ORDER BY pubDate"
+        "SELECT * FROM news ORDER BY num ASC"
     )
-    fun getNewsList(): PagingSource<Int, NewsEntity>
+    fun getNewsList(): PagingSource<Int, NewsListEntity>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(list: List<NewsEntity>)
+    @Insert
+    suspend fun insertAll(list: List<NewsListEntity>)
 
     @Query(
         "DELETE FROM news"

@@ -1,5 +1,6 @@
 package com.dmonster.data.repository.mediator
 
+import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
@@ -7,11 +8,12 @@ import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.dmonster.data.local.database.MyDatabase
 import com.dmonster.data.local.entity.paging.RemoteKeys
-import com.dmonster.data.local.entity.paging.news.NewsEntity
+import com.dmonster.data.local.entity.paging.news.NewsListEntity
+import com.dmonster.data.remote.dto.request.NewsRequest
 import com.dmonster.data.repository.datasource.LocalDataSource
 import com.dmonster.data.repository.datasource.RemoteDataSource
 import com.dmonster.data.utils.ErrorCallback
-import com.dmonster.data.utils.ObjectMapper.toNewsEntityList
+import com.dmonster.data.utils.ObjectMapper.dtoToNewsListEntityList
 import com.dmonster.domain.type.RemoteKeysType
 import javax.inject.Inject
 
@@ -21,32 +23,47 @@ class NewsListMediator @Inject constructor(
     private val localDataSource: LocalDataSource,
     private val database: MyDatabase,
     private val errorCallback: ErrorCallback,
-) : RemoteMediator<Int, NewsEntity>() {
+    private val newsRequest: NewsRequest,
+) : RemoteMediator<Int, NewsListEntity>() {
     override suspend fun load(
-        loadType: LoadType,
-        state: PagingState<Int, NewsEntity>
+        loadType: LoadType, state: PagingState<Int, NewsListEntity>
     ): MediatorResult {
         val page = when (loadType) {
             LoadType.REFRESH -> {
                 val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
-                remoteKeys?.nextKey?.minus(1) ?: remoteKeys?.prevKey?.plus(1) ?: 0
+                Log.d("아외안되", "REFRESH -> remote is null : ${remoteKeys == null} / remoteKey : $remoteKeys")
+                remoteKeys?.nextKey?.minus(1) ?: remoteKeys?.prevKey?.plus(1) ?: 1
             }
 
             LoadType.PREPEND -> {
                 val remoteKeys = getRemoteKeyForFirstItem(state)
-                val prevKey = remoteKeys?.prevKey ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
+                Log.d("아외안되", "PREPEND -> remote is null : ${remoteKeys == null} / remoteKey : $remoteKeys")
+                val prevKey = remoteKeys?.prevKey
+                    ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
+
                 prevKey
             }
 
             LoadType.APPEND -> {
                 val remoteKeys = getRemoteKeyForLastItem(state)
-                val nextKey = remoteKeys?.nextKey ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
+                Log.d("아외안되", "APPEND -> remote is null : ${remoteKeys == null} / remoteKey : $remoteKeys")
+                val nextKey = remoteKeys?.nextKey
+                    ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
+
                 nextKey
             }
         }
 
         try {
-            val response = remoteDataSource.getNewsList()
+            val response = remoteDataSource.getNewsList(
+                pg = page,
+                row = newsRequest.row,
+                search_filter = newsRequest.search_filter,
+                search_value = newsRequest.search_value,
+                search_sdate = newsRequest.search_sdate,
+                search_edate = newsRequest.search_edate,
+                search_order = newsRequest.search_order,
+            )
 
             if (response.isSuccessful) {
                 response.body()?.let {
@@ -55,18 +72,19 @@ class NewsListMediator @Inject constructor(
                     }
                 }
                 val news = response.body()?.data ?: return MediatorResult.Error(Exception())
-                val endOfPaginationReached = news.isEmpty()
+                val endOfPaginationReached = news.rows.isNullOrEmpty()
 
                 database.withTransaction {
                     if (loadType == LoadType.REFRESH) {
+                        Log.d("아외안되", "LoadType.REFRESH")
                         localDataSource.deleteRemoteKeys(RemoteKeysType.NEWS.name)
                         localDataSource.deleteAllNewsList()
                     }
 
-                    val prevKey = if (page == 0) null else page - 1
+                    val prevKey = if (page == 1) null else page - 1
                     val nextKey = if (endOfPaginationReached) null else page + 1
 
-                    val keys = news.map {
+                    val keys = news.rows.map {
                         RemoteKeys(
                             idx = it.guid,
                             type = RemoteKeysType.NEWS.name,
@@ -76,7 +94,7 @@ class NewsListMediator @Inject constructor(
                     }
 
                     localDataSource.insertRemoteKeys(keys)
-                    localDataSource.insertNewsList(news.toNewsEntityList())
+                    localDataSource.insertNewsList(news.rows.dtoToNewsListEntityList())
                 }
 
                 return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
@@ -89,7 +107,7 @@ class NewsListMediator @Inject constructor(
     }
 
     private suspend fun getRemoteKeyForLastItem(
-        state: PagingState<Int, NewsEntity>
+        state: PagingState<Int, NewsListEntity>
     ): RemoteKeys? {
         return state.pages.lastOrNull {
             it.data.isNotEmpty()
@@ -99,7 +117,7 @@ class NewsListMediator @Inject constructor(
     }
 
     private suspend fun getRemoteKeyForFirstItem(
-        state: PagingState<Int, NewsEntity>
+        state: PagingState<Int, NewsListEntity>
     ): RemoteKeys? {
         return state.pages.firstOrNull {
             it.data.isNotEmpty()
@@ -109,7 +127,7 @@ class NewsListMediator @Inject constructor(
     }
 
     private suspend fun getRemoteKeyClosestToCurrentPosition(
-        state: PagingState<Int, NewsEntity>
+        state: PagingState<Int, NewsListEntity>
     ): RemoteKeys? {
         return state.anchorPosition?.let { position ->
             state.closestItemToPosition(position)?.guid?.let {

@@ -1,14 +1,16 @@
 package com.dmonster.dcash.view.intro
 
 import android.os.CountDownTimer
+import android.view.View
 import androidx.fragment.app.activityViewModels
 import com.dmonster.dcash.R
 import com.dmonster.dcash.base.BaseFragment
 import com.dmonster.dcash.databinding.FragmentIntroBinding
 import com.dmonster.dcash.utils.PermissionViewModel
-import com.dmonster.dcash.utils.dialog
 import com.dmonster.dcash.utils.observeInLifecycleStop
 import com.dmonster.dcash.utils.observeOnLifecycleStop
+import com.dmonster.dcash.view.dialog.basic.BasicDialog
+import com.dmonster.dcash.view.dialog.basic.BasicDialogModel
 import com.dmonster.domain.type.NavigateType
 import kotlinx.coroutines.flow.onEach
 
@@ -54,47 +56,60 @@ internal class IntroFragment : BaseFragment<FragmentIntroBinding, IntroViewModel
 
         showPermissionPopup.onEach {
             if (it) {
-                /*dialog?.let { dialog ->
-                    dialog.setFragmentManager(childFragmentManager)
-                        .setCancel(false)
-                        .setTitle(getString(R.string.set_permission_title)).setText(
-                            String.format(
+                mainViewModel.fragmentNavigateTo(
+                    NavigateType.BasicDialog(
+                        BasicDialogModel(
+                            titleText = getString(R.string.set_permission_title),
+                            text = String.format(
                                 getString(R.string.set_permission_contents),
                                 getString(R.string.app_name)
-                            )
-                        ).setPositiveButton(
-                            true, getString(R.string.set_lock_screen_button)
-                        ) { _, _ ->
-                            dialog.dismiss()
-                            requestPermission(requireActivity())
-                        }.setOnDismissListener {
-                            childFragmentManager.beginTransaction().remove(dialog)
-                        }.show()
-                }*/
+                            ),
+                            setCancelable = false,
+                            setPositiveButton = true to getString(R.string.set_lock_screen_button),
+                            buttonClickListener = object : BasicDialog.ButtonClickListener {
+                                override fun onPositiveButtonClick(
+                                    view: View,
+                                    dialog: BasicDialog
+                                ) {
+                                    super.onPositiveButtonClick(view, dialog)
+                                    requestPermission(requireActivity())
+                                }
+                            }
+                        )
+                    )
+                )
             }
         }.observeInLifecycleStop(viewLifecycleOwner)
 
         showSettingPopup.onEach {
-            /*dialog?.let { dialog ->
-                dialog.setFragmentManager(childFragmentManager)
-                    .setCancel(false)
-                    .setTitle(getString(R.string.set_permission_title)).setText(
-                        String.format(
+            mainViewModel.fragmentNavigateTo(
+                NavigateType.BasicDialog(
+                    BasicDialogModel(
+                        titleText = getString(R.string.set_permission_title),
+                        text = String.format(
                             getString(R.string.require_permission_contents),
                             getString(R.string.app_name)
-                        )
-                    ).setNegativeButton(true, getString(R.string.finish)) { _, _ ->
-                        dialog.dismiss()
-                        requireActivity().finish()
-                    }.setPositiveButton(
-                        true, getString(R.string.require_permission_button)
-                    ) { _, _ ->
-                        dialog.dismiss()
-                        mainViewModel.goPermissionSetting()
-                    }.setOnDismissListener {
-                        childFragmentManager.beginTransaction().remove(dialog)
-                    }.show()
-            }*/
+                        ),
+                        setCancelable = false,
+                        setNegativeButton = true to getString(R.string.finish),
+                        setPositiveButton = true to getString(R.string.require_permission_button),
+                        buttonClickListener = object : BasicDialog.ButtonClickListener {
+                            override fun onPositiveButtonClick(
+                                view: View,
+                                dialog: BasicDialog
+                            ) {
+                                super.onPositiveButtonClick(view, dialog)
+                                mainViewModel.goPermissionSetting()
+                            }
+
+                            override fun onNegativeButtonClick(view: View, dialog: BasicDialog) {
+                                super.onNegativeButtonClick(view, dialog)
+                                requireActivity().finish()
+                            }
+                        }
+                    )
+                )
+            )
         }.observeInLifecycleStop(viewLifecycleOwner)
     }
 

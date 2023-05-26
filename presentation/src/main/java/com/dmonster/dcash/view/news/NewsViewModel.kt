@@ -3,6 +3,7 @@ package com.dmonster.dcash.view.news
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.dmonster.dcash.base.BaseViewModel
+import com.dmonster.domain.model.paging.PageModel
 import com.dmonster.domain.type.PagingLoadingType
 import com.dmonster.domain.usecase.GetNewsListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel

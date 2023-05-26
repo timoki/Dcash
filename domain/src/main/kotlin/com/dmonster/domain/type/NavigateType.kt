@@ -1,20 +1,18 @@
 package com.dmonster.domain.type
 
-import com.dmonster.domain.model.NewsModel
-import com.dmonster.domain.model.dialog.BasicDialogModel
-import com.dmonster.domain.model.navi.BottomNavItem
+import com.dmonster.domain.model.base.BaseModel
+import com.dmonster.domain.model.paging.news.NewsListModel
 
 sealed class NavigateType : EnumClassProguard {
-    open val getItem: BottomNavItem? = null
     abstract val fragmentName: String
 
     class BasicDialog(
-        private val model: BasicDialogModel
+        private val model: BaseModel
     ) : NavigateType() {
         override val fragmentName: String
             get() = "basicDialog"
 
-        val getModel: BasicDialogModel
+        val getModel: BaseModel
             get() = model
     }
 
@@ -23,37 +21,27 @@ sealed class NavigateType : EnumClassProguard {
             get() = "login"
     }
 
-    class Home(private val bottomNavItem: BottomNavItem? = null) : NavigateType() {
-        override val getItem: BottomNavItem?
-            get() = bottomNavItem
+    class Home : NavigateType() {
         override val fragmentName: String
             get() = "home"
     }
 
-    class News(private val bottomNavItem: BottomNavItem? = null) : NavigateType() {
-        override val getItem: BottomNavItem?
-            get() = bottomNavItem
+    class News : NavigateType() {
         override val fragmentName: String
             get() = "news"
     }
 
-    class Event(private val bottomNavItem: BottomNavItem? = null) : NavigateType() {
-        override val getItem: BottomNavItem?
-            get() = bottomNavItem
+    class Event : NavigateType() {
         override val fragmentName: String
             get() = "event"
     }
 
-    class Point(private val bottomNavItem: BottomNavItem? = null) : NavigateType() {
-        override val getItem: BottomNavItem?
-            get() = bottomNavItem
+    class Point : NavigateType() {
         override val fragmentName: String
             get() = "point"
     }
 
-    class MyPage(private val bottomNavItem: BottomNavItem? = null) : NavigateType() {
-        override val getItem: BottomNavItem?
-            get() = bottomNavItem
+    class MyPage : NavigateType() {
         override val fragmentName: String
             get() = "myPage"
     }
@@ -69,12 +57,12 @@ sealed class NavigateType : EnumClassProguard {
     }
 
     class NewsDetailFromNews(
-        private val model: NewsModel
+        private val model: NewsListModel
     ) : NavigateType() {
         override val fragmentName: String
             get() = "newsDetailFromNews"
 
-        val getModel: NewsModel
+        val getModel: NewsListModel
             get() = model
     }
 }

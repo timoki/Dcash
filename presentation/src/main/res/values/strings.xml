@@ -40,4 +40,7 @@
     <string name="use_external_browser">외부 브라우저 사용</string>
     <string name="go_external_browser">해당 링크로 이동하려면 외부 브라우저를 이용해야 합니다.\n링크로 이동하시겠습니까?</string>
     <string name="str_go">이동하기</string>
+    <string name="intro_text">by. dmonster</string>
+    <string name="error_login_id_empty">아이디를 입력해 주세요.</string>
+    <string name="error_login_pw_empty">비밀번호를 입력해 주세요.</string>
 </resources>

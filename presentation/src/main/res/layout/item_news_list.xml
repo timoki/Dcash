@@ -9,7 +9,7 @@
 
         <variable
             name="data"
-            type="com.dmonster.domain.model.NewsModel" />
+            type="com.dmonster.domain.model.paging.news.NewsListModel" />
 
         <variable
             name="listener"

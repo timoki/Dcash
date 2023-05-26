@@ -4,10 +4,10 @@ import com.dmonster.data.remote.api.LoginAPIService
 import com.dmonster.data.remote.api.MemberAPIService
 import com.dmonster.data.remote.api.NewsAPIService
 import com.dmonster.data.remote.api.TokenAPIService
-import com.dmonster.data.remote.dto.MemberInfoDto
-import com.dmonster.data.remote.dto.NewsDto
-import com.dmonster.data.remote.dto.TokenDto
-import com.dmonster.data.remote.dto.base.BaseResponse
+import com.dmonster.data.remote.dto.response.MemberInfoDto
+import com.dmonster.data.remote.dto.response.TokenDto
+import com.dmonster.data.remote.dto.response.base.BaseResponse
+import com.dmonster.data.remote.dto.response.news.NewsDto
 import com.dmonster.data.repository.datasource.RemoteDataSource
 import retrofit2.Response
 import javax.inject.Inject
@@ -34,7 +34,23 @@ class RemoteDataSourceImpl @Inject constructor(
         return memberAPIService.getMemberInfo()
     }
 
-    override suspend fun getNewsList(): Response<BaseResponse<List<NewsDto>>> {
-        return newsAPIService.getNewsList()
+    override suspend fun getNewsList(
+        pg: Int,
+        row: Int,
+        search_filter: String?,
+        search_value: String?,
+        search_sdate: String?,
+        search_edate: String?,
+        search_order: String?,
+    ): Response<BaseResponse<NewsDto>> {
+        return newsAPIService.getNewsList(
+            pg,
+            row,
+            search_filter,
+            search_value,
+            search_sdate,
+            search_edate,
+            search_order,
+        )
     }
 }

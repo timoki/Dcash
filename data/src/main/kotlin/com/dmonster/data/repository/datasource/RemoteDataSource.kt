@@ -1,9 +1,9 @@
 package com.dmonster.data.repository.datasource
 
-import com.dmonster.data.remote.dto.MemberInfoDto
-import com.dmonster.data.remote.dto.NewsDto
-import com.dmonster.data.remote.dto.TokenDto
-import com.dmonster.data.remote.dto.base.BaseResponse
+import com.dmonster.data.remote.dto.response.MemberInfoDto
+import com.dmonster.data.remote.dto.response.news.NewsDto
+import com.dmonster.data.remote.dto.response.TokenDto
+import com.dmonster.data.remote.dto.response.base.BaseResponse
 import retrofit2.Response
 
 interface RemoteDataSource {
@@ -21,5 +21,13 @@ interface RemoteDataSource {
 
     suspend fun getMemberInfo(): Response<BaseResponse<MemberInfoDto>>
 
-    suspend fun getNewsList(): Response<BaseResponse<List<NewsDto>>>
+    suspend fun getNewsList(
+        pg: Int,
+        row: Int,
+        search_filter: String?,
+        search_value: String?,
+        search_sdate: String?,
+        search_edate: String?,
+        search_order: String?,
+    ): Response<BaseResponse<NewsDto>>
 }

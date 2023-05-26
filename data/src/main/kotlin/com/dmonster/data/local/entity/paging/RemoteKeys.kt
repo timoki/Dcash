@@ -7,7 +7,8 @@ import androidx.room.PrimaryKey
     tableName = "paging_remote_key"
 )
 data class RemoteKeys(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    val num: Long = 0L,
     val idx: Long,
     val type: String,
     val prevKey: Int?,

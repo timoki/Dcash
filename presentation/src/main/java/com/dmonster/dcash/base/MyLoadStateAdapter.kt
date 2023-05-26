@@ -12,14 +12,12 @@ import com.dmonster.dcash.databinding.ItemLoadStateFooterViewBinding
 
 class MyLoadStateAdapter(private val retry: () -> Unit) : LoadStateAdapter<MyLoadStateAdapter.LoadStateViewHolder>() {
 
-    private lateinit var binding: ItemLoadStateFooterViewBinding
-
     override fun onBindViewHolder(holder: LoadStateViewHolder, loadState: LoadState) {
         holder.bind(loadState)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, loadState: LoadState): LoadStateViewHolder {
-        binding = DataBindingUtil.inflate(
+        val binding: ItemLoadStateFooterViewBinding = DataBindingUtil.inflate(
             LayoutInflater.from(parent.context),
             R.layout.item_load_state_footer_view,
             parent,
@@ -41,7 +39,9 @@ class MyLoadStateAdapter(private val retry: () -> Unit) : LoadStateAdapter<MyLoa
 
         fun bind(loadState: LoadState) {
             if (loadState is LoadState.NotLoading && loadState.endOfPaginationReached) {
-                binding.isVisible = false
+                binding.progressBar.isVisible = false
+                binding.retryButton.isVisible = false
+                binding.errorMsg.isVisible = false
                 return
             }
 

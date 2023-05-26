@@ -39,17 +39,7 @@
         tools:layout="@layout/dialog_basic">
 
         <argument android:name="model"
-            app:argType="com.dmonster.domain.model.dialog.BasicDialogModel"/>
-
-        <argument android:name="positiveClickListener"
-            app:nullable="true"
-            android:defaultValue="@null"
-            app:argType="android.view.View.OnClickListener"/>
-
-        <argument android:name="negativeClickListener"
-            app:nullable="true"
-            android:defaultValue="@null"
-            app:argType="android.view.View.OnClickListener"/>
+            app:argType="com.dmonster.dcash.view.dialog.basic.BasicDialogModel"/>
     </dialog>
     <dialog
         android:id="@+id/networkFragment"

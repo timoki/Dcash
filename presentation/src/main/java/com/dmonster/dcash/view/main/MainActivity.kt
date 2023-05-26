@@ -1,5 +1,7 @@
 package com.dmonster.dcash.view.main
 
+import android.animation.ObjectAnimator
+import android.animation.PropertyValuesHolder
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.res.Configuration
@@ -9,10 +11,14 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.View
+import android.view.animation.AnticipateInterpolator
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.core.animation.doOnEnd
+import androidx.core.splashscreen.SplashScreen
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -26,7 +32,6 @@ import com.dmonster.dcash.base.BaseActivity
 import com.dmonster.dcash.databinding.ActivityMainBinding
 import com.dmonster.dcash.utils.PermissionViewModel
 import com.dmonster.dcash.utils.StaticData.tokenData
-import com.dmonster.dcash.utils.dialog
 import com.dmonster.dcash.utils.hideSnackBar
 import com.dmonster.dcash.utils.lockscreen.LockScreenService
 import com.dmonster.dcash.utils.observeInLifecycleDestroy
@@ -35,6 +40,7 @@ import com.dmonster.dcash.utils.observeOnLifecycleDestroy
 import com.dmonster.dcash.utils.observeOnLifecycleStop
 import com.dmonster.dcash.utils.showSnackBar
 import com.dmonster.dcash.view.dialog.basic.BasicDialog
+import com.dmonster.dcash.view.dialog.basic.BasicDialogModel
 import com.dmonster.dcash.view.event.EventFragment
 import com.dmonster.dcash.view.home.HomeFragment
 import com.dmonster.dcash.view.home.HomeFragmentDirections
@@ -46,7 +52,6 @@ import com.dmonster.dcash.view.news.NewsFragment
 import com.dmonster.dcash.view.news.NewsFragmentDirections
 import com.dmonster.dcash.view.point.PointFragment
 import com.dmonster.domain.model.Result
-import com.dmonster.domain.model.dialog.BasicDialogModel
 import com.dmonster.domain.type.NavigateType
 import com.dmonster.domain.type.NetworkState
 import com.dmonster.domain.type.TopMenuType
@@ -106,8 +111,6 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(
         binding.viewModel = viewModel
         binding.topView.viewModel = topViewModel
 
-        dialog = BasicDialog()
-
         navController.addOnDestinationChangedListener(this)
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
@@ -164,7 +167,9 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(
                 navigateToCompose(
                     when (it) {
                         is NavigateType.BasicDialog -> {
-                            NavigationDirections.actionGlobalLoginFragment()
+                            NavigationDirections.actionGlobalBasicDialog(
+                                it.getModel as BasicDialogModel
+                            )
                         }
 
                         is NavigateType.Login -> {
@@ -172,22 +177,27 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(
                         }
 
                         is NavigateType.Home -> {
+                            viewModel.currentPageIndex.value = 3
                             NavigationDirections.actionGlobalHomeGraph()
                         }
 
                         is NavigateType.News -> {
+                            viewModel.currentPageIndex.value = 1
                             NavigationDirections.actionGlobalNewsGraph()
                         }
 
                         is NavigateType.Event -> {
+                            viewModel.currentPageIndex.value = 2
                             NavigationDirections.actionGlobalEventGraph()
                         }
 
                         is NavigateType.Point -> {
+                            viewModel.currentPageIndex.value = 4
                             NavigationDirections.actionGlobalPointGraph()
                         }
 
                         is NavigateType.MyPage -> {
+                            viewModel.currentPageIndex.value = 5
                             NavigationDirections.actionGlobalMyPageGraph()
                         }
 
@@ -224,62 +234,37 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(
             when (it) {
                 PermissionViewModel.TYPE_LOCK_SCREEN -> {
                     if (!permissionViewModel.canDrawOverlays()) {
-                        navigateToCompose(NavigationDirections.actionGlobalBasicDialog(
-                            model = BasicDialogModel(
-                                titleText = resources.getString(R.string.set_lock_screen),
-                                text = String.format(
-                                    resources.getString(R.string.set_lock_screen_contents),
-                                    resources.getString(
-                                        R.string.app_name
-                                    )
-                                ),
-                                isCheckBoxVisible = true,
-                                checkBoxText = resources.getString(R.string.not_showing_week),
-                                isNegativeButtonVisible = true,
-                                negativeButtonText = resources.getString(R.string.cancel),
-                                isPositiveButtonVisible = true,
-                                positiveButtonText = resources.getString(R.string.set_use),
-                            ),
-                            positiveClickListener = {
-                                if (!permissionViewModel.canDrawOverlays()) {
-                                    fragmentNavigateTo(NavigateType.LockScreenPermission())
-                                } else {
-                                    startLockScreenService()
-                                }
-                            },
-                            negativeClickListener = {
-
-                            }
-                        ))
-                            /*dialog?.let { dialog ->
-                                dialog.setFragmentManager(currentNavigationFragment?.childFragmentManager)
-                                    .setCancel(false)
-                                    .setTitle(resources.getString(R.string.set_lock_screen)).setText(
-                                        String.format(
-                                            resources.getString(R.string.set_lock_screen_contents),
-                                            resources.getString(
-                                                R.string.app_name
-                                            )
+                        navigateToCompose(
+                            NavigationDirections.actionGlobalBasicDialog(
+                                BasicDialogModel(
+                                    titleText = resources.getString(R.string.set_lock_screen),
+                                    text = String.format(
+                                        resources.getString(R.string.set_lock_screen_contents),
+                                        resources.getString(
+                                            R.string.app_name
                                         )
-                                    ).setCheckBox(true, resources.getString(R.string.not_showing_week))
-                                    .setNegativeButton(true, resources.getString(R.string.cancel))
-                                    .setPositiveButton(
-                                        true, resources.getString(R.string.set_use)
-                                    ) { _, _ ->
-                                        dialog.dismiss()
+                                    ),
+                                    setCancelable = false,
+                                    setCheckBox = true to resources.getString(R.string.not_showing_week),
+                                    setNegativeButton = true to resources.getString(R.string.cancel),
+                                    setPositiveButton = true to resources.getString(R.string.set_use),
+                                    buttonClickListener = object : BasicDialog.ButtonClickListener {
+                                        override fun onPositiveButtonClick(
+                                            view: View,
+                                            dialog: BasicDialog
+                                        ) {
+                                            super.onPositiveButtonClick(view, dialog)
 
-                                        if (!permissionViewModel.canDrawOverlays()) {
-                                            fragmentNavigateTo(NavigateType.LockScreenPermission())
-
-                                            return@setPositiveButton
+                                            if (!permissionViewModel.canDrawOverlays()) {
+                                                fragmentNavigateTo(NavigateType.LockScreenPermission())
+                                            } else {
+                                                startLockScreenService()
+                                            }
                                         }
-
-                                        startLockScreenService()
-                                    }.setOnDismissListener {
-                                        currentNavigationFragment?.childFragmentManager?.beginTransaction()?.remove(dialog)
                                     }
-                                    .show()
-                            }*/
+                                ),
+                            )
+                        )
                     }
                 }
 
@@ -298,6 +283,14 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(
                 Log.e("REQ_DETAILS_SETTINGS", "권한 error -> ${e.printStackTrace()}")
                 val intent = Intent(Settings.ACTION_MANAGE_APPLICATIONS_SETTINGS)
                 settingDetails.launch(intent)
+            }
+        }.observeInLifecycleStop(this@MainActivity)
+
+        topButtonVisible.onEach { isVisible ->
+            if (isVisible) {
+                binding.topButton.show()
+            } else {
+                binding.topButton.hide()
             }
         }.observeInLifecycleStop(this@MainActivity)
     }
@@ -446,7 +439,6 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(
 
     override fun onDestroy() {
         networkViewModel.unRegister()
-        dialog = null
         super.onDestroy()
     }
 

@@ -51,13 +51,16 @@ class MainViewModel @Inject constructor(
         _setOverlayPermissionChannel.send(Unit)
     }
 
+    val currentPageIndex = MutableStateFlow(3)
+
     fun onBottomMenuClick(type: Int) {
+        currentPageIndex.value = type
         val item = when (type) {
-            0 -> NavigateType.Home()
             1 -> NavigateType.News()
             2 -> NavigateType.Event()
-            3 -> NavigateType.Point()
-            4 -> NavigateType.MyPage()
+            3 -> NavigateType.Home()
+            4 -> NavigateType.Point()
+            5 -> NavigateType.MyPage()
             else -> NavigateType.Home()
         }
         fragmentNavigateTo(item)
@@ -102,4 +105,18 @@ class MainViewModel @Inject constructor(
                 started = SharingStarted.WhileSubscribed(5000),
                 initialValue = Result.Loading()
             )
+
+    private val _scrollTop = Channel<Unit>(Channel.CONFLATED)
+    val scrollTop = _scrollTop.receiveAsFlow()
+
+    fun onScrollTop() = viewModelScope.launch {
+        _scrollTop.send(Unit)
+    }
+
+    private val _topButtonVisible = Channel<Boolean>(Channel.CONFLATED)
+    val topButtonVisible = _topButtonVisible.receiveAsFlow()
+
+    fun setTopButtonVisible(isVisible: Boolean) = viewModelScope.launch {
+        _topButtonVisible.send(isVisible)
+    }
 }

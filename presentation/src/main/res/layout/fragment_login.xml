@@ -1,60 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
     <data>
+
+        <import type="com.dmonster.dcash.R" />
+
+        <import type="android.view.View" />
+
+        <import type="android.text.TextUtils" />
+
         <variable
             name="viewModel"
             type="com.dmonster.dcash.view.login.LoginViewModel" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:padding="20dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/logoConst"
-            android:layout_width="0dp"
-            android:layout_height="150dp"
-            android:layout_marginHorizontal="20dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="50dp"
-            android:background="@color/default_grey">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true">
 
-            <TextView
+            <ImageView
+                android:id="@+id/logo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                app:coilSrc="@{R.drawable.logo_login}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:text="로고 영역"
-                android:textSize="50sp"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                tools:src="@drawable/logo_login" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_margin="20dp"
-            android:layout_marginVertical="20dp"
-            app:layout_constraintTop_toBottomOf="@id/logoConst"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:background="@color/white"
-            android:elevation="20dp"
-            android:padding="20dp">
-
-            <Button
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputId"
                 android:layout_width="0dp"
-                android:layout_height="48dp"
-                app:layout_constraintStart_toStartOf="parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="55dp"
+                app:endIconMode="clear_text"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:background="@color/main_color"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/logo"
+                app:tabInputLayoutHintColor="@{R.color.black}"
+                app:textInputEditText="@{viewModel.loginIdText}">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/textInputEtId"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/icon_login_id"
+                    android:drawablePadding="8dp"
+                    android:hint="아이디"
+                    android:paddingStart="10dp"
+                    android:paddingBottom="15dp"
+                    android:text="@={viewModel.loginIdText}" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--<TextView
+                android:id="@+id/idErrorText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="@+id/textInputId"
+                app:layout_constraintStart_toStartOf="@+id/textInputId"
+                app:layout_constraintTop_toBottomOf="@+id/textInputId"
+                android:visibility="@{TextUtils.isEmpty(viewModel.loginIdErrorText) ? View.GONE : View.VISIBLE}"
+                android:text="@{viewModel.loginIdErrorText}"
+                android:textColor="@color/text_color_error"
+                tools:text="@string/error_login_id_empty"
+                android:layout_marginStart="5dp"
+                tools:visibility="visible"/>-->
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputPw"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:endIconMode="password_toggle"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textInputId"
+                app:tabInputLayoutHintColor="@{R.color.black}"
+                app:textInputEditText="@{viewModel.loginPwText}">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/textInputEtPw"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/icon_login_pw"
+                    android:drawablePadding="8dp"
+                    android:hint="비밀번호"
+                    android:inputType="textPassword"
+                    android:paddingStart="10dp"
+                    android:paddingBottom="15dp"
+                    android:text="@={viewModel.loginPwText}" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--<TextView
+                android:id="@+id/pwErrorText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="@+id/textInputPw"
+                app:layout_constraintStart_toStartOf="@+id/textInputPw"
+                app:layout_constraintTop_toBottomOf="@+id/textInputPw"
+                android:visibility="@{TextUtils.isEmpty(viewModel.loginPwErrorText) ? View.GONE : View.VISIBLE}"
+                android:text="@{viewModel.loginPwErrorText}"
+                android:textColor="@color/text_color_error"
+                tools:text="@string/error_login_pw_empty"
+                android:layout_marginStart="5dp"
+                tools:visibility="visible"/>-->
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+                android:layout_marginTop="20dp"
                 android:text="로그인"
-                app:onSingleClick="@{() -> viewModel.loginClick()}"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textInputPw"
+                app:onSingleClick="@{() -> viewModel.loginClick()}" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </RelativeLayout>
 </layout>

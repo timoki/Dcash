@@ -212,6 +212,9 @@ dependencies {
 
     // Shimmer
     implementation("com.facebook.shimmer:shimmer:0.5.0")
+
+    // SplashScreen
+    implementation("androidx.core:core-splashscreen:1.0.0-rc01")
 }
 
 kapt {

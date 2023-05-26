@@ -24,7 +24,7 @@
         <argument
             android:name="model"
             android:defaultValue="@null"
-            app:argType="com.dmonster.domain.model.NewsModel"
+            app:argType="com.dmonster.domain.model.paging.news.NewsListModel"
             app:nullable="true" />
     </fragment>
 </navigation>

@@ -11,13 +11,10 @@ import android.view.WindowManager
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
 import com.dmonster.dcash.R
-import com.dmonster.dcash.view.dialog.basic.BasicDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import okhttp3.Cache
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
-
-var dialog: BasicDialog? = null
 
 var snackBar: Snackbar? = null
 
@@ -27,9 +24,9 @@ fun showSnackBar(
 ) {
     hideSnackBar()
     val view = activity.findViewById<CoordinatorLayout>(R.id.coordinator)
-    val fab = activity.findViewById<FloatingActionButton>(R.id.fab)
+    //val fab = activity.findViewById<FloatingActionButton>(R.id.fab)
     snackBar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT).apply {
-        if (fab.isVisible) anchorView = fab
+        //if (fab.isVisible) anchorView = fab
         show()
     }
 }

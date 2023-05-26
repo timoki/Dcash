@@ -9,13 +9,13 @@ import com.dmonster.data.local.dao.paging.NewsDao
 import com.dmonster.data.local.dao.paging.RemoteKeysDao
 import com.dmonster.data.local.entity.ConfigEntity
 import com.dmonster.data.local.entity.paging.RemoteKeys
-import com.dmonster.data.local.entity.paging.news.NewsEntity
+import com.dmonster.data.local.entity.paging.news.NewsListEntity
 
 @Database(
     entities = [
         ConfigEntity::class,
-        NewsEntity::class,
-        RemoteKeys::class
+        NewsListEntity::class,
+        RemoteKeys::class,
     ],
     version = 1,
     exportSchema = false

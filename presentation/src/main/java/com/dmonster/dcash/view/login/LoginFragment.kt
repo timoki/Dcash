@@ -1,14 +1,15 @@
 package com.dmonster.dcash.view.login
 
+import android.content.res.ColorStateList
 import android.util.Log
-import com.dmonster.domain.type.NavigateType
+import androidx.core.widget.addTextChangedListener
+import com.dmonster.dcash.R
 import com.dmonster.dcash.base.BaseFragment
 import com.dmonster.dcash.databinding.FragmentLoginBinding
-import com.dmonster.dcash.utils.StaticData
 import com.dmonster.dcash.utils.observeInLifecycleStop
-import com.dmonster.dcash.utils.observeOnLifecycleDestroy
 import com.dmonster.dcash.utils.observeOnLifecycleStop
 import com.dmonster.domain.model.Result
+import com.dmonster.domain.type.NavigateType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.onEach
 
@@ -19,7 +20,7 @@ internal class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel
         binding.lifecycleOwner = viewLifecycleOwner
     }
 
-    override fun initViewModelCallback() : Unit = with(viewModel) {
+    override fun initViewModelCallback(): Unit = with(viewModel) {
         loginSuccessChannel.onEach {
             mainViewModel.getMemberInfo().observeOnLifecycleStop(viewLifecycleOwner) { result ->
                 when (result) {
@@ -47,5 +48,53 @@ internal class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel
                 }
             }
         }.observeInLifecycleStop(viewLifecycleOwner)
+
+        loginIdError.onEach {
+            with(binding) {
+                textInputId.error = it
+                textInputEtId.compoundDrawableTintList =
+                    ColorStateList.valueOf(
+                        resources.getColor(
+                            R.color.text_color_error,
+                            null
+                        )
+                    )
+
+                textInputEtId.requestFocus()
+            }
+        }.observeInLifecycleStop(viewLifecycleOwner)
+
+        loginPwError.onEach {
+            with(binding) {
+                textInputPw.error = it
+                textInputEtPw.compoundDrawableTintList =
+                    ColorStateList.valueOf(
+                        resources.getColor(
+                            R.color.text_color_error,
+                            null
+                        )
+                    )
+
+                textInputEtPw.requestFocus()
+            }
+        }.observeInLifecycleStop(viewLifecycleOwner)
+    }
+
+    override fun initListener(): Unit = with(binding) {
+        textInputEtId.addTextChangedListener {
+            if (!textInputId.error.isNullOrEmpty()) {
+                textInputId.error = ""
+                textInputId.isErrorEnabled = false
+                binding.textInputEtId.compoundDrawableTintList = null
+            }
+        }
+
+        textInputEtPw.addTextChangedListener {
+            if (!textInputPw.error.isNullOrEmpty()) {
+                textInputPw.error = ""
+                textInputPw.isErrorEnabled = false
+                binding.textInputEtPw.compoundDrawableTintList = null
+            }
+        }
     }
 }

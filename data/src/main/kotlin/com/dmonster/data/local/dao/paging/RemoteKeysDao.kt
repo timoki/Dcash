@@ -14,7 +14,7 @@ interface RemoteKeysDao {
     suspend fun getRemoteKeys(type: String, idx: Long): RemoteKeys
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertRemoteKeys(keys: List<RemoteKeys>)
+    suspend fun insertRemoteKeys(keys: List<RemoteKeys>?)
 
     @Query(
         "DELETE FROM paging_remote_key WHERE type = :type"
