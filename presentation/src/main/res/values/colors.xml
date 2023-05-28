@@ -8,9 +8,13 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
+    <color name="lock_screen_background">#70222222</color>
+    <color name="lock_screen_seek_background">#C4222222</color>
+
     <color name="main_color">#45C4B0</color>
     <color name="sub_color">#26A8A9</color>
     <color name="text_color">#222222</color>
+    <color name="text_color_white">#e5e5e5</color>
     <color name="text_color_hint">#C5C5C5</color>
     <color name="text_color_error">#D42323</color>
     <color name="default_grey">#999999</color>

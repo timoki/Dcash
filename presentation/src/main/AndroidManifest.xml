@@ -33,8 +33,9 @@
             android:name=".view.lockscreen.LockScreen"
             android:clearTaskOnLaunch="true"
             android:excludeFromRecents="true"
-            android:launchMode="singleTask"
+            android:launchMode="singleInstance"
             android:stateNotNeeded="true"
+            android:windowSoftInputMode="adjustPan|adjustResize"
             android:exported="true">
 
             <intent-filter >
@@ -49,6 +50,7 @@
             android:name=".view.main.MainActivity"
             android:configChanges="orientation|keyboard|keyboardHidden|screenSize|screenLayout|smallestScreenSize"
             android:label="${appName}"
+            android:launchMode="singleTask"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

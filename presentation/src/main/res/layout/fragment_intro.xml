@@ -54,7 +54,7 @@
                 android:layout_marginBottom="17sp"
                 android:fontFamily="@font/pretendard_light"
                 android:text="@string/intro_text"
-                android:textColor="#e5e5e5"
+                android:textColor="@color/text_color_white"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

@@ -51,7 +51,12 @@
     <string name="lock_screen_notification_content_title">%s 잠금화면</string>
     <string name="lock_screen_notification_content_text">%s에서 잠금화면을 사용하고 있습니다.</string>
 
+    <!-- 잠금화면 -->
+    <string name="str_unlock">잠금해제</string>
+    <string name="str_launch_app">앱실행</string>
+
     <!-- 뉴스상세 -->
     <string name="use_external_browser">외부 브라우저 사용</string>
     <string name="go_external_browser">해당 링크로 이동하려면 외부 브라우저를 이용해야 합니다.\n링크로 이동하시겠습니까?</string>
+    <string name="str_news">뉴스</string>
 </resources>
