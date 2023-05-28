@@ -6,8 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.dmonster.dcash.R
 import com.dmonster.dcash.base.BaseViewModel
 import com.dmonster.dcash.utils.StaticData
+import com.dmonster.dcash.utils.showSnackBar
 import com.dmonster.domain.model.Result
 import com.dmonster.domain.model.TokenModel
+import com.dmonster.domain.type.SnsType
 import com.dmonster.domain.usecase.RequestLoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -62,12 +64,10 @@ internal class LoginViewModel @Inject constructor(
         login().collect { result ->
             when (result) {
                 is Result.Loading -> {
-                    Log.d("아외안되", "Loading")
                     showLoadingDialog()
                 }
 
                 is Result.Success -> {
-                    Log.d("아외안되", "Success")
                     hideLoadingDialog()
                     result.data?.let {
                         StaticData.tokenData.value = it
@@ -76,15 +76,25 @@ internal class LoginViewModel @Inject constructor(
                 }
 
                 is Result.Error -> {
-                    Log.d("아외안되", "Error : ${result.message}")
                     hideLoadingDialog()
                 }
 
                 is Result.NetworkError -> {
-                    Log.d("아외안되", "NetworkError")
                     hideLoadingDialog()
                 }
             }
         }
+    }
+
+    fun joinClick() = viewModelScope.launch {
+
+    }
+
+    fun findAccountClick() = viewModelScope.launch {
+
+    }
+
+    fun snsClick(type: SnsType) = viewModelScope.launch {
+
     }
 }

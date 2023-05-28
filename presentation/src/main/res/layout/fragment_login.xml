@@ -9,14 +9,14 @@
 
         <import type="android.view.View" />
 
-        <import type="android.text.TextUtils" />
+        <import type="com.dmonster.domain.type.SnsType" />
 
         <variable
             name="viewModel"
             type="com.dmonster.dcash.view.login.LoginViewModel" />
     </data>
 
-    <RelativeLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
@@ -25,7 +25,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true">
+            android:layout_gravity="center">
 
             <ImageView
                 android:id="@+id/logo"
@@ -61,20 +61,6 @@
                     android:text="@={viewModel.loginIdText}" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!--<TextView
-                android:id="@+id/idErrorText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="@+id/textInputId"
-                app:layout_constraintStart_toStartOf="@+id/textInputId"
-                app:layout_constraintTop_toBottomOf="@+id/textInputId"
-                android:visibility="@{TextUtils.isEmpty(viewModel.loginIdErrorText) ? View.GONE : View.VISIBLE}"
-                android:text="@{viewModel.loginIdErrorText}"
-                android:textColor="@color/text_color_error"
-                tools:text="@string/error_login_id_empty"
-                android:layout_marginStart="5dp"
-                tools:visibility="visible"/>-->
-
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textInputPw"
                 android:layout_width="0dp"
@@ -100,29 +86,115 @@
                     android:text="@={viewModel.loginPwText}" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!--<TextView
-                android:id="@+id/pwErrorText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="@+id/textInputPw"
-                app:layout_constraintStart_toStartOf="@+id/textInputPw"
-                app:layout_constraintTop_toBottomOf="@+id/textInputPw"
-                android:visibility="@{TextUtils.isEmpty(viewModel.loginPwErrorText) ? View.GONE : View.VISIBLE}"
-                android:text="@{viewModel.loginPwErrorText}"
-                android:textColor="@color/text_color_error"
-                tools:text="@string/error_login_pw_empty"
-                android:layout_marginStart="5dp"
-                tools:visibility="visible"/>-->
-
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnLogin"
+                style="@style/CustomMaterialButtonMain"
                 android:layout_width="0dp"
                 android:layout_height="55dp"
                 android:layout_marginTop="20dp"
-                android:text="로그인"
+                android:text="@string/str_login"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textInputPw"
                 app:onSingleClick="@{() -> viewModel.loginClick()}" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnJoin"
+                style="@style/CustomMaterialButtonSub"
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+                android:layout_marginTop="9dp"
+                android:text="@string/str_join"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btnLogin"
+                app:onSingleClick="@{() -> viewModel.joinClick()}" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:fontFamily="@font/pretendard_regular"
+                android:text="@string/str_find_account_info"
+                android:textColor="@color/text_color_hint"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@+id/findAccount"
+                app:layout_constraintEnd_toStartOf="@+id/findAccount"
+                app:layout_constraintTop_toTopOf="@+id/findAccount" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/findAccount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:fontFamily="@font/pretendard_regular"
+                android:text="@string/str_find_account"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="@+id/btnJoin"
+                app:layout_constraintTop_toBottomOf="@+id/btnJoin"
+                app:onSingleClick="@{() -> viewModel.findAccountClick()}" />
+
+            <View
+                android:id="@+id/line"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="64dp"
+                android:background="@color/text_color_hint"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/findAccount" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:fontFamily="@font/pretendard_semi_bold"
+                android:paddingHorizontal="20dp"
+                android:text="@string/str_sns_login_info"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@+id/line"
+                app:layout_constraintEnd_toEndOf="@+id/line"
+                app:layout_constraintStart_toStartOf="@+id/line"
+                app:layout_constraintTop_toTopOf="@+id/line" />
+
+            <ImageButton
+                android:id="@+id/btnKakao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                app:coilSrc="@{R.drawable.ic_kakao}"
+                app:layout_constraintBottom_toBottomOf="@+id/btnNaver"
+                app:layout_constraintEnd_toStartOf="@+id/btnNaver"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/btnNaver"
+                app:onSingleClick="@{() -> viewModel.snsClick(SnsType.KAKAO)}"
+                tools:src="@drawable/ic_kakao" />
+
+            <ImageButton
+                android:id="@+id/btnNaver"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:background="@android:color/transparent"
+                app:coilSrc="@{R.drawable.ic_naver}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/line"
+                app:onSingleClick="@{() -> viewModel.snsClick(SnsType.NAVER)}"
+                tools:src="@drawable/ic_naver" />
+
+            <ImageButton
+                android:id="@+id/btnGoogle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                app:coilSrc="@{R.drawable.ic_google}"
+                app:layout_constraintBottom_toBottomOf="@+id/btnNaver"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/btnNaver"
+                app:layout_constraintTop_toTopOf="@+id/btnNaver"
+                app:onSingleClick="@{() -> viewModel.snsClick(SnsType.GOOGLE)}"
+                tools:src="@drawable/ic_google" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </RelativeLayout>
+    </androidx.core.widget.NestedScrollView>
 </layout>
