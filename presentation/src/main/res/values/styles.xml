@@ -4,7 +4,7 @@
     <style name="Theme.Dcash" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/main_color</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorPrimaryVariant">@color/sub_color</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/teal_200</item>
@@ -13,13 +13,32 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">@color/text_color</item>
         <item name="android:textSize">16sp</item>
-        <item name="android:includeFontPadding">true</item>
+        <item name="android:includeFontPadding">false</item>
         <item name="fontFamily">@font/pretendard_light</item>
         <item name="android:colorControlNormal">#0f000000</item>
         <item name="android:colorControlActivated">@color/main_color</item>
         <item name="android:windowIsTranslucent">true</item>
+    </style>
+
+    <style name="CustomMaterialButtonMain" parent="Widget.MaterialComponents.Button">
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:radius">4dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="fontFamily">@font/pretendard_semi_bold</item>
+    </style>
+
+    <style name="CustomMaterialButtonSub" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:radius">4dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/main_color</item>
+        <item name="fontFamily">@font/pretendard_semi_bold</item>
+        <item name="strokeColor">@color/main_color</item>
     </style>
 
     <style name="transparent" parent="Theme.AppCompat">

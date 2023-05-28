@@ -9,10 +9,14 @@
     <string name="set_use">사용하기</string>
     <string name="retry">재시도</string>
     <string name="finish">종료</string>
+    <string name="str_go">이동하기</string>
     <string name="main_back_pressed">뒤로가기 버튼을 한번 더 누르면 종료됩니다.</string>
 
     <!-- 공통(에러) -->
     <string name="str_load_state_error">리스트를 가져오는데 실패했습니다.\n잠시 후 다시 시도해 주세요.</string>
+
+    <!-- 인트로 -->
+    <string name="intro_text">by. dmonster</string>
 
     <!-- 권한 -->
     <string name="set_permission_title">권한 설정</string>
@@ -26,6 +30,15 @@
     <string name="disabled_network">네트워크 연결이 필요합니다. 확인해 주세요.</string>
     <string name="block_off">차단해제</string>
 
+    <!-- 로그인화면 -->
+    <string name="error_login_id_empty">아이디를 입력해 주세요.</string>
+    <string name="error_login_pw_empty">비밀번호를 입력해 주세요.</string>
+    <string name="str_login">로그인</string>
+    <string name="str_join">회원가입</string>
+    <string name="str_find_account_info">아이디를 잊으셨나요?</string>
+    <string name="str_find_account"><u>계정찾기</u></string>
+    <string name="str_sns_login_info">SNS 간편로그인</string>
+
     <!-- 잠금화면 설정 다이얼로그 -->
     <string name="not_showing_week">일주일간 보지 않기</string>
     <string name="set_lock_screen">잠금화면 설정</string>
@@ -37,10 +50,8 @@
     <!-- 잠금화면 Notification -->
     <string name="lock_screen_notification_content_title">%s 잠금화면</string>
     <string name="lock_screen_notification_content_text">%s에서 잠금화면을 사용하고 있습니다.</string>
+
+    <!-- 뉴스상세 -->
     <string name="use_external_browser">외부 브라우저 사용</string>
     <string name="go_external_browser">해당 링크로 이동하려면 외부 브라우저를 이용해야 합니다.\n링크로 이동하시겠습니까?</string>
-    <string name="str_go">이동하기</string>
-    <string name="intro_text">by. dmonster</string>
-    <string name="error_login_id_empty">아이디를 입력해 주세요.</string>
-    <string name="error_login_pw_empty">비밀번호를 입력해 주세요.</string>
 </resources>

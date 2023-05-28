@@ -26,15 +26,12 @@ class MemberRepositoryImpl @Inject constructor(
         val response = remoteDataSource.requestLogin(id, pw)
 
         if (response.isSuccessful) {
-            response.body()?.let {
-                if (it.isSuccess()) {
-                    emit(Result.Success(it.data?.toModel()))
-
-                    return@let
+            response.body()?.data?.let {
+                if (!it.isSuccess()) {
+                    errorCallback.postErrorData(it)
                 }
 
-                emit(Result.Error(it.resultDetail))
-                errorCallback.postErrorData(it)
+                emit(Result.Success(it.toModel()))
             } ?: kotlin.run {
                 throw Exception()
             }
