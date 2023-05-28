@@ -26,10 +26,11 @@ abstract class BaseActivity<VB : ViewDataBinding, VM : BaseViewModel>(
         lifecycle.currentState == Lifecycle.State.RESUMED
 
     abstract fun init()
+    open fun initListener() {}
     abstract fun initViewModelCallback()
-    abstract fun initNetworkViewModelCallback()
-    abstract fun initPermissionViewModelCallback()
-    abstract fun initTopViewModelCallback()
+    open fun initNetworkViewModelCallback() {}
+    open fun initPermissionViewModelCallback() {}
+    open fun initTopViewModelCallback() {}
     abstract fun initErrorCallback()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,6 +38,7 @@ abstract class BaseActivity<VB : ViewDataBinding, VM : BaseViewModel>(
         binding.lifecycleOwner = this
 
         init()
+        initListener()
         initViewModelCallback()
         initNetworkViewModelCallback()
         initPermissionViewModelCallback()

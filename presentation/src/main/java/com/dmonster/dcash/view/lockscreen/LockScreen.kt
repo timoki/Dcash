@@ -5,35 +5,34 @@ import android.app.ActivityManager
 import android.app.KeyguardManager
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Build
-import android.os.Bundle
-import android.util.Log
 import android.view.WindowManager
 import android.widget.SeekBar
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
 import com.dmonster.dcash.R
+import com.dmonster.dcash.base.BaseActivity
 import com.dmonster.dcash.databinding.ActivityLockScreenBinding
 import com.dmonster.dcash.utils.lockscreen.OnSystemKeyPressedListener
 import com.dmonster.dcash.utils.lockscreen.SystemButtonWatcher
 import com.dmonster.dcash.view.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
+import java.text.SimpleDateFormat
+import java.util.Calendar
 
 @AndroidEntryPoint
-class LockScreen : AppCompatActivity() {
+class LockScreen : BaseActivity<ActivityLockScreenBinding, LockScreenViewModel>(
+    R.layout.activity_lock_screen
+) {
+    override val viewModel: LockScreenViewModel by viewModels()
 
-    private val binding: ActivityLockScreenBinding by lazy {
-        DataBindingUtil.setContentView(this, R.layout.activity_lock_screen)
-    }
-
-    private val viewModel: LockScreenViewModel by viewModels()
     private val watcher: SystemButtonWatcher by lazy {
         SystemButtonWatcher(this, object : OnSystemKeyPressedListener {
             override fun onPressed() {
-                val manager = getSystemService(ACTIVITY_SERVICE) as ActivityManager
-                manager.moveTaskToFront(taskId, 0)
+                return
+                /*val manager = getSystemService(ACTIVITY_SERVICE) as ActivityManager
+                manager.moveTaskToFront(taskId, 0)*/
             }
         })
     }
@@ -44,8 +43,7 @@ class LockScreen : AppCompatActivity() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun init() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
 
@@ -63,12 +61,9 @@ class LockScreen : AppCompatActivity() {
                 WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
             )
         }
-
-        initListener()
-        initViewModelCallback()
     }
 
-    private fun initListener() = with(binding) {
+    override fun initListener() = with(binding) {
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(view: SeekBar?, progress: Int, fromUser: Boolean) {
 
@@ -108,31 +103,14 @@ class LockScreen : AppCompatActivity() {
                 }
             }
         })
-
-        /*seekBar.setOnTouchListener { view, event ->
-            if (event.action == MotionEvent.ACTION_DOWN || event.action == MotionEvent.ACTION_MOVE) {
-                if (
-                    event.x >= seekBar.thumb.bounds.left &&
-                    event.x <= seekBar.thumb.bounds.right &&
-                    event.y <= seekBar.thumb.bounds.bottom &&
-                    event.y >= seekBar.thumb.bounds.top
-                ) {
-                    Log.d("아외안되", "1 / ${event.action}")
-                    false
-                }
-            }
-
-            Log.d("아외안되", "2 / ${event.action}")
-            true
-        }*/
     }
 
-    private fun initViewModelCallback() = with(viewModel) {
+    override fun initViewModelCallback() = with(viewModel) {
 
     }
 
-    override fun onUserLeaveHint() {
-        super.onUserLeaveHint()
+    override fun initErrorCallback() {
+
     }
 
     override fun onPause() {
