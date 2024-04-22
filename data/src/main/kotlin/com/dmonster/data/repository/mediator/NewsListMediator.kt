@@ -1,6 +1,5 @@
 package com.dmonster.data.repository.mediator
 
-import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
@@ -31,13 +30,11 @@ class NewsListMediator @Inject constructor(
         val page = when (loadType) {
             LoadType.REFRESH -> {
                 val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
-                Log.d("아외안되", "REFRESH -> remote is null : ${remoteKeys == null} / remoteKey : $remoteKeys")
                 remoteKeys?.nextKey?.minus(1) ?: remoteKeys?.prevKey?.plus(1) ?: 1
             }
 
             LoadType.PREPEND -> {
                 val remoteKeys = getRemoteKeyForFirstItem(state)
-                Log.d("아외안되", "PREPEND -> remote is null : ${remoteKeys == null} / remoteKey : $remoteKeys")
                 val prevKey = remoteKeys?.prevKey
                     ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
 
@@ -46,7 +43,6 @@ class NewsListMediator @Inject constructor(
 
             LoadType.APPEND -> {
                 val remoteKeys = getRemoteKeyForLastItem(state)
-                Log.d("아외안되", "APPEND -> remote is null : ${remoteKeys == null} / remoteKey : $remoteKeys")
                 val nextKey = remoteKeys?.nextKey
                     ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
 
@@ -63,6 +59,9 @@ class NewsListMediator @Inject constructor(
                 search_sdate = newsRequest.search_sdate,
                 search_edate = newsRequest.search_edate,
                 search_order = newsRequest.search_order,
+                search_category = newsRequest.search_category,
+                search_author = newsRequest.search_author,
+                search_creator = newsRequest.search_creator,
             )
 
             if (response.isSuccessful) {
@@ -76,7 +75,6 @@ class NewsListMediator @Inject constructor(
 
                 database.withTransaction {
                     if (loadType == LoadType.REFRESH) {
-                        Log.d("아외안되", "LoadType.REFRESH")
                         localDataSource.deleteRemoteKeys(RemoteKeysType.NEWS.name)
                         localDataSource.deleteAllNewsList()
                     }

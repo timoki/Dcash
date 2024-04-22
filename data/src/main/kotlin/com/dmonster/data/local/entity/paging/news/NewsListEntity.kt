@@ -31,4 +31,6 @@ data class NewsListEntity(
     val creator: String? = null,
     @ColumnInfo(name = "pubDate")
     val pubDate: String? = null,
+    @ColumnInfo(name = "point")
+    val point: Int? = null,
 )

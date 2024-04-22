@@ -5,7 +5,7 @@ import com.dmonster.dcash.databinding.FragmentPointBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-internal class PointFragment : BaseFragment<FragmentPointBinding, PointViewModel>() {
+class PointFragment : BaseFragment<FragmentPointBinding, PointViewModel>() {
     override fun init() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner

@@ -21,13 +21,12 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="${appIcon}"
-        android:label="${appName}"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
         android:supportsRtl="true"
         android:screenOrientation="portrait"
         android:theme="@style/Theme.Dcash"
         tools:targetApi="33"
-        tools:replace="icon, label"
         android:usesCleartextTraffic="true">
         <activity
             android:name=".view.lockscreen.LockScreen"
@@ -49,7 +48,6 @@
         <activity
             android:name=".view.main.MainActivity"
             android:configChanges="orientation|keyboard|keyboardHidden|screenSize|screenLayout|smallestScreenSize"
-            android:label="${appName}"
             android:launchMode="singleTask"
             android:exported="true">
             <intent-filter>

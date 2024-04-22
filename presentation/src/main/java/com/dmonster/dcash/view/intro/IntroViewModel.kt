@@ -8,14 +8,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
-internal class IntroViewModel @Inject constructor(
+class IntroViewModel @Inject constructor(
 
 ): BaseViewModel() {
 
     private val _isLottieUse = MutableStateFlow(false)
     val isLottieUse = _isLottieUse.asStateFlow()
 
-    private val _lottieImage = MutableStateFlow(R.raw.splash_test)
+    private val _lottieImage = MutableStateFlow(R.raw.loading_animation)
     val lottieImage = _lottieImage.asStateFlow()
 
     private val _splashImage = MutableStateFlow(R.drawable.intro)

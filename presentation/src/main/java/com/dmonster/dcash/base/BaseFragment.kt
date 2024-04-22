@@ -1,21 +1,22 @@
 package com.dmonster.dcash.base
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.createViewModelLazy
+import androidx.navigation.NavController
+import androidx.navigation.NavDirections
 import androidx.viewbinding.ViewBinding
 import com.dmonster.dcash.utils.observeOnLifecycleDestroy
 import com.dmonster.dcash.view.dialog.LoadingDialog
-import com.dmonster.dcash.view.main.MainActivity
 import com.dmonster.dcash.view.main.MainViewModel
 import java.lang.reflect.ParameterizedType
 
-internal abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : Fragment() {
+abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : Fragment() {
     abstract fun init()
     open fun initListener() {}
     abstract fun initViewModelCallback()
@@ -82,6 +83,30 @@ internal abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : Fra
                 loadingDialog?.dismiss()
                 loadingDialog = null
             }
+        }
+    }
+
+    fun NavController.safeNavigate(direction: NavDirections) {
+        try {
+            currentDestination!!
+                .getAction(
+                    direction.actionId
+                )!!.run {
+                navigate(direction)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        /*currentDestination?.getAction(direction.actionId)?.run {
+            navigate(direction)
+        }*/
+    }
+
+    fun NavController.safeNavigate(
+        @IdRes currentDestinationId: Int, @IdRes id: Int, args: Bundle? = null
+    ) {
+        if (currentDestinationId == currentDestination?.id) {
+            navigate(id, args)
         }
     }
 }

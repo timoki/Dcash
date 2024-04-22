@@ -1,7 +1,7 @@
 package com.dmonster.dcash.di
 
 import android.content.Context
-import android.util.Log
+import com.dmonster.data.remote.api.HomeAPIService
 import com.dmonster.data.remote.api.LoginAPIService
 import com.dmonster.data.remote.api.MemberAPIService
 import com.dmonster.data.remote.api.NewsAPIService
@@ -10,26 +10,17 @@ import com.dmonster.data.repository.datasource.RemoteDataSource
 import com.dmonster.data.repository.datasource.impl.RemoteDataSourceImpl
 import com.dmonster.dcash.BuildConfig
 import com.dmonster.dcash.utils.AppInfo
-import com.dmonster.dcash.utils.StaticData
 import com.dmonster.dcash.utils.StaticData.tokenData
 import com.dmonster.dcash.utils.TokenManager
 import com.dmonster.dcash.utils.clearMalformedUrls
-import com.dmonster.dcash.view.main.MainActivity
-import com.dmonster.domain.usecase.GetAccessTokenUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
 import okhttp3.Cache
 import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
-import okhttp3.Route
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -40,6 +31,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object RemoteModule {
+
+    @Singleton
+    @Provides
+    fun provideHomeAPIService(
+        retrofit: Retrofit
+    ): HomeAPIService = retrofit.create(HomeAPIService::class.java)
 
     @Singleton
     @Provides
@@ -71,12 +68,14 @@ object RemoteModule {
         loginAPIService: LoginAPIService,
         tokenAPIService: TokenAPIService,
         memberAPIService: MemberAPIService,
-        newsAPIService: NewsAPIService
+        newsAPIService: NewsAPIService,
+        homeAPIService: HomeAPIService,
     ): RemoteDataSource = RemoteDataSourceImpl(
         loginAPIService,
         tokenAPIService,
         memberAPIService,
         newsAPIService,
+        homeAPIService,
     )
 
     @Singleton

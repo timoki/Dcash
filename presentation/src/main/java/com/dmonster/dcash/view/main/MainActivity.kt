@@ -1,24 +1,17 @@
 package com.dmonster.dcash.view.main
 
-import android.animation.ObjectAnimator
-import android.animation.PropertyValuesHolder
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.View
-import android.view.animation.AnticipateInterpolator
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.core.animation.doOnEnd
-import androidx.core.splashscreen.SplashScreen
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -49,10 +42,8 @@ import com.dmonster.dcash.view.login.LoginFragment
 import com.dmonster.dcash.view.mypage.MyPageFragment
 import com.dmonster.dcash.view.network.NetworkViewModel
 import com.dmonster.dcash.view.news.NewsFragment
-import com.dmonster.dcash.view.news.NewsFragmentDirections
 import com.dmonster.dcash.view.point.PointFragment
 import com.dmonster.domain.model.Result
-import com.dmonster.domain.type.NavigateType
 import com.dmonster.domain.type.NetworkState
 import com.dmonster.domain.type.TopMenuType
 import com.google.android.material.transition.MaterialElevationScale
@@ -118,7 +109,9 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(
                 currentNavigationFragment?.let {
                     // 홈을 제외한 루트 경로면 뒤로가기 시 홈 화면으로 이동
                     if (it is NewsFragment || it is EventFragment || it is PointFragment || it is MyPageFragment) {
-                        viewModel.fragmentNavigateTo(NavigateType.Home())
+                        navController.navigate(
+                            NavigationDirections.actionGlobalHomeFragment()
+                        )
                         return
                     }
 
@@ -162,82 +155,35 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(
             }
         }
 
-        navigateToChannel.observeOnLifecycleDestroy(this@MainActivity) { item ->
-            item?.let {
-                navigateToCompose(
-                    when (it) {
-                        is NavigateType.BasicDialog -> {
-                            NavigationDirections.actionGlobalBasicDialog(
-                                it.getModel as BasicDialogModel
-                            )
-                        }
-
-                        is NavigateType.Login -> {
-                            NavigationDirections.actionGlobalLoginFragment()
-                        }
-
-                        is NavigateType.Home -> {
-                            viewModel.currentPageIndex.value = 3
-                            NavigationDirections.actionGlobalHomeGraph()
-                        }
-
-                        is NavigateType.News -> {
-                            viewModel.currentPageIndex.value = 1
-                            NavigationDirections.actionGlobalNewsGraph()
-                        }
-
-                        is NavigateType.Event -> {
-                            viewModel.currentPageIndex.value = 2
-                            NavigationDirections.actionGlobalEventGraph()
-                        }
-
-                        is NavigateType.Point -> {
-                            viewModel.currentPageIndex.value = 4
-                            NavigationDirections.actionGlobalPointGraph()
-                        }
-
-                        is NavigateType.MyPage -> {
-                            viewModel.currentPageIndex.value = 5
-                            NavigationDirections.actionGlobalMyPageGraph()
-                        }
-
-                        is NavigateType.LockScreenPermission -> {
-                            HomeFragmentDirections.actionHomeFragmentToLockScreenPermissionFragment()
-                        }
-
-                        is NavigateType.NewsDetailFromHome -> {
-                            HomeFragmentDirections.actionHomeFragmentToNewsDetailFragment()
-                        }
-
-                        is NavigateType.NewsDetailFromNews -> {
-                            NewsFragmentDirections.actionNewsFragmentToNewsDetailFragment(
-                                it.getModel
-                            )
-                        }
-                    }
-                )
-            }
-        }
+        onBottomMenuClickChannel.onEach {
+            navController.navigate(
+                when (it) {
+                    1 -> NavigationDirections.actionGlobalNewsFragment()
+                    2 -> NavigationDirections.actionGlobalEventFragment()
+                    3 -> NavigationDirections.actionGlobalHomeFragment()
+                    4 -> NavigationDirections.actionGlobalPointFragment()
+                    5 -> NavigationDirections.actionGlobalMyPageFragment()
+                    else -> return@onEach
+                }
+            )
+        }.observeInLifecycleDestroy(this@MainActivity)
 
         setOverlayPermissionChannel.onEach {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                val intent = Intent(
-                    Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                    Uri.parse("package:" + this@MainActivity.packageName)
-                )
+            val intent = Intent(
+                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                Uri.parse("package:" + this@MainActivity.packageName)
+            )
 
-                overLayPermission.launch(intent)
-            }
+            overLayPermission.launch(intent)
         }.observeInLifecycleStop(this@MainActivity)
 
         checkPermissionChannel.onEach {
             when (it) {
                 PermissionViewModel.TYPE_LOCK_SCREEN -> {
                     if (!permissionViewModel.canDrawOverlays()) {
-                        navigateToCompose(
+                        navController.navigate(
                             NavigationDirections.actionGlobalBasicDialog(
-                                BasicDialogModel(
-                                    titleText = resources.getString(R.string.set_lock_screen),
+                                BasicDialogModel(titleText = resources.getString(R.string.set_lock_screen),
                                     text = String.format(
                                         resources.getString(R.string.set_lock_screen_contents),
                                         resources.getString(
@@ -250,19 +196,19 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(
                                     setPositiveButton = true to resources.getString(R.string.set_use),
                                     buttonClickListener = object : BasicDialog.ButtonClickListener {
                                         override fun onPositiveButtonClick(
-                                            view: View,
-                                            dialog: BasicDialog
+                                            view: View, dialog: BasicDialog
                                         ) {
                                             super.onPositiveButtonClick(view, dialog)
 
                                             if (!permissionViewModel.canDrawOverlays()) {
-                                                fragmentNavigateTo(NavigateType.LockScreenPermission())
+                                                navController.navigate(
+                                                    HomeFragmentDirections.actionHomeFragmentToLockScreenPermissionFragment()
+                                                )
                                             } else {
                                                 startLockScreenService()
                                             }
                                         }
-                                    }
-                                ),
+                                    }),
                             )
                         )
                     }
@@ -283,14 +229,6 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(
                 Log.e("REQ_DETAILS_SETTINGS", "권한 error -> ${e.printStackTrace()}")
                 val intent = Intent(Settings.ACTION_MANAGE_APPLICATIONS_SETTINGS)
                 settingDetails.launch(intent)
-            }
-        }.observeInLifecycleStop(this@MainActivity)
-
-        topButtonVisible.onEach { isVisible ->
-            if (isVisible) {
-                binding.topButton.show()
-            } else {
-                binding.topButton.hide()
             }
         }.observeInLifecycleStop(this@MainActivity)
     }
@@ -320,11 +258,19 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(
         }.observeInLifecycleStop(this@MainActivity)
 
         onRightMenuClickChannel.onEach {
+            when (it) {
+                TopMenuType.RightMenu.SEARCH_AND_NOTIFICATION -> {
 
+                }
+            }
         }.observeInLifecycleStop(this@MainActivity)
 
         onRightMenuSubClickChannel.onEach {
+            when (it) {
+                TopMenuType.RightMenu.SEARCH_AND_NOTIFICATION -> {
 
+                }
+            }
         }.observeInLifecycleStop(this@MainActivity)
     }
 
@@ -369,7 +315,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(
                     topViewModel.setTopMenu(
                         leftMenu = TopMenuType.LeftMenu.LOGO,
                         middleMenu = TopMenuType.MiddleMenu.NONE,
-                        rightMenu = TopMenuType.RightMenu.NOTIFICATION
+                        rightMenu = TopMenuType.RightMenu.SEARCH_AND_NOTIFICATION
                     )
                 }
 
@@ -440,11 +386,6 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(
     override fun onDestroy() {
         networkViewModel.unRegister()
         super.onDestroy()
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        Log.d("아외안되", "$newConfig")
     }
 
     fun getNewAccessToken() {

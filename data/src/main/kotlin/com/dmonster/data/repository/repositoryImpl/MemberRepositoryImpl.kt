@@ -1,6 +1,5 @@
 package com.dmonster.data.repository.repositoryImpl
 
-import android.util.Log
 import com.dmonster.data.repository.datasource.RemoteDataSource
 import com.dmonster.data.utils.ErrorCallback
 import com.dmonster.data.utils.ObjectMapper.toModel
@@ -29,6 +28,7 @@ class MemberRepositoryImpl @Inject constructor(
             response.body()?.data?.let {
                 if (!it.isSuccess()) {
                     errorCallback.postErrorData(it)
+                    emit(Result.Error(it.resultDetail))
                 }
 
                 emit(Result.Success(it.toModel()))
@@ -61,7 +61,6 @@ class MemberRepositoryImpl @Inject constructor(
                 throw Exception()
             }
         } else {
-            Log.d("아외안되", "${response.body()} / ${response.body()?.statusCode}")
             response.body()?.statusCode?.let {
                 when (it) {
                     TokenErrorType.TypeUnprocessed.value -> {

@@ -49,7 +49,7 @@
             <com.google.android.material.bottomappbar.BottomAppBar
                 android:id="@+id/bottomAppbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/bottom_appbar_height"
                 android:layout_gravity="bottom"
                 android:visibility="@{viewModel.isBottomAppBarVisible ? View.VISIBLE : View.GONE}"
                 app:contentInsetEnd="0dp"
@@ -63,7 +63,7 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="70dp"
+                    android:layout_height="match_parent"
                     android:orientation="horizontal">
 
                     <RelativeLayout
@@ -90,8 +90,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
-                            app:coilSrc="@{viewModel.currentPageIndex == 2 ? @drawable/bot_nav_event_on : @drawable/bot_nav_event}"
-                            android:src="@drawable/bot_nav_event" />
+                            android:src="@drawable/bot_nav_event"
+                            app:coilSrc="@{viewModel.currentPageIndex == 2 ? @drawable/bot_nav_event_on : @drawable/bot_nav_event}" />
                     </RelativeLayout>
 
                     <RelativeLayout
@@ -104,8 +104,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
-                            app:coilSrc="@{viewModel.currentPageIndex == 3 ? @drawable/bot_nav_home_on : @drawable/bot_nav_home}"
-                            android:src="@drawable/bot_nav_home" />
+                            android:src="@drawable/bot_nav_home"
+                            app:coilSrc="@{viewModel.currentPageIndex == 3 ? @drawable/bot_nav_home_on : @drawable/bot_nav_home}" />
                     </RelativeLayout>
 
                     <RelativeLayout
@@ -118,8 +118,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
-                            app:coilSrc="@{viewModel.currentPageIndex == 4 ? @drawable/bot_nav_point_on : @drawable/bot_nav_point}"
-                            android:src="@drawable/bot_nav_point" />
+                            android:src="@drawable/bot_nav_point"
+                            app:coilSrc="@{viewModel.currentPageIndex == 4 ? @drawable/bot_nav_point_on : @drawable/bot_nav_point}" />
                     </RelativeLayout>
 
                     <RelativeLayout
@@ -132,10 +132,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
-                            app:coilSrc="@{viewModel.currentPageIndex == 5 ? @drawable/bot_nav_my_on : @drawable/bot_nav_my}"
-                            android:src="@drawable/bot_nav_my" />
+                            android:src="@drawable/bot_nav_my"
+                            app:coilSrc="@{viewModel.currentPageIndex == 5 ? @drawable/bot_nav_my_on : @drawable/bot_nav_my}" />
                     </RelativeLayout>
                 </LinearLayout>
+
             </com.google.android.material.bottomappbar.BottomAppBar>
 
             <!--<com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -147,24 +148,23 @@
                 android:visibility="@{viewModel.isBottomAppBarVisible ? View.VISIBLE : View.GONE}"
                 app:layout_anchor="@id/bottomAppbar" />-->
 
-        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/topButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/white_e"
+                app:layout_anchor="@id/navHostFragmentContainer"
+                app:layout_anchorGravity="bottom|end"
+                android:layout_marginBottom="90dp"
+                android:layout_marginEnd="20dp"
+                android:src="@drawable/ic_arrow_up"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:onSingleClick="@{() -> viewModel.onScrollTop()}"
+                app:visibilityWithAnimation="@{viewModel.topButtonVisible ? true : false}"
+                tools:visibility="visible" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/topButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="80dp"
-            android:src="@android:drawable/ic_menu_upload"
-            android:visibility="gone"
-            app:borderWidth="0dp"
-            app:elevation="0dp"
-            app:fabSize="normal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:maxImageSize="56dp"
-            app:onSingleClick="@{() -> viewModel.onScrollTop()}"
-            tools:visibility="visible" />
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -1,10 +1,12 @@
 package com.dmonster.dcash.di
 
+import com.dmonster.domain.repository.HomeRepository
 import com.dmonster.domain.repository.MemberRepository
 import com.dmonster.domain.repository.NewsRepository
 import com.dmonster.domain.repository.TokenRepository
 import com.dmonster.domain.usecase.ChangeRefreshTokenUseCase
 import com.dmonster.domain.usecase.GetAccessTokenUseCase
+import com.dmonster.domain.usecase.GetHomeDataUseCase
 import com.dmonster.domain.usecase.GetMemberInfoUseCase
 import com.dmonster.domain.usecase.GetNewsListUseCase
 import com.dmonster.domain.usecase.RequestLoginUseCase
@@ -46,4 +48,10 @@ object UseCaseModule {
     fun provideGetNewsListUseCase(
         newsRepository: NewsRepository
     ): GetNewsListUseCase = GetNewsListUseCase(newsRepository)
+
+    @Provides
+    @ViewModelScoped
+    fun provideGetHomeDataUseCase(
+        homeRepository: HomeRepository
+    ): GetHomeDataUseCase = GetHomeDataUseCase(homeRepository)
 }

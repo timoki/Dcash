@@ -25,6 +25,7 @@ sealed class TopMenuType {
             const val REMOVE = 4
             const val POINT_AND_SHARE = 5
             const val ATTEND_AND_NOTIFICATION = 6
+            const val SEARCH_AND_NOTIFICATION = 7
         }
     }
 }

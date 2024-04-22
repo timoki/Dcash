@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-internal class NetworkViewModel @Inject constructor(
+class NetworkViewModel @Inject constructor(
     private val application: Application,
     private val dataStore: DataStoreModule
 ) : BaseViewModel() {

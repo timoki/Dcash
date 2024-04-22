@@ -9,4 +9,7 @@ data class NewsRequest(
     val search_sdate: String?,
     val search_edate: String?,
     val search_order: String?,
+    val search_category: String?,
+    val search_author: String?,
+    val search_creator: String?,
 ) : BaseRequest()

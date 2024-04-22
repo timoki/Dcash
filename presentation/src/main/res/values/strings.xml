@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name_release">디캐시</string>
-    <string name="app_name_debug">디캐시 디버그</string>
+    <string name="app_name">디캐시</string>
 
     <!-- 공통 -->
     <string name="cancel">취소</string>
     <string name="confirm">확인</string>
+    <string name="str_confirm2">확인했어요.</string>
     <string name="send">전송</string>
     <string name="set_use">사용하기</string>
     <string name="retry">재시도</string>
@@ -13,6 +13,8 @@
     <string name="main_back_pressed">뒤로가기 버튼을 한번 더 누르면 종료됩니다.</string>
 
     <!-- 공통(에러) -->
+    <string name="str_load_error_title">정보를 가져오지 못했습니다.</string>
+    <string name="str_load_home_data_error">정보를 가져오는데 실패했습니다.\n잠시 후 다시 시도해 주세요.</string>
     <string name="str_load_state_error">리스트를 가져오는데 실패했습니다.\n잠시 후 다시 시도해 주세요.</string>
 
     <!-- 인트로 -->
@@ -41,6 +43,7 @@
 
     <!-- 잠금화면 설정 다이얼로그 -->
     <string name="not_showing_week">일주일간 보지 않기</string>
+    <string name="not_showing_next">다시 보지 않기</string>
     <string name="set_lock_screen">잠금화면 설정</string>
     <string name="set_lock_screen_contents">%s을 잠금화면으로 설정하시면 관심사에 대한 최신 뉴스와 아직 포인트를 적립 하지 않은 뉴스에 대해 실시간으로 정보를 받아볼 수 있습니다.\n\n잠금화면으로 사용하시겠습니까?</string>
     <string name="set_lock_screen_title">잠금화면 사용을 위해 \'다른 앱 위에 표시\' 권한이 필요합니다.</string>
@@ -56,7 +59,27 @@
     <string name="str_launch_app">앱실행</string>
 
     <!-- 뉴스상세 -->
+    <string name="str_not_load_news_title">뉴스를 불러오지 못했습니다.</string>
+    <string name="str_not_load_news">삭제되거나 다른 요인으로 뉴스를 불러 올 수 없습니다.</string>
     <string name="use_external_browser">외부 브라우저 사용</string>
     <string name="go_external_browser">해당 링크로 이동하려면 외부 브라우저를 이용해야 합니다.\n링크로 이동하시겠습니까?</string>
     <string name="str_news">뉴스</string>
+    <string name="str_scroll_top">위로 이동</string>
+    <string name="str_recommend_news">추천 뉴스</string>
+    <string name="str_custom_news">맞춤 뉴스</string>
+    <string name="str_more_recommend_news">추천뉴스 펼쳐보기</string>
+    <string name="str_slash">/</string>
+    <string name="str_dot">ㆍ</string>
+    <string name="str_point">+%dp</string>
+    <string name="str_id">아이디</string>
+    <string name="str_pw">비밀번호</string>
+    <string name="str_all_news">전체뉴스 보기</string>
+    <string name="str_populer">인기</string>
+    <string name="str_all">전체</string>
+    <string name="str_category_news">분야별뉴스</string>
+    <string name="str_reset">재설정</string>
+    <string name="str_news_view_tutorial_title">뉴스를보면 %dp 적립!</string>
+    <string name="str_news_view_tutorial_contents1">한번 포인트를 적립한 뉴스는 다시 적립이 불가능하며</string>
+    <string name="str_news_view_tutorial_contents2">아이콘이 있으면 적립이 가능합니다.</string>
+    <string name="str_news_view_tutorial_contents3">뉴스를 80%이상, 10초 이상 봐야지 포인트가 적립이 됩니다.</string>
 </resources>

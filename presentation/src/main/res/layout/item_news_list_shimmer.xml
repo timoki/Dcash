@@ -8,7 +8,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="150dp">
+        android:layout_height="115dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
@@ -21,7 +21,7 @@
 
             <View
                 android:id="@+id/view1"
-                android:layout_width="120dp"
+                android:layout_width="85dp"
                 android:layout_height="0dp"
                 android:background="@color/loading_shimmer"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -39,7 +39,7 @@
 
             <View
                 android:layout_width="150dp"
-                android:layout_height="40dp"
+                android:layout_height="20dp"
                 android:background="@color/loading_shimmer"
                 android:textColor="@color/default_grey"
                 app:layout_constraintBottom_toBottomOf="parent"

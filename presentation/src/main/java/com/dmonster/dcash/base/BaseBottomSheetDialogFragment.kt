@@ -4,12 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.createViewModelLazy
 import androidx.viewbinding.ViewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import java.lang.reflect.ParameterizedType
 
-internal abstract class BaseBottomSheetDialogFragment<VB : ViewBinding, VM : BaseViewModel> :
+abstract class BaseBottomSheetDialogFragment<VB : ViewBinding, VM : BaseViewModel>() :
     BottomSheetDialogFragment() {
     abstract fun init()
     open fun initListener() {}
@@ -31,7 +32,11 @@ internal abstract class BaseBottomSheetDialogFragment<VB : ViewBinding, VM : Bas
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         binding = inflateMethod.invoke(null, inflater, container, false) as VB
-        viewModel = createViewModelLazy(classVM.kotlin, { viewModelStore }).value
+        try {
+            viewModel = createViewModelLazy(classVM.kotlin, { viewModelStore }).value
+        } catch (e: Exception) {
+            //throw e
+        }
         return binding.root
     }
 
@@ -42,5 +47,10 @@ internal abstract class BaseBottomSheetDialogFragment<VB : ViewBinding, VM : Bas
         initListener()
         initViewModelCallback()
         navigationBackStackCallback()
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setStyle(DialogFragment.STYLE_NO_TITLE, com.google.android.material.R.style.Theme_Design_BottomSheetDialog)
     }
 }

@@ -1,9 +1,10 @@
 package com.dmonster.dcash.view.news
 
+import android.util.Log
 import android.view.View
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.dmonster.dcash.base.BaseFragment
 import com.dmonster.dcash.base.MyLoadStateAdapter
@@ -11,23 +12,48 @@ import com.dmonster.dcash.databinding.FragmentNewsBinding
 import com.dmonster.dcash.utils.ScrollListener
 import com.dmonster.dcash.utils.observeInLifecycleStop
 import com.dmonster.dcash.utils.observeOnLifecycleStop
-import com.dmonster.domain.model.paging.news.NewsListModel
-import com.dmonster.domain.type.NavigateType
+import com.dmonster.dcash.view.news.adapter.FilterAdapter
+import com.dmonster.dcash.view.news.adapter.NewsAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
-internal class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>(),
+class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>(),
     SwipeRefreshLayout.OnRefreshListener {
 
-    private val adapter: NewsAdapter by lazy {
-        NewsAdapter()
+    private val newsAdapter: NewsAdapter = NewsAdapter { item ->
+        findNavController().safeNavigate(
+            NewsFragmentDirections.actionNewsFragmentToNewsDetailFragment(
+                item
+            )
+        )
+    }
+
+    private val creatorAdapter = FilterAdapter {
+        it.name?.let { name ->
+            if (it.isChecked) {
+                viewModel.selectCreator.add(name)
+            } else {
+                viewModel.selectCreator.remove(name)
+            }
+        }
+        newsAdapter.refresh()
+    }
+
+    private val authorAdapter = FilterAdapter {
+        it.name?.let { name ->
+            if (it.isChecked) {
+                viewModel.selectAuthor.add(name)
+            } else {
+                viewModel.selectAuthor.remove(name)
+            }
+        }
+        newsAdapter.refresh()
     }
 
     private val scrollListener: ScrollListener by lazy {
         ScrollListener(
-            binding.listRv.layoutManager as LinearLayoutManager,
-            mainViewModel
+            binding.listRv.layoutManager as LinearLayoutManager, mainViewModel
         )
     }
 
@@ -36,14 +62,32 @@ internal class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>()
         binding.lifecycleOwner = viewLifecycleOwner
         binding.refreshListener = this
         binding.listRv.let { rv ->
-            rv.adapter = adapter.withLoadStateHeaderAndFooter(
-                MyLoadStateAdapter { adapter.retry() },
-                MyLoadStateAdapter { adapter.retry() }
-            )
+            rv.adapter =
+                newsAdapter.withLoadStateHeaderAndFooter(MyLoadStateAdapter { newsAdapter.retry() },
+                    MyLoadStateAdapter { newsAdapter.retry() })
             rv.addOnScrollListener(scrollListener)
         }
 
-        adapter.loadStateFlow.observeOnLifecycleStop(viewLifecycleOwner) {
+        mainViewModel.newsCategory.value?.let {
+            it.forEach { filter ->
+                binding.categoryTab.run {
+                    addTab(
+                        newTab().setText(filter.name).setTag(filter.code)
+                    )
+                }
+            }
+
+            viewModel.selectCategory.value = it[0].code ?: ""
+            newsAdapter.refresh()
+        }
+
+        binding.creatorRv.adapter = creatorAdapter
+        binding.authorRv.adapter = authorAdapter
+
+        creatorAdapter.submitList(mainViewModel.newsCreator.value)
+        authorAdapter.submitList(mainViewModel.newsAuthor.value)
+
+        newsAdapter.loadStateFlow.observeOnLifecycleStop(viewLifecycleOwner) {
             setShimmer(false)
 
             binding.isResult = when {
@@ -57,7 +101,7 @@ internal class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>()
                     false
                 }
 
-                it.refresh is LoadState.NotLoading && adapter.itemCount == 0 -> {
+                it.refresh is LoadState.NotLoading && newsAdapter.itemCount == 0 -> {
                     //binding.noResult.errorString = getString(R.string.no_history_account)
                     false
                 }
@@ -69,17 +113,13 @@ internal class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>()
         }
     }
 
-    override fun initListener() {
-        adapter.setOnItemClickListener(object : NewsAdapter.ItemListener {
-            override fun onRootClick(item: NewsListModel) {
-                mainViewModel.fragmentNavigateTo(NavigateType.NewsDetailFromNews(model = item))
-            }
-        })
-    }
-
     override fun initViewModelCallback(): Unit = with(viewModel) {
-        newsList.observeOnLifecycleStop(viewLifecycleOwner) {
-            adapter.submitData(it)
+        newsList.observeOnLifecycleStop(viewLifecycleOwner) { data ->
+            newsAdapter.submitData(data)
+        }
+
+        isSelectFilter.observeOnLifecycleStop(viewLifecycleOwner) {
+            Log.d("아외안되", "isSelectFilter $it")
         }
     }
 
@@ -95,7 +135,8 @@ internal class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>()
     override fun initMainViewModelCallback(): Unit = with(mainViewModel) {
         scrollTop.onEach {
             binding.listRv.stopScroll()
-            val position = (binding.listRv.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+            val position =
+                (binding.listRv.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
             if (position > 30) binding.listRv.scrollToPosition(30)
             binding.listRv.smoothScrollToPosition(0)
         }.observeInLifecycleStop(viewLifecycleOwner)
@@ -116,6 +157,6 @@ internal class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>()
     override fun onRefresh() {
         binding.refreshView.isRefreshing = false
         //binding.noResultSwipe.isRefreshing = false
-        adapter.refresh()
+        newsAdapter.refresh()
     }
 }

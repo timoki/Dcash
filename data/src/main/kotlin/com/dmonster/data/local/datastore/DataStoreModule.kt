@@ -1,8 +1,6 @@
 package com.dmonster.data.local.datastore
 
 import android.content.Context
-import android.util.Log
-import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
@@ -11,7 +9,6 @@ import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 import javax.inject.Inject
@@ -28,6 +25,7 @@ class DataStoreModule @Inject constructor(
     private val loginPwKey = stringPreferencesKey("loginPw")
     private val accessTokenKey = stringPreferencesKey("accessToken")
     private val refreshTokenKey = stringPreferencesKey("refreshToken")
+    private val notShowingNewsViewTutorialKey = booleanPreferencesKey("notShowingNewsViewTutorial")
 
     val isMobileData: Flow<Boolean> = context.dataStore.data
         .catch { exception ->
@@ -151,6 +149,27 @@ class DataStoreModule @Inject constructor(
         if (getData != value) {
             context.dataStore.edit { preferences ->
                 preferences[refreshTokenKey] = value
+            }
+        }
+    }
+
+    val isNotShowingNewsViewTutorial: Flow<Boolean> = context.dataStore.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map { preferences ->
+            preferences[notShowingNewsViewTutorialKey] ?: false
+        }
+
+    suspend fun putNotShowingNewsViewTutorial(use: Boolean) {
+        val getData = isNotShowingNewsViewTutorial.first()
+        if (getData != use) {
+            context.dataStore.edit { preferences ->
+                preferences[notShowingNewsViewTutorialKey] = use
             }
         }
     }
