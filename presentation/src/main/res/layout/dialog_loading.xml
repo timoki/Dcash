@@ -18,6 +18,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
-            app:lottieSrc="@{R.raw.splash_test}"/>
+            app:lottieSrc="@{R.raw.loading_animation}"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

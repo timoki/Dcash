@@ -28,13 +28,10 @@ android {
         val baseUrlDebug: String = project.properties["baseUrlDebug"] as String
 
         getByName("debug") {
-            manifestPlaceholders["appName"] = "@string/app_name_debug"
-            manifestPlaceholders["appIcon"] = "@mipmap/ic_launcher"
             isMinifyEnabled = false
             isJniDebuggable = true
             applicationIdSuffix = ".debug"
             signingConfig = signingConfigs.getByName("debug")
-            resValue("string", "app_name", "@string/app_name_debug")
             buildConfigField("String", "BASE_URL", baseUrlDebug)
 
             proguardFiles(
@@ -44,10 +41,7 @@ android {
         }
 
         getByName("release") {
-            manifestPlaceholders["appName"] = "@string/app_name_release"
-            manifestPlaceholders["appIcon"] = "@mipmap/ic_launcher"
             isMinifyEnabled = true
-            resValue("string", "app_name", "@string/app_name_release")
             buildConfigField("String", "BASE_URL", baseUrl)
 
             proguardFiles(
@@ -215,6 +209,8 @@ dependencies {
 
     // SplashScreen
     implementation("androidx.core:core-splashscreen:1.0.0-rc01")
+
+    implementation("com.tbuonomo:dotsindicator:5.0")
 }
 
 kapt {

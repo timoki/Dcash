@@ -3,14 +3,22 @@ package com.dmonster.data.utils
 import com.dmonster.data.local.entity.paging.news.NewsListEntity
 import com.dmonster.data.remote.dto.response.MemberInfoDto
 import com.dmonster.data.remote.dto.response.PageDto
-import com.dmonster.data.remote.dto.response.news.NewsDto
 import com.dmonster.data.remote.dto.response.TokenDto
+import com.dmonster.data.remote.dto.response.home.AuthorDto
+import com.dmonster.data.remote.dto.response.home.CategoryDto
+import com.dmonster.data.remote.dto.response.home.CategoryNewsDto
+import com.dmonster.data.remote.dto.response.home.CreatorDto
+import com.dmonster.data.remote.dto.response.home.HomeDataDto
+import com.dmonster.data.remote.dto.response.news.NewsDto
 import com.dmonster.data.remote.dto.response.news.NewsListDto
 import com.dmonster.domain.model.MemberInfoModel
-import com.dmonster.domain.model.paging.news.NewsModel
 import com.dmonster.domain.model.TokenModel
+import com.dmonster.domain.model.home.CategoryNewsModel
+import com.dmonster.domain.model.home.FilterModel
+import com.dmonster.domain.model.home.HomeDataModel
 import com.dmonster.domain.model.paging.PageModel
 import com.dmonster.domain.model.paging.news.NewsListModel
+import com.dmonster.domain.model.paging.news.NewsModel
 
 object ObjectMapper {
     fun TokenDto.toModel(): TokenModel = TokenModel(
@@ -39,6 +47,7 @@ object ObjectMapper {
         author = this.author,
         creator = this.creator,
         pubDate = this.pubDate,
+        point = this.point,
     )
 
     fun NewsDto.toModel(): NewsModel = NewsModel(
@@ -78,6 +87,7 @@ object ObjectMapper {
         author = this.author,
         creator = this.creator,
         pubDate = this.pubDate,
+        point = this.point,
     )
 
     fun List<NewsListEntity>.entityToNewsListModelList(): List<NewsListModel> = map {
@@ -93,5 +103,55 @@ object ObjectMapper {
         author = this.author,
         creator = this.creator,
         pubDate = this.pubDate,
+        point = this.point,
+    )
+
+    private fun AuthorDto.toModel(): FilterModel = FilterModel(
+        name = this.atName,
+        code = this.atCode,
+        order = this.atOrder,
+    )
+
+    private fun List<AuthorDto>.dtoToAuthorModelList(): List<FilterModel> = map {
+        it.toModel()
+    }
+
+    private fun CategoryDto.toModel(): FilterModel = FilterModel(
+        name = this.ctName,
+        code = this.ctCode,
+        order = this.ctOrder,
+    )
+
+    private fun List<CategoryDto>.dtoToCategoryModelList(): List<FilterModel> = map {
+        it.toModel()
+    }
+
+    private fun CreatorDto.toModel(): FilterModel = FilterModel(
+        name = this.ctName,
+        code = this.ctCode,
+        order = this.ctOrder,
+    )
+
+    private fun List<CreatorDto>.dtoToCreatorModelList(): List<FilterModel> = map {
+        it.toModel()
+    }
+
+    private fun CategoryNewsDto.toModel(): CategoryNewsModel = CategoryNewsModel(
+        ctName = this.ctName,
+        news = this.news?.dtoToNewsListModelList(),
+    )
+
+    private fun List<CategoryNewsDto>.dtoToCategoryNewsModelList(): List<CategoryNewsModel> = map {
+        it.toModel()
+    }
+
+    fun HomeDataDto.toModel(): HomeDataModel = HomeDataModel(
+        creator = this.creator?.dtoToCreatorModelList(),
+        author = this.author?.dtoToAuthorModelList(),
+        category = this.category?.dtoToCategoryModelList(),
+        custom = this.custom?.dtoToNewsListModelList(),
+        banner = this.banner?.dtoToNewsListModelList(),
+        categoryNews = this.categoryNews?.dtoToCategoryNewsModelList(),
+        recommend = this.recommend?.dtoToNewsListModelList(),
     )
 }

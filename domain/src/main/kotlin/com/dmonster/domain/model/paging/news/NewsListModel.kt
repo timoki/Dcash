@@ -11,4 +11,5 @@ data class NewsListModel(
     val author: String? = null,
     val creator: String? = null,
     val pubDate: String? = null,
+    val point: Int? = null,
 ) : Serializable

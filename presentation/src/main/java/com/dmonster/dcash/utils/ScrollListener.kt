@@ -14,7 +14,7 @@ class ScrollListener @Inject constructor(
         super.onScrolled(recyclerView, dx, dy)
         layoutManager.apply {
             val firstItemPosition = findFirstVisibleItemPosition()
-            mainViewModel.setTopButtonVisible(firstItemPosition >= 2)
+            mainViewModel.topButtonVisible.value = firstItemPosition >= 2
         }
     }
 }

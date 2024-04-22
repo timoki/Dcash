@@ -8,10 +8,10 @@ import android.view.View
 import android.view.Window
 import android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
 import android.view.WindowManager
+import android.view.animation.AnimationUtils
+import android.widget.TextView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.view.isVisible
 import com.dmonster.dcash.R
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import okhttp3.Cache
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
@@ -23,10 +23,12 @@ fun showSnackBar(
     message: String
 ) {
     hideSnackBar()
-    val view = activity.findViewById<CoordinatorLayout>(R.id.coordinator)
+    val anchorView = activity.findViewById<CoordinatorLayout>(R.id.coordinator)
     //val fab = activity.findViewById<FloatingActionButton>(R.id.fab)
-    snackBar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT).apply {
+    snackBar = Snackbar.make(anchorView, message, Snackbar.LENGTH_SHORT).apply {
         //if (fab.isVisible) anchorView = fab
+        val textView = view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
+        textView.setTextColor(activity.resources.getColor(R.color.text_color_white))
         show()
     }
 }
@@ -103,4 +105,17 @@ fun Cache.clearMalformedUrls(): Cache {
     }
 
     return this
+}
+
+fun View.setVisibilityWithAnimation(
+    visible: Boolean
+) {
+    if (visible) {
+        visibility = View.VISIBLE
+        startAnimation(AnimationUtils.loadAnimation(context, R.anim.view_visible))
+    } else {
+        val hideAnim = AnimationUtils.loadAnimation(context, R.anim.view_hide)
+        hideAnim.setAnimationListener(HideAnimListener(this))
+        startAnimation(hideAnim)
+    }
 }

@@ -3,6 +3,7 @@ package com.dmonster.dcash.view.intro
 import android.os.CountDownTimer
 import android.view.View
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.dmonster.dcash.R
 import com.dmonster.dcash.base.BaseFragment
 import com.dmonster.dcash.databinding.FragmentIntroBinding
@@ -11,10 +12,9 @@ import com.dmonster.dcash.utils.observeInLifecycleStop
 import com.dmonster.dcash.utils.observeOnLifecycleStop
 import com.dmonster.dcash.view.dialog.basic.BasicDialog
 import com.dmonster.dcash.view.dialog.basic.BasicDialogModel
-import com.dmonster.domain.type.NavigateType
 import kotlinx.coroutines.flow.onEach
 
-internal class IntroFragment : BaseFragment<FragmentIntroBinding, IntroViewModel>() {
+class IntroFragment : BaseFragment<FragmentIntroBinding, IntroViewModel>() {
 
     private var timerFinished = false
     private var checkPermission = false
@@ -56,66 +56,56 @@ internal class IntroFragment : BaseFragment<FragmentIntroBinding, IntroViewModel
 
         showPermissionPopup.onEach {
             if (it) {
-                mainViewModel.fragmentNavigateTo(
-                    NavigateType.BasicDialog(
-                        BasicDialogModel(
-                            titleText = getString(R.string.set_permission_title),
-                            text = String.format(
-                                getString(R.string.set_permission_contents),
-                                getString(R.string.app_name)
-                            ),
-                            setCancelable = false,
-                            setPositiveButton = true to getString(R.string.set_lock_screen_button),
-                            buttonClickListener = object : BasicDialog.ButtonClickListener {
-                                override fun onPositiveButtonClick(
-                                    view: View,
-                                    dialog: BasicDialog
-                                ) {
-                                    super.onPositiveButtonClick(view, dialog)
-                                    requestPermission(requireActivity())
-                                }
+                findNavController().safeNavigate(IntroFragmentDirections.actionGlobalBasicDialog(
+                    BasicDialogModel(titleText = getString(R.string.set_permission_title),
+                        text = String.format(
+                            getString(R.string.set_permission_contents),
+                            getString(R.string.app_name)
+                        ),
+                        setCancelable = false,
+                        setPositiveButton = true to getString(R.string.set_lock_screen_button),
+                        buttonClickListener = object : BasicDialog.ButtonClickListener {
+                            override fun onPositiveButtonClick(
+                                view: View, dialog: BasicDialog
+                            ) {
+                                super.onPositiveButtonClick(view, dialog)
+                                requestPermission(requireActivity())
                             }
-                        )
-                    )
-                )
+                        })))
             }
         }.observeInLifecycleStop(viewLifecycleOwner)
 
         showSettingPopup.onEach {
-            mainViewModel.fragmentNavigateTo(
-                NavigateType.BasicDialog(
-                    BasicDialogModel(
-                        titleText = getString(R.string.set_permission_title),
-                        text = String.format(
-                            getString(R.string.require_permission_contents),
-                            getString(R.string.app_name)
-                        ),
-                        setCancelable = false,
-                        setNegativeButton = true to getString(R.string.finish),
-                        setPositiveButton = true to getString(R.string.require_permission_button),
-                        buttonClickListener = object : BasicDialog.ButtonClickListener {
-                            override fun onPositiveButtonClick(
-                                view: View,
-                                dialog: BasicDialog
-                            ) {
-                                super.onPositiveButtonClick(view, dialog)
-                                mainViewModel.goPermissionSetting()
-                            }
-
-                            override fun onNegativeButtonClick(view: View, dialog: BasicDialog) {
-                                super.onNegativeButtonClick(view, dialog)
-                                requireActivity().finish()
-                            }
+            findNavController().safeNavigate(IntroFragmentDirections.actionGlobalBasicDialog(
+                BasicDialogModel(titleText = getString(R.string.set_permission_title),
+                    text = String.format(
+                        getString(R.string.require_permission_contents),
+                        getString(R.string.app_name)
+                    ),
+                    setCancelable = false,
+                    setNegativeButton = true to getString(R.string.finish),
+                    setPositiveButton = true to getString(R.string.require_permission_button),
+                    buttonClickListener = object : BasicDialog.ButtonClickListener {
+                        override fun onPositiveButtonClick(
+                            view: View, dialog: BasicDialog
+                        ) {
+                            super.onPositiveButtonClick(view, dialog)
+                            mainViewModel.goPermissionSetting()
                         }
-                    )
-                )
-            )
+
+                        override fun onNegativeButtonClick(view: View, dialog: BasicDialog) {
+                            super.onNegativeButtonClick(view, dialog)
+                            requireActivity().finish()
+                        }
+                    })))
         }.observeInLifecycleStop(viewLifecycleOwner)
     }
 
     private fun goNextPage() {
         if (timerFinished && checkPermission) {
-            mainViewModel.fragmentNavigateTo(NavigateType.Login())
+            findNavController().safeNavigate(
+                IntroFragmentDirections.actionIntroFragmentToLoginFragment()
+            )
         }
     }
 }

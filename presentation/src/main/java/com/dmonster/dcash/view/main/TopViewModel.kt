@@ -1,8 +1,8 @@
 package com.dmonster.dcash.view.main
 
 import androidx.lifecycle.viewModelScope
-import com.dmonster.domain.type.TopMenuType
 import com.dmonster.dcash.base.BaseViewModel
+import com.dmonster.domain.type.TopMenuType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,9 +12,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-internal class TopViewModel @Inject constructor(
+class TopViewModel @Inject constructor(
 
 ) : BaseViewModel() {
+
+    val newNotification = MutableStateFlow(false)
 
     private val _title = MutableStateFlow("")
     val title = _title.asStateFlow()

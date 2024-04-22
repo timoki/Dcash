@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="image"
+            type="String" />
+
+        <variable
+            name="title"
+            type="String" />
+
+        <variable
+            name="creator"
+            type="String" />
+
+        <variable
+            name="author"
+            type="String" />
+
+        <variable
+            name="date"
+            type="String" />
+
+        <variable
+            name="point"
+            type="Integer" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="centerCrop"
+            app:coilSrc="@{image}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@tools:sample/backgrounds/scenic"
+            android:importantForAccessibility="no" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:background="@drawable/background_point"
+            android:orientation="horizontal"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="5dp"
+            android:visibility="@{point == null || point &lt;= 0 ? View.GONE : View.VISIBLE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{@string/str_point(point)}"
+                android:textColor="@color/white"
+                app:fontFamily="@font/pretendard_medium"
+                tools:text="+3p" />
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/home_banner_news_title_background"
+            android:paddingHorizontal="20dp"
+            android:paddingTop="24dp"
+            android:paddingBottom="35dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:id="@+id/titleTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:text="@{title}"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                app:fontFamily="@font/pretendard_semi_bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="@tools:sample/lorem/random" />
+
+            <TextView
+                android:id="@+id/creatorTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@{creator}"
+                android:textColor="@color/light_grey"
+                app:fontFamily="@font/pretendard_regular"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/titleTv"
+                tools:text="@tools:sample/lorem" />
+
+            <TextView
+                android:id="@+id/dot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text="@string/str_dot"
+                android:textColor="@color/light_grey"
+                app:fontFamily="@font/pretendard_regular"
+                app:layout_constraintBottom_toBottomOf="@+id/creatorTv"
+                app:layout_constraintStart_toEndOf="@+id/creatorTv"
+                app:layout_constraintTop_toTopOf="@+id/creatorTv" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text="@{author}"
+                android:textColor="@color/light_grey"
+                app:fontFamily="@font/pretendard_regular"
+                app:layout_constraintBottom_toBottomOf="@+id/creatorTv"
+                app:layout_constraintStart_toEndOf="@+id/dot"
+                app:layout_constraintTop_toTopOf="@+id/creatorTv"
+                tools:text="@tools:sample/lorem" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{date}"
+                android:textColor="@color/light_grey"
+                app:fontFamily="@font/pretendard_regular"
+                app:layout_constraintBottom_toBottomOf="@+id/creatorTv"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/creatorTv"
+                tools:text="@tools:sample/date/ddmmyy" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

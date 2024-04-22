@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="point"
+            type="Integer" />
+
+        <variable
+            name="viewModel"
+            type="com.dmonster.dcash.view.dialog.newsViewTutorial.NewsViewTutorialViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:paddingHorizontal="14dp"
+        android:paddingBottom="10dp">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_news_view_tutorial"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/titleTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@{@string/str_news_view_tutorial_title(point)}"
+            android:textColor="@color/text_color_check"
+            android:textSize="22sp"
+            app:fontFamily="@font/pretendard_semi_bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView"
+            tools:text="@string/str_news_view_tutorial_title" />
+
+        <TextView
+            android:id="@+id/contentsTv1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/str_news_view_tutorial_contents1"
+            android:textColor="@color/text_color_charcoal"
+            app:fontFamily="@font/pretendard_regular"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/titleTv" />
+
+        <TextView
+            android:id="@+id/contentsTv2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:drawablePadding="5dp"
+            android:text="@string/str_news_view_tutorial_contents2"
+            android:textColor="@color/text_color_charcoal"
+            app:drawableStartCompat="@drawable/ic_coin_small"
+            app:fontFamily="@font/pretendard_regular"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/contentsTv1" />
+
+        <TextView
+            android:id="@+id/contentsTv3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:drawablePadding="5dp"
+            android:text="@string/str_news_view_tutorial_contents3"
+            android:textColor="@color/text_color_charcoal"
+            app:fontFamily="@font/pretendard_regular"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/contentsTv2" />
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/check"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:button="@drawable/checkbox_button"
+            android:checked="@={viewModel.isCheck}"
+            android:paddingStart="5dp"
+            android:paddingEnd="0dp"
+            android:text="@string/not_showing_next"
+            android:textColor="@color/default_grey"
+            android:textSize="15sp"
+            app:fontFamily="@font/pretendard_regular"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/contentsTv3" />
+
+        <com.google.android.material.button.MaterialButton
+            style="@style/CustomMaterialButtonMain"
+            android:layout_width="0dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="30dp"
+            android:text="@string/str_confirm2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/check"
+            app:onSingleClick="@{() -> viewModel.onClick()}" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

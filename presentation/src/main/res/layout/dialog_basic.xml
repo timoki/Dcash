@@ -49,19 +49,19 @@
     </data>
 
     <LinearLayout
+        style="@style/AlertDialogTheme"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        style="@style/AlertDialogTheme"
         android:background="@android:color/transparent"
+        android:gravity="center"
         tools:background="#88000000">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:elevation="10dp"
             android:layout_margin="20dp"
-            android:background="@drawable/fill_white_round_25">
+            android:background="@drawable/fill_white_round_25"
+            android:elevation="10dp">
 
             <TextView
                 android:id="@+id/title"
@@ -107,14 +107,15 @@
                 <com.google.android.material.checkbox.MaterialCheckBox
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="-5dp"
                     android:layout_marginTop="20dp"
-                    style="@style/Theme.Dcash"
-                    app:useMaterialThemeColors="false"
-                    android:minWidth="0dp"
-                    android:minHeight="0dp"
+                    android:button="@drawable/checkbox_button"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="0dp"
                     android:text="@{checkBoxText}"
+                    android:textColor="@color/default_grey"
+                    android:textSize="15sp"
                     android:visibility="@{isCheckBoxVisible ? View.VISIBLE : View.GONE}"
+                    app:fontFamily="@font/pretendard_regular"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/subject"

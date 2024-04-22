@@ -6,7 +6,7 @@ import com.dmonster.dcash.base.BaseViewModel
 import com.dmonster.domain.model.MemberInfoModel
 import com.dmonster.domain.model.Result
 import com.dmonster.domain.model.TokenModel
-import com.dmonster.domain.type.NavigateType
+import com.dmonster.domain.model.home.FilterModel
 import com.dmonster.domain.usecase.GetAccessTokenUseCase
 import com.dmonster.domain.usecase.GetMemberInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,7 +14,6 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -35,15 +34,6 @@ class MainViewModel @Inject constructor(
     val isTopViewVisible = MutableStateFlow(false)
     val isBottomAppBarVisible = MutableStateFlow(false)
 
-    private val _navigateToChannel = MutableStateFlow<NavigateType?>(null)
-    val navigateToChannel = _navigateToChannel.asStateFlow()
-
-    fun fragmentNavigateTo(item: NavigateType?) = viewModelScope.launch {
-        item?.let {
-            _navigateToChannel.value = it
-        }
-    }
-
     private val _setOverlayPermissionChannel = Channel<Unit>(Channel.CONFLATED)
     val setOverlayPermissionChannel = _setOverlayPermissionChannel.receiveAsFlow()
 
@@ -53,17 +43,12 @@ class MainViewModel @Inject constructor(
 
     val currentPageIndex = MutableStateFlow(3)
 
-    fun onBottomMenuClick(type: Int) {
+    private val _onBottomMenuClickChannel = Channel<Int>(Channel.CONFLATED)
+    val onBottomMenuClickChannel = _onBottomMenuClickChannel.receiveAsFlow()
+
+    fun onBottomMenuClick(type: Int) = viewModelScope.launch {
         currentPageIndex.value = type
-        val item = when (type) {
-            1 -> NavigateType.News()
-            2 -> NavigateType.Event()
-            3 -> NavigateType.Home()
-            4 -> NavigateType.Point()
-            5 -> NavigateType.MyPage()
-            else -> NavigateType.Home()
-        }
-        fragmentNavigateTo(item)
+        _onBottomMenuClickChannel.send(type)
     }
 
     private val _checkPermissionChannel = Channel<Int>(Channel.CONFLATED)
@@ -80,7 +65,7 @@ class MainViewModel @Inject constructor(
         _goPermissionSettingChannel.send(Unit)
     }
 
-    val isUseLockScreen = MutableStateFlow<Boolean>(false)
+    val isUseLockScreen = MutableStateFlow(false)
 
     fun getUseLockScreen() = viewModelScope.launch {
         isUseLockScreen.value = dataStore.isUseLockScreen.first()
@@ -90,21 +75,18 @@ class MainViewModel @Inject constructor(
         dataStore.putUseLockScreen(isUse)
     }
 
-    fun getMemberInfo(): StateFlow<Result<MemberInfoModel>> =
-        getMemberInfoUseCase.invoke()
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000),
-                initialValue = Result.Loading()
-            )
+    fun getMemberInfo(): StateFlow<Result<MemberInfoModel>> = getMemberInfoUseCase.invoke().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = Result.Loading()
+    )
 
     fun getAccessToken(refreshToken: String): StateFlow<Result<TokenModel>> =
-        getAccessTokenUseCase.invoke(refreshToken)
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000),
-                initialValue = Result.Loading()
-            )
+        getAccessTokenUseCase.invoke(refreshToken).stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = Result.Loading()
+        )
 
     private val _scrollTop = Channel<Unit>(Channel.CONFLATED)
     val scrollTop = _scrollTop.receiveAsFlow()
@@ -113,10 +95,9 @@ class MainViewModel @Inject constructor(
         _scrollTop.send(Unit)
     }
 
-    private val _topButtonVisible = Channel<Boolean>(Channel.CONFLATED)
-    val topButtonVisible = _topButtonVisible.receiveAsFlow()
+    val topButtonVisible = MutableStateFlow(false)
 
-    fun setTopButtonVisible(isVisible: Boolean) = viewModelScope.launch {
-        _topButtonVisible.send(isVisible)
-    }
+    val newsCategory = MutableStateFlow<List<FilterModel>?>(null)
+    val newsAuthor = MutableStateFlow<List<FilterModel>?>(null)
+    val newsCreator = MutableStateFlow<List<FilterModel>?>(null)
 }

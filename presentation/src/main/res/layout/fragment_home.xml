@@ -1,36 +1,304 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
     <data>
+
+        <import type="android.view.View" />
+
         <variable
             name="viewModel"
             type="com.dmonster.dcash.view.home.HomeViewModel" />
+
+        <variable
+            name="isBannerVisible"
+            type="Boolean" />
+
+        <variable
+            name="isRecommendVisible"
+            type="Boolean" />
+
+        <variable
+            name="isRecommendSubVisible"
+            type="Boolean" />
+
+        <variable
+            name="isCustomVisible"
+            type="Boolean" />
+
+        <variable
+            name="isCategoryVisible"
+            type="Boolean" />
+
+        <variable
+            name="customTotalCount"
+            type="String" />
+
+        <variable
+            name="customCurrentIndex"
+            type="String" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="홈화면입니다."
-            android:textSize="55sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:text="뉴스보기"
-            app:onSingleClick="@{() -> viewModel.onClick()}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView3" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/mainBannerNewsCl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="@{isBannerVisible ? View.VISIBLE : View.GONE}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <androidx.viewpager2.widget.ViewPager2
+                        android:id="@+id/mainBannerNews"
+                        android:layout_width="match_parent"
+                        android:layout_height="300dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
+                        android:id="@+id/indicator"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="20dp"
+                        app:dotsColor="@color/white"
+                        app:dotsSize="10dp"
+                        app:dotsSpacing="4dp"
+                        app:dotsWidthFactor="2.5"
+                        app:layout_constraintBottom_toBottomOf="@+id/mainBannerNews"
+                        app:layout_constraintEnd_toEndOf="@+id/mainBannerNews"
+                        app:layout_constraintStart_toStartOf="@+id/mainBannerNews"
+                        app:progressMode="true"
+                        app:selectedDotColor="@color/sub_color" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/recommendNewsCl"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:paddingTop="10dp"
+                    android:visibility="@{isRecommendVisible ? View.VISIBLE : View.GONE}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/mainBannerNewsCl">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/recommendNewsTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/str_recommend_news"
+                        app:fontFamily="@font/pretendard_medium"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recommendNewsRvHorizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:orientation="horizontal"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/recommendNewsTitle"
+                        app:setItemEndPadding="@{20}"
+                        tools:listitem="@layout/item_news_list_big" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recommendNewsRvVertical"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:visibility="@{isRecommendSubVisible ? View.VISIBLE : View.GONE}"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/recommendNewsRvHorizontal"
+                        tools:itemCount="1"
+                        tools:listitem="@layout/item_news_list" />
+
+                    <LinearLayout
+                        android:layout_width="@dimen/margin_0dp"
+                        android:layout_height="55dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/btn_more_style"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:visibility="@{viewModel.moreRecommend ? View.GONE : View.VISIBLE}"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/recommendNewsRvVertical"
+                        app:onSingleClick="@{() -> viewModel.moreRecommendClick()}">
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableEnd="@drawable/ic_arrow_down_999"
+                            android:text="@string/str_more_recommend_news"
+                            android:textColor="@color/default_grey"
+                            app:fontFamily="@font/pretendard_regular" />
+                    </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/customNewsCl"
+                    android:layout_width="@dimen/margin_0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:visibility="@{isCustomVisible ? View.VISIBLE : View.GONE}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/recommendNewsCl">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/customNewsTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:text="@string/str_custom_news"
+                        app:fontFamily="@font/pretendard_medium"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/customNewsRv"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:clipToPadding="false"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="20dp"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/customNewsTitle"
+                        app:setItemEndPadding="@{20}"
+                        tools:listitem="@layout/item_news_list_big" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/line_grey_1dp_round_20dp"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="20dp"
+                        android:paddingVertical="10dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/customNewsRv">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@{customCurrentIndex}"
+                            android:textSize="14sp"
+                            app:fontFamily="@font/pretendard_regular"
+                            tools:text="1" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="5dp"
+                            android:text="@string/str_slash"
+                            android:textSize="14sp"
+                            app:fontFamily="@font/pretendard_regular" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@{customTotalCount}"
+                            android:textSize="14sp"
+                            app:fontFamily="@font/pretendard_regular"
+                            tools:text="8" />
+                    </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/categoryNewsCl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/customNewsCl">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/categoryNewsTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:text="@string/str_category_news"
+                        app:fontFamily="@font/pretendard_medium"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/allNews"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="20dp"
+                        android:drawableEnd="@drawable/arrow_right_small"
+                        android:drawablePadding="2dp"
+                        android:text="@string/str_all_news"
+                        android:textColor="@color/text_color_grey"
+                        android:textSize="12sp"
+                        app:fontFamily="@font/pretendard_regular"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:onSingleClick="@{() -> viewModel.allNewsClick()}" />
+
+                    <com.google.android.material.divider.MaterialDivider
+                        android:id="@+id/divider"
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@color/line_grey"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/categoryNewsTitle" />
+
+                    <com.google.android.material.tabs.TabLayout
+                        android:id="@+id/categoryNewsTab"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:tabTextAppearance="@style/tabText"
+                        app:tabSelectedTextAppearance="@style/selectedTabText"
+                        app:tabIndicator="@null"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/divider" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/categoryNews"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="20dp"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/categoryNewsTab"
+                        tools:listitem="@layout/item_news_list" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </layout>

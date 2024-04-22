@@ -5,7 +5,7 @@ import com.dmonster.dcash.databinding.FragmentEventBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-internal class EventFragment : BaseFragment<FragmentEventBinding, EventViewModel>() {
+class EventFragment : BaseFragment<FragmentEventBinding, EventViewModel>() {
     override fun init() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner

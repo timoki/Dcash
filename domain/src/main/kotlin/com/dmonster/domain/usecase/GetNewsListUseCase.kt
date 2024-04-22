@@ -1,7 +1,6 @@
 package com.dmonster.domain.usecase
 
 import androidx.paging.PagingData
-import com.dmonster.domain.model.paging.PageModel
 import com.dmonster.domain.model.paging.news.NewsListModel
 import com.dmonster.domain.repository.NewsRepository
 import kotlinx.coroutines.flow.Flow
@@ -17,6 +16,9 @@ class GetNewsListUseCase @Inject constructor(
         search_sdate: String? = null,
         search_edate: String? = null,
         search_order: String? = null,
+        search_category: String? = null,
+        search_author: String? = null,
+        search_creator: String? = null,
     ): Flow<PagingData<NewsListModel>> = newsRepository.getNewsList(
         row,
         search_filter,
@@ -24,5 +26,8 @@ class GetNewsListUseCase @Inject constructor(
         search_sdate,
         search_edate,
         search_order,
+        search_category,
+        search_author,
+        search_creator,
     )
 }

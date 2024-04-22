@@ -5,20 +5,17 @@
 
     <data>
 
-        <import type="com.dmonster.dcash.R" />
+        <import type="android.view.View" />
 
         <variable
             name="data"
             type="com.dmonster.domain.model.paging.news.NewsListModel" />
 
-        <variable
-            name="listener"
-            type="com.dmonster.dcash.view.news.NewsAdapter.ItemListener" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="150dp">
+        android:layout_height="115dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
@@ -27,19 +24,20 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:onSingleClick="@{() -> listener.onRootClick(data)}">
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:id="@+id/imageView"
-                android:layout_width="120dp"
+                android:layout_width="85dp"
                 android:layout_height="0dp"
-                app:coilSrc="@{data.enclosure}"
+                android:importantForAccessibility="no"
+                android:scaleType="centerCrop"
                 app:coilRoundedCorner="@{true}"
+                app:coilSrc="@{data.enclosure}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:src="@drawable/sample_icon" />
+                tools:src="@tools:sample/backgrounds/scenic" />
 
             <TextView
                 android:id="@+id/textView4"
@@ -54,15 +52,27 @@
                 app:layout_constraintEnd_toStartOf="@+id/imageView"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="뉴스제목표시 뉴스제목표시 뉴스제목표시 뉴스제목표시 뉴스제목표시 뉴스제목표시 뉴스제목표시 뉴스제목표시" />
+                tools:text="@tools:sample/lorem/random" />
 
-            <ImageView
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:coilSrc="@{R.drawable.sample_icon}"
+                android:background="@drawable/background_point"
+                android:orientation="horizontal"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="5dp"
+                android:visibility="@{data.point == null || data.point &lt;= 0 ? View.GONE : View.VISIBLE}"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/textView4"
-                tools:src="@drawable/sample_icon" />
+                app:layout_constraintEnd_toEndOf="@+id/textView4">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{@string/str_point(data.point)}"
+                    android:textColor="@color/white"
+                    app:fontFamily="@font/pretendard_medium"
+                    tools:text="+3p" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/textView6"
@@ -72,16 +82,16 @@
                 android:includeFontPadding="false"
                 android:text="@{data.creator}"
                 android:textColor="@color/default_grey"
-                app:layout_constraintBottom_toTopOf="@+id/textView5"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/textView4"
-                tools:text="뉴스사" />
+                tools:text="@tools:sample/lorem" />
 
             <TextView
                 android:id="@+id/textView7"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:includeFontPadding="false"
-                android:text="ㆍ"
+                android:text="@string/str_dot"
                 android:textColor="@color/default_grey"
                 app:layout_constraintBottom_toBottomOf="@+id/textView6"
                 app:layout_constraintStart_toEndOf="@+id/textView6"
@@ -91,23 +101,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:includeFontPadding="false"
-                android:text="@{data.author + &quot; 기자&quot;}"
+                android:text="@{data.pubDate}"
                 android:textColor="@color/default_grey"
                 app:layout_constraintBottom_toBottomOf="@+id/textView6"
                 app:layout_constraintStart_toEndOf="@+id/textView7"
                 app:layout_constraintTop_toTopOf="@+id/textView6"
-                tools:text="기자명 기자" />
-
-            <TextView
-                android:id="@+id/textView5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:includeFontPadding="false"
-                android:text="@{data.pubDate}"
-                android:textColor="@color/default_grey"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/textView4"
-                tools:text="23/01/01 12:34" />
+                tools:text="@tools:sample/date/ddmmyy" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View

@@ -1,11 +1,8 @@
 package com.dmonster.dcash.utils.webView
 
-import android.content.Context
-import android.util.Log
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.fragment.app.FragmentManager
 
 class WebClient : WebViewClient() {
 
@@ -17,11 +14,8 @@ class WebClient : WebViewClient() {
     }
 
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-        helper?.showDialog()
-        Log.d(
-            "아외안되",
-            "shouldOverrideUrlLoading(view : $view, request : $request), requestUrl: ${request?.url.toString()}"
-        )
+        helper?.showDialog(request?.url)
+
         return true
     }
 }

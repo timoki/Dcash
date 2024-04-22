@@ -6,7 +6,7 @@ import com.dmonster.dcash.databinding.FragmentSetLockScreenBinding
 import com.dmonster.dcash.utils.observeInLifecycleStop
 import kotlinx.coroutines.flow.onEach
 
-internal class LockScreenPermissionFragment :
+class LockScreenPermissionFragment :
     BaseFragment<FragmentSetLockScreenBinding, LockScreenPermissionViewModel>() {
     override fun init() {
         binding.viewModel = viewModel

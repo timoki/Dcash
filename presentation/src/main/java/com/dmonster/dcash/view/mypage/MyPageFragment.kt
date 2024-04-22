@@ -5,7 +5,7 @@ import com.dmonster.dcash.databinding.FragmentMypageBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-internal class MyPageFragment : BaseFragment<FragmentMypageBinding, MyPageViewModel>() {
+class MyPageFragment : BaseFragment<FragmentMypageBinding, MyPageViewModel>() {
     override fun init() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner

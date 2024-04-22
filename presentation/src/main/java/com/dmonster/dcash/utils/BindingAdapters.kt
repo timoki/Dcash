@@ -1,9 +1,11 @@
 package com.dmonster.dcash.utils
 
+import android.annotation.SuppressLint
 import android.content.res.ColorStateList
+import android.graphics.Rect
 import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.ColorRes
@@ -11,16 +13,21 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.RawRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.forEach
+import androidx.core.view.updateLayoutParams
+import androidx.core.widget.TextViewCompat
 import androidx.databinding.BindingAdapter
-import androidx.databinding.InverseBindingAdapter
+import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.transform.CircleCropTransformation
 import coil.transform.RoundedCornersTransformation
 import com.airbnb.lottie.LottieAnimationView
-import com.dmonster.domain.type.TopMenuType
 import com.dmonster.dcash.R
+import com.dmonster.domain.type.TopMenuType
+import com.google.android.material.tabs.TabLayout
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import kotlin.math.max
 
 @BindingAdapter(
     value = [
@@ -113,6 +120,7 @@ fun setLottieAnimation(
     view.playAnimation()
 }
 
+@SuppressLint("UseCompatLoadingForDrawables")
 @BindingAdapter(
     value = [
         "title",
@@ -164,7 +172,7 @@ fun setTopMenu(
                 leftMenu.visibility = View.VISIBLE
                 leftMenuLogo.visibility = View.VISIBLE
                 leftMenuBack.visibility = View.GONE
-                leftMenuLogoIv.load(context.resources.getDrawable(R.drawable.sample_icon, null))
+                leftMenuLogoIv.load(context.resources.getDrawable(R.drawable.ic_logo, null))
             }
         }
     }
@@ -215,14 +223,20 @@ fun setTopMenu(
 
             TopMenuType.RightMenu.POINT_AND_SHARE -> {
                 rightMenuSubIv.visibility = View.VISIBLE
-                rightMenuIv.load(context.resources.getDrawable(R.drawable.sample_icon, null))
-                rightMenuSubIv.load(context.resources.getDrawable(R.drawable.sample_icon, null))
+                rightMenuIv.load(context.resources.getDrawable(R.drawable.ic_share, null))
+                rightMenuSubIv.load(context.resources.getDrawable(R.drawable.ic_coin, null))
             }
 
             TopMenuType.RightMenu.ATTEND_AND_NOTIFICATION -> {
                 rightMenuSubIv.visibility = View.VISIBLE
-                rightMenuIv.load(context.resources.getDrawable(R.drawable.sample_icon, null))
-                rightMenuSubIv.load(context.resources.getDrawable(R.drawable.sample_icon, null))
+                rightMenuIv.load(context.resources.getDrawable(R.drawable.ic_alarm, null))
+                rightMenuSubIv.load(context.resources.getDrawable(R.drawable.ic_attend, null))
+            }
+
+            TopMenuType.RightMenu.SEARCH_AND_NOTIFICATION -> {
+                rightMenuSubIv.visibility = View.VISIBLE
+                rightMenuIv.load(context.resources.getDrawable(R.drawable.ic_alarm, null))
+                rightMenuSubIv.load(context.resources.getDrawable(R.drawable.ic_search, null))
             }
         }
     }
@@ -239,7 +253,7 @@ fun tabInputLayoutHintColor(
     @ColorRes color: Int,
     textInputEditText: String
 ) {
-    if (textInputEditText.isNullOrEmpty()) {
+    if (textInputEditText.isEmpty()) {
         view.defaultHintTextColor = ColorStateList.valueOf(
             ContextCompat.getColor(
                 view.context,
@@ -261,4 +275,142 @@ fun tabInputLayoutHintColor(
             color
         )
     )
+}
+
+@BindingAdapter(
+    value = [
+        "setMargin",
+        "setLeftMargin",
+        "setRightMargin",
+        "setStartMargin",
+        "setEndMargin",
+        "setTopMargin",
+        "setBottomMargin",
+    ], requireAll = false
+)
+fun setViewMargin(
+    view: View,
+    marginAll: Float = 0f,
+    marginLeftDimen: Float = 0f,
+    marginRightDimen: Float = 0f,
+    marginStartDimen: Float = 0f,
+    marginEndDimen: Float = 0f,
+    marginTopDimen: Float = 0f,
+    marginBottomDimen: Float = 0f,
+) {
+    val realLeftMargin = max(marginLeftDimen, marginStartDimen)
+    val realRightMargin = max(marginRightDimen, marginEndDimen)
+    view.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+        if (marginAll > 0f) {
+            topMargin = marginAll.toInt()
+            bottomMargin = marginAll.toInt()
+            leftMargin = marginAll.toInt()
+            rightMargin = marginAll.toInt()
+
+            return
+        }
+
+        leftMargin = realLeftMargin.toInt()
+        rightMargin = realRightMargin.toInt()
+        topMargin = marginTopDimen.toInt()
+        bottomMargin = marginBottomDimen.toInt()
+    }
+
+    view.invalidate()
+}
+
+@BindingAdapter(
+    value = [
+        "visibilityWithAnimation"
+    ]
+)
+fun setVisibilityWithAnimation(
+    view: View,
+    visible: Boolean
+) {
+    view.setVisibilityWithAnimation(visible)
+}
+
+@BindingAdapter(
+    value = [
+        "setItemBottomPadding",
+        "setItemEndPadding",
+    ], requireAll = false
+)
+fun setItemBottomPadding(
+    view: RecyclerView,
+    verticalSpaceHeight: Int = 0,
+    horizontalSpaceHeight: Int = 0,
+) {
+    view.addItemDecoration(
+        VerticalSpaceItemDecoration(
+            verticalSpaceHeight,
+            horizontalSpaceHeight
+        )
+    )
+}
+
+class VerticalSpaceItemDecoration(
+    private val verticalSpaceHeight: Int = 0,
+    private val horizontalSpaceHeight: Int = 0
+) : RecyclerView.ItemDecoration() {
+    override fun getItemOffsets(
+        outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State
+    ) {
+        if (parent.getChildAdapterPosition(view) != parent.adapter?.itemCount?.minus(1)) {
+            outRect.bottom = verticalSpaceHeight
+            outRect.right = horizontalSpaceHeight
+        }
+    }
+}
+
+@BindingAdapter(
+    value = [
+        "errorText",
+        "childView"
+    ]
+)
+fun setErrorText(
+    view: TextInputLayout,
+    errorText: String,
+    textInputEditText: TextInputEditText?,
+) {
+    if (errorText.isEmpty()) {
+        return
+    }
+
+    view.run {
+        error = errorText
+        textInputEditText?.let { et ->
+            TextViewCompat.setCompoundDrawableTintList(
+                et,
+                ColorStateList.valueOf(
+                    resources.getColor(
+                        R.color.text_color_error,
+                        null
+                    )
+                )
+            )
+
+            et.requestFocus()
+        }
+
+    }
+}
+
+@BindingAdapter(
+    value = [
+        "setTabItemMargin"
+    ]
+)
+fun setTabItemMargin(
+    view: TabLayout,
+    space: Int,
+) {
+    val tabStrip = view.getChildAt(0) as ViewGroup
+
+    tabStrip.forEach {
+        val params = it.layoutParams as ViewGroup.MarginLayoutParams
+        params.rightMargin = space
+    }
 }

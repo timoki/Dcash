@@ -1,8 +1,5 @@
 package com.dmonster.dcash.view.dialog.basic
 
-import android.app.Dialog
-import android.content.DialogInterface
-import android.view.View
 import com.dmonster.domain.model.base.BaseModel
 
 data class BasicDialogModel(

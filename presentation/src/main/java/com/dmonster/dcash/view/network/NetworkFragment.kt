@@ -15,7 +15,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
-internal class NetworkFragment : BaseDialogFragment<FragmentNetworkBinding, NetworkViewModel>() {
+class NetworkFragment : BaseDialogFragment<FragmentNetworkBinding, NetworkViewModel>() {
 
     private val args: NetworkFragmentArgs by navArgs()
 

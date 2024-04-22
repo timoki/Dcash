@@ -1,7 +1,7 @@
 package com.dmonster.data.remote.api
 
-import com.dmonster.data.remote.dto.response.news.NewsDto
 import com.dmonster.data.remote.dto.response.base.BaseResponse
+import com.dmonster.data.remote.dto.response.news.NewsDto
 import retrofit2.Response
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -22,5 +22,8 @@ interface NewsAPIService {
         @Field("search_sdate") search_sdate: String?,
         @Field("search_edate") search_edate: String?,
         @Field("search_order") search_order: String?,
+        @Field("search_category") search_category: String?,
+        @Field("search_author") search_author: String?,
+        @Field("search_creator") search_creator: String?,
     ): Response<BaseResponse<NewsDto>>
 }

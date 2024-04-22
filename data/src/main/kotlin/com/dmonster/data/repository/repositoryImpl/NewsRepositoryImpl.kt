@@ -1,5 +1,6 @@
 package com.dmonster.data.repository.repositoryImpl
 
+import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -35,14 +36,23 @@ class NewsRepositoryImpl @Inject constructor(
         search_sdate: String?,
         search_edate: String?,
         search_order: String?,
+        search_category: String?,
+        search_author: String?,
+        search_creator: String?,
     ): Flow<PagingData<NewsListModel>> {
+        Log.d("아외안되", "row : $row\n" +
+                "search_filter : $search_filter\n" +
+                "search_value : $search_value\n" +
+                "search_sdate : $search_sdate\n" +
+                "search_edate : $search_edate\n" +
+                "search_order : $search_order\n" +
+                "search_category : $search_category\n" +
+                "search_author : $search_author\n" +
+                "search_creator : $search_creator\n")
         return Pager(
             config = PagingConfig(
-                pageSize = row,
-                prefetchDistance = 1,
-                initialLoadSize = 1
-            ),
-            remoteMediator = NewsListMediator(
+                pageSize = row, prefetchDistance = 1, initialLoadSize = 1
+            ), remoteMediator = NewsListMediator(
                 remoteDataSource = remoteDataSource,
                 localDataSource = localDataSource,
                 database = database,
@@ -53,7 +63,10 @@ class NewsRepositoryImpl @Inject constructor(
                     search_value,
                     search_sdate,
                     search_edate,
-                    search_order
+                    search_order,
+                    search_category,
+                    search_author,
+                    search_creator,
                 )
             )
         ) {
