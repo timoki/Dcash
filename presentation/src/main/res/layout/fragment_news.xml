@@ -18,6 +18,10 @@
             type="Boolean" />
 
         <variable
+            name="isFilter"
+            type="Boolean" />
+
+        <variable
             name="refreshListener"
             type="androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener" />
     </data>
@@ -30,12 +34,12 @@
             android:id="@+id/categoryTab"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingHorizontal="20dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:setTabItemMargin="@{100}"
             app:tabIndicatorColor="@color/main_color"
-            android:paddingHorizontal="20dp"
             app:tabMinWidth="0dp"
             app:tabMode="scrollable"
             app:tabPaddingEnd="0dp"
@@ -48,71 +52,90 @@
             android:id="@+id/creatorRv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/news_category_background"
             android:orientation="horizontal"
             android:paddingHorizontal="20dp"
-            android:background="@color/news_category_background"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
-            tools:listitem="@layout/item_filter_checkbox"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/categoryTab" />
+            app:layout_constraintTop_toBottomOf="@+id/categoryTab"
+            tools:listitem="@layout/item_filter_checkbox" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/authorRv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/news_category_background"
             android:orientation="horizontal"
             android:paddingHorizontal="20dp"
-            android:background="@color/news_category_background"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
-            tools:listitem="@layout/item_filter_checkbox"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/creatorRv" />
+            app:layout_constraintTop_toBottomOf="@+id/creatorRv"
+            tools:listitem="@layout/item_filter_checkbox" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/sortingCl"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
+            android:layout_height="52dp"
+            android:layout_marginHorizontal="20dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/authorRv">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:text="@{viewModel.searchValue}"
+                android:textColor="@color/main_color"
+                android:visibility="@{viewModel.searchValue.empty ? View.GONE : View.VISIBLE}"
+                app:fontFamily="@font/pretendard_semi_bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/resetFilter"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="검색어" />
 
             <RelativeLayout
                 android:id="@+id/resetFilter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
                 android:background="@drawable/fill_main_round_14"
                 android:paddingHorizontal="9dp"
                 android:paddingVertical="5dp"
-                android:layout_marginEnd="10dp"
-                android:visibility="@{viewModel.isSelectFilter ? View.VISIBLE : View.GONE}"
+                android:visibility="@{isFilter ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/sortingTv"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:onSingleClick="@{() -> viewModel.onResetFilter()}">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/str_reset"
+                    android:layout_centerInParent="true"
                     android:drawablePadding="2dp"
-                    app:fontFamily="@font/pretendard_regular"
+                    android:text="@string/str_reset"
                     android:textColor="@color/white"
-                    app:drawableStartCompat="@drawable/ic_reset" />
+                    app:drawableStartCompat="@drawable/ic_reset"
+                    app:fontFamily="@font/pretendard_regular" />
             </RelativeLayout>
 
             <TextView
                 android:id="@+id/sortingTv"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="기본순"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/resetFilter"
-                app:layout_constraintBottom_toBottomOf="@+id/resetFilter"
-                android:textColor="@color/default_grey"
+                android:layout_height="match_parent"
                 android:drawablePadding="5dp"
+                android:gravity="center"
+                android:text="@{viewModel.selectOrder.item}"
+                android:textColor="@color/default_grey"
+                app:drawableEndCompat="@drawable/ic_arrow_down_999"
                 app:fontFamily="@font/pretendard_regular"
-                app:drawableEndCompat="@drawable/ic_arrow_down_999" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:onSingleClick="@{() -> viewModel.sortingClick()}"
+                tools:text="기본순" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -120,19 +143,29 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:paddingHorizontal="20dp"
-            android:layout_marginTop="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/sortingCl"
             app:setOnRefreshListener="@{refreshListener}">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/listRv"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/item_news_list" />
+                android:layout_height="match_parent">
+
+                <include
+                    android:id="@+id/noResult"
+                    layout="@layout/no_result"
+                    android:visibility="@{isResult ? View.GONE : View.VISIBLE}" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/listRv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="@{isResult ? View.VISIBLE : View.GONE}"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_news_list" />
+            </FrameLayout>
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <com.facebook.shimmer.ShimmerFrameLayout
@@ -143,7 +176,8 @@
             app:layout_constraintEnd_toEndOf="@+id/refreshView"
             app:layout_constraintStart_toStartOf="@+id/refreshView"
             app:layout_constraintTop_toTopOf="@+id/refreshView"
-            app:shimmer_auto_start="true">
+            app:shimmer_auto_start="true"
+            tools:visibility="gone">
 
             <LinearLayout
                 android:layout_width="match_parent"

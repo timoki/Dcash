@@ -1,6 +1,5 @@
 package com.dmonster.data.repository.repositoryImpl
 
-import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -17,6 +16,7 @@ import com.dmonster.domain.model.paging.news.NewsListModel
 import com.dmonster.domain.repository.NewsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -31,27 +31,20 @@ class NewsRepositoryImpl @Inject constructor(
     @OptIn(ExperimentalPagingApi::class)
     override fun getNewsList(
         row: Int,
-        search_filter: String?,
-        search_value: String?,
-        search_sdate: String?,
-        search_edate: String?,
-        search_order: String?,
-        search_category: String?,
-        search_author: String?,
-        search_creator: String?,
+        search_filter: StateFlow<String?>?,
+        search_value: StateFlow<String?>?,
+        search_sdate: StateFlow<String?>?,
+        search_edate: StateFlow<String?>?,
+        search_order: StateFlow<String?>?,
+        search_category: StateFlow<String?>?,
+        search_author: StateFlow<String?>?,
+        search_creator: StateFlow<String?>?,
     ): Flow<PagingData<NewsListModel>> {
-        Log.d("아외안되", "row : $row\n" +
-                "search_filter : $search_filter\n" +
-                "search_value : $search_value\n" +
-                "search_sdate : $search_sdate\n" +
-                "search_edate : $search_edate\n" +
-                "search_order : $search_order\n" +
-                "search_category : $search_category\n" +
-                "search_author : $search_author\n" +
-                "search_creator : $search_creator\n")
         return Pager(
             config = PagingConfig(
-                pageSize = row, prefetchDistance = 1, initialLoadSize = 1
+                pageSize = row,
+                prefetchDistance = 2,
+                initialLoadSize = 1
             ), remoteMediator = NewsListMediator(
                 remoteDataSource = remoteDataSource,
                 localDataSource = localDataSource,

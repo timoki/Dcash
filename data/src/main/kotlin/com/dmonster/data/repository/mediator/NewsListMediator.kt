@@ -54,14 +54,14 @@ class NewsListMediator @Inject constructor(
             val response = remoteDataSource.getNewsList(
                 pg = page,
                 row = newsRequest.row,
-                search_filter = newsRequest.search_filter,
-                search_value = newsRequest.search_value,
-                search_sdate = newsRequest.search_sdate,
-                search_edate = newsRequest.search_edate,
-                search_order = newsRequest.search_order,
-                search_category = newsRequest.search_category,
-                search_author = newsRequest.search_author,
-                search_creator = newsRequest.search_creator,
+                search_filter = newsRequest.search_filter?.value,
+                search_value = newsRequest.search_value?.value,
+                search_sdate = newsRequest.search_sdate?.value,
+                search_edate = newsRequest.search_edate?.value,
+                search_order = newsRequest.search_order?.value,
+                search_category = newsRequest.search_category?.value,
+                search_author = newsRequest.search_author?.value,
+                search_creator = newsRequest.search_creator?.value,
             )
 
             if (response.isSuccessful) {
@@ -71,7 +71,7 @@ class NewsListMediator @Inject constructor(
                     }
                 }
                 val news = response.body()?.data ?: return MediatorResult.Error(Exception())
-                val endOfPaginationReached = news.rows.isNullOrEmpty()
+                val endOfPaginationReached = news.rows.isEmpty()
 
                 database.withTransaction {
                     if (loadType == LoadType.REFRESH) {

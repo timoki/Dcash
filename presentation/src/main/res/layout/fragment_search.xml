@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="com.dmonster.dcash.R" />
+
+        <variable
+            name="viewModel"
+            type="com.dmonster.dcash.view.search.SearchViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="16dp"
+            android:drawablePadding="5dp"
+            android:gravity="center"
+            android:text="@{viewModel.selectTypeText}"
+            app:onSingleClick="@{() -> viewModel.onSearchTypeClick()}"
+            android:textColor="@color/default_grey"
+            app:drawableEndCompat="@drawable/ic_arrow_down_999"
+            app:fontFamily="@font/pretendard_regular"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="통합검색" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:endIconMode="clear_text"
+            app:tabInputLayoutHintColor="@{R.color.black}"
+            app:textInputEditText="@{viewModel.searchText}">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/textInputEt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_search_grey"
+                android:drawablePadding="8dp"
+                android:inputType="text"
+                android:imeOptions="actionSearch"
+                android:maxLines="1"
+                android:hint="@string/str_input_search_text"
+                android:paddingStart="10dp"
+                android:paddingEnd="0dp"
+                android:paddingBottom="15dp"
+                android:text="@={viewModel.searchText}"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/str_popular_search_text"
+                android:textSize="16sp"
+                app:fontFamily="@font/pretendard_medium"
+                android:layout_marginTop="30dp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/popularRv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="5"
+                tools:listitem="@layout/item_search_text"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/str_recent_search_text"
+                android:textSize="16sp"
+                app:fontFamily="@font/pretendard_medium"
+                android:layout_marginTop="30dp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recentRv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="5"
+                tools:listitem="@layout/item_search_text"/>
+        </LinearLayout>
+    </LinearLayout>
+</layout>

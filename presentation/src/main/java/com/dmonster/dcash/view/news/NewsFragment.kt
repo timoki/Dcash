@@ -1,19 +1,24 @@
 package com.dmonster.dcash.view.news
 
+import android.os.Build
 import android.util.Log
 import android.view.View
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.dmonster.dcash.R
 import com.dmonster.dcash.base.BaseFragment
 import com.dmonster.dcash.base.MyLoadStateAdapter
 import com.dmonster.dcash.databinding.FragmentNewsBinding
 import com.dmonster.dcash.utils.ScrollListener
 import com.dmonster.dcash.utils.observeInLifecycleStop
 import com.dmonster.dcash.utils.observeOnLifecycleStop
+import com.dmonster.dcash.view.dialog.select.adapter.SelectDialogData
 import com.dmonster.dcash.view.news.adapter.FilterAdapter
 import com.dmonster.dcash.view.news.adapter.NewsAdapter
+import com.google.android.material.tabs.TabLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.onEach
 
@@ -31,22 +36,14 @@ class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>(),
 
     private val creatorAdapter = FilterAdapter {
         it.name?.let { name ->
-            if (it.isChecked) {
-                viewModel.selectCreator.add(name)
-            } else {
-                viewModel.selectCreator.remove(name)
-            }
+            viewModel.setSearchCreator(name, it.isChecked)
         }
         newsAdapter.refresh()
     }
 
     private val authorAdapter = FilterAdapter {
         it.name?.let { name ->
-            if (it.isChecked) {
-                viewModel.selectAuthor.add(name)
-            } else {
-                viewModel.selectAuthor.remove(name)
-            }
+            viewModel.setSearchAuthor(name, it.isChecked)
         }
         newsAdapter.refresh()
     }
@@ -61,10 +58,9 @@ class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>(),
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
         binding.refreshListener = this
+
         binding.listRv.let { rv ->
-            rv.adapter =
-                newsAdapter.withLoadStateHeaderAndFooter(MyLoadStateAdapter { newsAdapter.retry() },
-                    MyLoadStateAdapter { newsAdapter.retry() })
+            rv.adapter = newsAdapter.withLoadStateFooter(MyLoadStateAdapter { newsAdapter.retry() })
             rv.addOnScrollListener(scrollListener)
         }
 
@@ -77,7 +73,24 @@ class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>(),
                 }
             }
 
-            viewModel.selectCategory.value = it[0].code ?: ""
+            binding.categoryTab.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+                override fun onTabSelected(tab: TabLayout.Tab?) {
+                    tab?.let { t ->
+                        viewModel.searchCategory.value = it[t.position].code
+                        newsAdapter.refresh()
+                    }
+                }
+
+                override fun onTabUnselected(p0: TabLayout.Tab?) {
+
+                }
+
+                override fun onTabReselected(p0: TabLayout.Tab?) {
+
+                }
+            })
+
+            viewModel.searchCategory.value = it[0].code
             newsAdapter.refresh()
         }
 
@@ -97,12 +110,12 @@ class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>(),
                 }
 
                 it.refresh is LoadState.Error -> {
-                    //binding.noResult.errorString = getString(R.string.no_history_error)
+                    binding.noResult.errorString = getString(R.string.str_load_state_error)
                     false
                 }
 
                 it.refresh is LoadState.NotLoading && newsAdapter.itemCount == 0 -> {
-                    //binding.noResult.errorString = getString(R.string.no_history_account)
+                    binding.noResult.errorString = getString(R.string.str_no_result)
                     false
                 }
 
@@ -111,6 +124,25 @@ class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>(),
                 }
             }
         }
+
+        setFragmentResultListener(TAG) { tag, result ->
+            Log.d("아외안되", "tag / $tag")
+            val selectItem = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                result.getParcelable("selectItem", SelectDialogData::class.java)
+            } else {
+                result.getParcelable("selectItem") as SelectDialogData?
+            }
+
+            selectItem?.let {
+                viewModel.selectOrder.value = it
+                viewModel.searchOrder.value = it.code
+            }
+
+            viewModel.searchFilter.value = result.getString("search_filter")
+            viewModel.searchValue.value = result.getString("search_value")
+
+            newsAdapter.refresh()
+        }
     }
 
     override fun initViewModelCallback(): Unit = with(viewModel) {
@@ -118,9 +150,42 @@ class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>(),
             newsAdapter.submitData(data)
         }
 
-        isSelectFilter.observeOnLifecycleStop(viewLifecycleOwner) {
+        isFilter.observeOnLifecycleStop(viewLifecycleOwner) {
             Log.d("아외안되", "isSelectFilter $it")
+            binding.isFilter = it
         }
+
+        sortingClickChannel.onEach {
+            findNavController().safeNavigate(
+                NewsFragmentDirections.actionGlobalSelectDialog(
+                    title = "정렬",
+                    list = arrayOf(
+                        SelectDialogData("desc", "최신순", searchOrder.value == "desc"),
+                        SelectDialogData("asc", "과거순", searchOrder.value == "asc")
+                    ),
+                    requestTag = TAG,
+                )
+            )
+        }.observeInLifecycleStop(viewLifecycleOwner)
+
+        onResetFilterChannel.onEach {
+            binding.isFilter = false
+            creatorAdapter.run {
+                currentList.forEachIndexed { position, item ->
+                    item.isChecked = false
+                    notifyItemChanged(position)
+                }
+            }
+
+            authorAdapter.run {
+                currentList.forEachIndexed { position, item ->
+                    item.isChecked = false
+                    notifyItemChanged(position)
+                }
+            }
+
+            newsAdapter.refresh()
+        }.observeInLifecycleStop(viewLifecycleOwner)
     }
 
     /**
@@ -156,7 +221,10 @@ class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>(),
 
     override fun onRefresh() {
         binding.refreshView.isRefreshing = false
-        //binding.noResultSwipe.isRefreshing = false
         newsAdapter.refresh()
+    }
+
+    companion object {
+        const val TAG = "NewsFragment"
     }
 }

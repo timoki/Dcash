@@ -104,47 +104,4 @@
         <item name="android:fontFamily">@font/pretendard_semi_bold</item>
         <item name="android:textColor">@color/main_color</item>
     </style>
-
-    <!--<style name="TextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
-        &lt;!&ndash;FilledBox일 경우 밑줄 색상, OutlinedBox일 경우 테두리 색상&ndash;&gt;
-        &lt;!&ndash; 포커스 시 밑줄 색상 &ndash;&gt;
-        <item name="boxStrokeColor">@color/main_color</item>
-        <item name="android:strokeColor">@color/text_color_error</item>
-        &lt;!&ndash; 박스 컬러 &ndash;&gt;
-        <item name="boxBackgroundColor">@color/white</item>
-        &lt;!&ndash;EditText에 있을때의 Hint&ndash;&gt;
-        <item name="android:textColorHint">@color/black</item>
-        &lt;!&ndash;상단에 있을때의 Hint&ndash;&gt;
-        <item name="hintTextColor">@color/main_color</item>
-        <item name="hintTextAppearance">@style/HintTextAppearance</item>
-        &lt;!&ndash;Helper&ndash;&gt;
-        <item name="helperTextTextAppearance">@style/HelperTextAppearance</item>
-        &lt;!&ndash;Error&ndash;&gt;
-        <item name="errorEnabled">true</item>
-        <item name="colorError">@color/text_color_error</item>
-        <item name="errorIconDrawable">@android:color/transparent</item>
-        <item name="errorTextAppearance">@style/ErrorTextAppearance</item>
-    </style>
-
-    <style name="ErrorTextAppearance">
-        <item name="fontFamily">@font/pretendard_light</item>
-        <item name="android:textSize">16sp</item>
-    </style>
-
-    <style name="HintTextAppearance">
-        <item name="fontFamily">@font/pretendard_regular</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:textColor">@color/black</item>
-    </style>
-
-    <style name="HelperTextAppearance">
-        <item name="fontFamily">@font/pretendard_light</item>
-        <item name="android:textSize">16sp</item>
-    </style>
-
-    <style name="TextInputEditTextStyle">
-        <item name="fontFamily">@font/pretendard_light</item>
-        <item name="android:textColor">@color/text_color</item>
-        <item name="android:textSize">16sp</item>
-    </style>-->
 </resources>
