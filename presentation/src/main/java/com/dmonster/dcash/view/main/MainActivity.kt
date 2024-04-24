@@ -268,7 +268,9 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(
         onRightMenuSubClickChannel.onEach {
             when (it) {
                 TopMenuType.RightMenu.SEARCH_AND_NOTIFICATION -> {
-
+                    navController.navigate(
+                        NavigationDirections.actionGlobalSearchFragment()
+                    )
                 }
             }
         }.observeInLifecycleStop(this@MainActivity)
@@ -332,7 +334,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(
                 }
 
                 // 백버튼, 타이틀, 바텀X
-                R.id.lockScreenPermissionFragment -> {
+                R.id.lockScreenPermissionFragment, R.id.searchFragment -> {
                     isTopViewVisible.value = true
                     isBottomAppBarVisible.value = false
 
@@ -340,7 +342,11 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(
                         leftMenu = TopMenuType.LeftMenu.BACK,
                         middleMenu = TopMenuType.MiddleMenu.TITLE,
                         rightMenu = TopMenuType.RightMenu.NONE,
-                        titleText = resources.getString(R.string.set_lock_screen)
+                        titleText = when(destination.id) {
+                            R.id.lockScreenPermissionFragment -> resources.getString(R.string.set_lock_screen)
+                            R.id.searchFragment -> resources.getString(R.string.str_search)
+                            else -> return
+                        }
                     )
                 }
 

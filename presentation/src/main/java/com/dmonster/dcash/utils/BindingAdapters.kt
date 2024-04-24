@@ -1,6 +1,7 @@
 package com.dmonster.dcash.utils
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
@@ -13,6 +14,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.RawRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.forEach
 import androidx.core.view.updateLayoutParams
 import androidx.core.widget.TextViewCompat
@@ -49,6 +51,22 @@ fun onSingleClick(
     } else {
         view.setOnClickListener(null)
     }
+}
+
+@BindingAdapter("app:font")
+fun setFont(
+    textView: TextView,
+    fontName: String
+) {
+    textView.typeface = ResourcesCompat.getFont(textView.context, textView.context.retrievingResources(fontName, "font"))
+}
+
+@SuppressLint("DiscouragedApi")
+fun Context.retrievingResources(
+    resourceName: String,
+    resourceType: String
+): Int {
+    return resources.getIdentifier(resourceName, resourceType, packageName)
 }
 
 @BindingAdapter(
@@ -246,7 +264,7 @@ fun setTopMenu(
     value = [
         "tabInputLayoutHintColor",
         "textInputEditText"
-    ]
+    ], requireAll = false
 )
 fun tabInputLayoutHintColor(
     view: TextInputLayout,

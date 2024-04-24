@@ -92,6 +92,12 @@
             app:destination="@id/newsViewTutorial" />
     </fragment>
 
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.dmonster.dcash.view.search.SearchFragment"
+        android:label="SearchFragment"
+        tools:layout="@layout/fragment_search" />
+
     <dialog
         android:id="@+id/basicDialog"
         android:name="com.dmonster.dcash.view.dialog.basic.BasicDialog"
@@ -126,6 +132,23 @@
             app:argType="integer" />
     </dialog>
 
+    <dialog
+        android:id="@+id/selectDialog"
+        android:name="com.dmonster.dcash.view.dialog.select.SelectDialog"
+        android:label="SelectDialog"
+        tools:layout="@layout/dialog_select_list">
+
+        <argument
+            android:name="title"
+            app:argType="string" />
+        <argument
+            android:name="list"
+            app:argType="com.dmonster.dcash.view.dialog.select.adapter.SelectDialogData[]" />
+        <argument
+            android:name="requestTag"
+            app:argType="string" />
+    </dialog>
+
     <action
         android:id="@+id/action_global_basicDialog"
         app:destination="@id/basicDialog" />
@@ -147,4 +170,10 @@
     <action
         android:id="@+id/action_global_newsFragment"
         app:destination="@id/newsFragment" />
+    <action
+        android:id="@+id/action_global_selectDialog"
+        app:destination="@id/selectDialog" />
+    <action
+        android:id="@+id/action_global_searchFragment"
+        app:destination="@id/searchFragment" />
 </navigation>
