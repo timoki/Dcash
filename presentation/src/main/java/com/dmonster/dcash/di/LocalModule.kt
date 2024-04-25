@@ -4,10 +4,10 @@ import android.content.Context
 import androidx.room.Room
 import com.dmonster.data.local.dao.ConfigDao
 import com.dmonster.data.local.dao.paging.NewsDao
+import com.dmonster.data.local.dao.paging.PointDao
 import com.dmonster.data.local.dao.paging.RemoteKeysDao
 import com.dmonster.data.local.database.MyDatabase
 import com.dmonster.data.local.datastore.DataStoreModule
-import com.dmonster.data.local.entity.paging.RemoteKeys
 import com.dmonster.data.repository.datasource.LocalDataSource
 import com.dmonster.data.repository.datasource.impl.LocalDataSourceImpl
 import dagger.Module
@@ -31,10 +31,12 @@ object LocalModule {
     fun provideLocalDataSource(
         configDao: ConfigDao,
         newsDao: NewsDao,
+        pointDao: PointDao,
         remoteKeys: RemoteKeysDao,
     ): LocalDataSource = LocalDataSourceImpl(
         configDao,
         newsDao,
+        pointDao,
         remoteKeys,
     )
 
@@ -61,6 +63,12 @@ object LocalModule {
     fun provideNewsDao(
         database: MyDatabase
     ): NewsDao = database.newsDao()
+
+    @Singleton
+    @Provides
+    fun providePointDao(
+        database: MyDatabase
+    ): PointDao = database.pointDao()
 
     @Singleton
     @Provides

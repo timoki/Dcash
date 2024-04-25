@@ -8,12 +8,13 @@ import androidx.room.withTransaction
 import com.dmonster.data.local.database.MyDatabase
 import com.dmonster.data.local.entity.paging.RemoteKeys
 import com.dmonster.data.local.entity.paging.news.NewsListEntity
-import com.dmonster.data.remote.dto.request.NewsRequest
+import com.dmonster.data.remote.dto.request.PagingRequest
 import com.dmonster.data.repository.datasource.LocalDataSource
 import com.dmonster.data.repository.datasource.RemoteDataSource
 import com.dmonster.data.utils.ErrorCallback
 import com.dmonster.data.utils.ObjectMapper.dtoToNewsListEntityList
 import com.dmonster.domain.type.RemoteKeysType
+import com.dmonster.domain.type.TokenErrorType
 import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
@@ -22,7 +23,7 @@ class NewsListMediator @Inject constructor(
     private val localDataSource: LocalDataSource,
     private val database: MyDatabase,
     private val errorCallback: ErrorCallback,
-    private val newsRequest: NewsRequest,
+    private val pagingRequest: PagingRequest,
 ) : RemoteMediator<Int, NewsListEntity>() {
     override suspend fun load(
         loadType: LoadType, state: PagingState<Int, NewsListEntity>
@@ -35,16 +36,18 @@ class NewsListMediator @Inject constructor(
 
             LoadType.PREPEND -> {
                 val remoteKeys = getRemoteKeyForFirstItem(state)
-                val prevKey = remoteKeys?.prevKey
-                    ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
+                val prevKey = remoteKeys?.prevKey ?: return MediatorResult.Success(
+                    endOfPaginationReached = remoteKeys != null
+                )
 
                 prevKey
             }
 
             LoadType.APPEND -> {
                 val remoteKeys = getRemoteKeyForLastItem(state)
-                val nextKey = remoteKeys?.nextKey
-                    ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
+                val nextKey = remoteKeys?.nextKey ?: return MediatorResult.Success(
+                    endOfPaginationReached = remoteKeys != null
+                )
 
                 nextKey
             }
@@ -53,26 +56,25 @@ class NewsListMediator @Inject constructor(
         try {
             val response = remoteDataSource.getNewsList(
                 pg = page,
-                row = newsRequest.row,
-                search_filter = newsRequest.search_filter?.value,
-                search_value = newsRequest.search_value?.value,
-                search_sdate = newsRequest.search_sdate?.value,
-                search_edate = newsRequest.search_edate?.value,
-                search_order = newsRequest.search_order?.value,
-                search_category = newsRequest.search_category?.value,
-                search_author = newsRequest.search_author?.value,
-                search_creator = newsRequest.search_creator?.value,
+                row = pagingRequest.row,
+                search_filter = pagingRequest.search_filter?.value,
+                search_value = pagingRequest.search_value?.value,
+                search_sdate = pagingRequest.search_sdate?.value,
+                search_edate = pagingRequest.search_edate?.value,
+                search_order = pagingRequest.search_order?.value,
+                search_category = pagingRequest.search_category?.value,
+                search_author = pagingRequest.search_author?.value,
+                search_creator = pagingRequest.search_creator?.value,
             )
 
             if (response.isSuccessful) {
                 response.body()?.let {
                     if (!it.isSuccess()) {
-                        errorCallback.postErrorData(it)
+                        MediatorResult.Error(Exception(it.resultDetail))
                     }
                 }
                 val news = response.body()?.data ?: return MediatorResult.Error(Exception())
                 val endOfPaginationReached = news.rows.isEmpty()
-
                 database.withTransaction {
                     if (loadType == LoadType.REFRESH) {
                         localDataSource.deleteRemoteKeys(RemoteKeysType.NEWS.name)
@@ -96,9 +98,32 @@ class NewsListMediator @Inject constructor(
                 }
 
                 return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
-            }
+            } else {
+                val message = when (response.code()) {
+                    TokenErrorType.TypeUnprocessed.value -> {
+                        "요청을 처리할 수 없습니다."
+                    }
 
-            return MediatorResult.Error(Exception())
+                    TokenErrorType.TypeRequestForbidden.value -> {
+                        "사용자 인증 중 오류가 발생하였습니다."
+                    }
+
+                    TokenErrorType.TypeRequestMethodNotAllowed.value -> {
+                        "해당 인증은 허용되지 않습니다."
+                    }
+
+                    TokenErrorType.TypeExpired.value -> {
+                        errorCallback.postTokenExpiration()
+                        "토큰이 만료되거나 토큰 형식이 맞지 않습니다."
+                    }
+
+                    else -> {
+                        response.message()
+                    }
+                }
+
+                return MediatorResult.Error(Exception(message))
+            }
         } catch (e: Exception) {
             return MediatorResult.Error(e)
         }

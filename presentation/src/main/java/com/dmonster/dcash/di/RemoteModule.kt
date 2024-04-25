@@ -5,6 +5,7 @@ import com.dmonster.data.remote.api.HomeAPIService
 import com.dmonster.data.remote.api.LoginAPIService
 import com.dmonster.data.remote.api.MemberAPIService
 import com.dmonster.data.remote.api.NewsAPIService
+import com.dmonster.data.remote.api.PointAPIService
 import com.dmonster.data.remote.api.TokenAPIService
 import com.dmonster.data.repository.datasource.RemoteDataSource
 import com.dmonster.data.repository.datasource.impl.RemoteDataSourceImpl
@@ -31,6 +32,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object RemoteModule {
+
+    @Singleton
+    @Provides
+    fun providePointAPIService(
+        retrofit: Retrofit
+    ): PointAPIService = retrofit.create(PointAPIService::class.java)
 
     @Singleton
     @Provides
@@ -70,12 +77,14 @@ object RemoteModule {
         memberAPIService: MemberAPIService,
         newsAPIService: NewsAPIService,
         homeAPIService: HomeAPIService,
+        pointAPIService: PointAPIService,
     ): RemoteDataSource = RemoteDataSourceImpl(
         loginAPIService,
         tokenAPIService,
         memberAPIService,
         newsAPIService,
         homeAPIService,
+        pointAPIService,
     )
 
     @Singleton

@@ -25,22 +25,53 @@ class MemberRepositoryImpl @Inject constructor(
         val response = remoteDataSource.requestLogin(id, pw)
 
         if (response.isSuccessful) {
-            response.body()?.data?.let {
+            response.body()?.let {
                 if (!it.isSuccess()) {
-                    errorCallback.postErrorData(it)
+                    it.statusCode?.let { statusCode ->
+                        emit(Result.Error(
+                            when (statusCode) {
+                                TokenErrorType.TypeUnprocessed.value -> {
+                                    errorCallback.postErrorData(it)
+                                    "요청을 처리할 수 없습니다."
+                                }
+
+                                TokenErrorType.TypeRequestForbidden.value -> {
+                                    errorCallback.postErrorData(it)
+                                    "사용자 인증 중 오류가 발생하였습니다."
+                                }
+
+                                TokenErrorType.TypeRequestMethodNotAllowed.value -> {
+                                    errorCallback.postErrorData(it)
+                                    "해당 인증은 허용되지 않습니다."
+                                }
+
+                                TokenErrorType.TypeExpired.value -> {
+                                    errorCallback.postTokenExpiration()
+                                    "토큰이 만료되거나 토큰 형식이 맞지 않습니다."
+                                }
+
+                                else -> {
+                                    errorCallback.postErrorData(it)
+                                    it.resultDetail
+                                }
+                            }
+                        ))
+
+                        return@flow
+                    }
+
                     emit(Result.Error(it.resultDetail))
+
+                    return@flow
                 }
 
-                emit(Result.Success(it.toModel()))
+                it.data?.let { data ->
+                    emit(Result.Success(data.toModel()))
+                }
             } ?: kotlin.run {
                 throw Exception()
             }
         } else {
-            response.body()?.statusCode?.let {
-                if (it == 401) {
-                    errorCallback.postTokenExpiration()
-                }
-            }
             emit(Result.NetworkError("네트워크 통신이 원활 하지 않습니다. 잠시 후 다시 시도해 주세요."))
         }
     }.catch {
@@ -51,38 +82,53 @@ class MemberRepositoryImpl @Inject constructor(
         val response = remoteDataSource.getMemberInfo()
 
         if (response.isSuccessful) {
-            response.body()?.data?.let {
+            response.body()?.let {
                 if (!it.isSuccess()) {
-                    errorCallback.postErrorData(it)
+                    it.statusCode?.let { statusCode ->
+                        emit(Result.Error(
+                            when (statusCode) {
+                                TokenErrorType.TypeUnprocessed.value -> {
+                                    errorCallback.postErrorData(it)
+                                   "요청을 처리할 수 없습니다."
+                                }
+
+                                TokenErrorType.TypeRequestForbidden.value -> {
+                                    errorCallback.postErrorData(it)
+                                 "사용자 인증 중 오류가 발생하였습니다."
+                                }
+
+                                TokenErrorType.TypeRequestMethodNotAllowed.value -> {
+                                    errorCallback.postErrorData(it)
+                                "해당 인증은 허용되지 않습니다."
+                                }
+
+                                TokenErrorType.TypeExpired.value -> {
+                                    errorCallback.postTokenExpiration()
+                                  "토큰이 만료되거나 토큰 형식이 맞지 않습니다."
+                                }
+
+                                else -> {
+                                    errorCallback.postErrorData(it)
+                                    it.resultDetail
+                                }
+                            }
+                        ))
+
+                        return@flow
+                    }
+
+                    emit(Result.Error(it.resultDetail))
+
+                    return@flow
                 }
 
-                emit(Result.Success(it.toModel()))
+                it.data?.let { data ->
+                    emit(Result.Success(data.toModel()))
+                }
             } ?: kotlin.run {
                 throw Exception()
             }
         } else {
-            response.body()?.statusCode?.let {
-                when (it) {
-                    TokenErrorType.TypeUnprocessed.value -> {
-                        emit(Result.Error("요청을 처리할 수 없습니다."))
-                    }
-
-                    TokenErrorType.TypeExpired.value -> {
-                        errorCallback.postTokenExpiration()
-                        emit(Result.Error("토큰이 만료되거나 토큰 형식이 맞지 않습니다."))
-                    }
-
-                    TokenErrorType.TypeRequestForbidden.value -> {
-                        emit(Result.Error("사용자 인증 중 오류가 발생하였습니다."))
-                    }
-
-                    TokenErrorType.TypeRequestMethodNotAllowed.value -> {
-                        emit(Result.Error("해당 인증은 허용되지 않습니다."))
-                    }
-                }
-
-                return@flow
-            }
             emit(Result.NetworkError("네트워크 통신이 원활 하지 않습니다. 잠시 후 다시 시도해 주세요."))
         }
     }.catch {

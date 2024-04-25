@@ -61,7 +61,7 @@
                 android:orientation="horizontal"
                 android:paddingHorizontal="10dp"
                 android:paddingVertical="5dp"
-                android:visibility="@{data.point == null || data.point &lt;= 0 ? View.GONE : View.VISIBLE}"
+                android:visibility="@{data.viewed &gt;= 1 ? View.GONE : View.VISIBLE}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/textView4">
 

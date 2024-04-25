@@ -1,6 +1,7 @@
 package com.dmonster.domain.repository
 
 import androidx.paging.PagingData
+import com.dmonster.domain.model.Result
 import com.dmonster.domain.model.paging.news.NewsListModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,4 +18,8 @@ interface NewsRepository {
         search_author: StateFlow<String?>?,
         search_creator: StateFlow<String?>?,
     ): Flow<PagingData<NewsListModel>>
+
+    fun viewNews(
+        guid: Long,
+    ): Flow<Result<Boolean>>
 }

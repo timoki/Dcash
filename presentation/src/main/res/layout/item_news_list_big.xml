@@ -41,7 +41,7 @@
             android:orientation="horizontal"
             android:paddingHorizontal="10dp"
             android:paddingVertical="5dp"
-            android:visibility="@{data.point == null || data.point &lt;= 0 ? View.GONE : View.VISIBLE}"
+            android:visibility="@{data.viewed == 1 || data.point &lt;= 0 ? View.GONE : View.VISIBLE}"
             app:layout_constraintEnd_toEndOf="@+id/imageView"
             app:layout_constraintTop_toTopOf="@+id/imageView">
 

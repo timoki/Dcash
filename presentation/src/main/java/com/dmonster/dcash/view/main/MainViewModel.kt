@@ -100,4 +100,18 @@ class MainViewModel @Inject constructor(
     val newsCategory = MutableStateFlow<List<FilterModel>?>(null)
     val newsAuthor = MutableStateFlow<List<FilterModel>?>(null)
     val newsCreator = MutableStateFlow<List<FilterModel>?>(null)
+
+    private val _setTopRightMenuChannel = Channel<Int>(Channel.CONFLATED)
+    val setTopRightMenuChannel = _setTopRightMenuChannel.receiveAsFlow()
+
+    fun setTopRightMenu(mode: Int) = viewModelScope.launch {
+        _setTopRightMenuChannel.send(mode)
+    }
+
+    private val _actionShareChannel = Channel<Unit>(Channel.CONFLATED)
+    val actionShareChannel = _actionShareChannel.receiveAsFlow()
+
+    fun actionShare() = viewModelScope.launch {
+        _actionShareChannel.send(Unit)
+    }
 }

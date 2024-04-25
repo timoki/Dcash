@@ -13,7 +13,7 @@ import com.dmonster.dcash.databinding.ItemNewsListCustomBinding
 import com.dmonster.domain.model.paging.news.NewsListModel
 
 class HomeAdapter(
-    private val itemViewType: Int, private val onItemClick: (item: NewsListModel) -> Unit
+    private val itemViewType: Int, private val onItemClick: (item: NewsListModel, position: Int) -> Unit
 ) : ListAdapter<NewsListModel, HomeAdapter.ViewHolder>(diffUtil) {
 
     override fun getItemViewType(position: Int): Int {
@@ -55,7 +55,7 @@ class HomeAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(
-            item: NewsListModel, onItemClick: (item: NewsListModel) -> Unit
+            item: NewsListModel, onItemClick: (item: NewsListModel, position: Int) -> Unit
         ) {
             when (itemViewType) {
                 TYPE_BANNER -> {
@@ -66,6 +66,7 @@ class HomeAdapter(
                         author = item.author
                         date = item.pubDate
                         point = item.point
+                        viewed = item.viewed
                     }
                 }
 
@@ -90,7 +91,8 @@ class HomeAdapter(
 
             binding.root.setOnClickListener {
                 onItemClick.invoke(
-                    item
+                    item,
+                    absoluteAdapterPosition
                 )
             }
         }

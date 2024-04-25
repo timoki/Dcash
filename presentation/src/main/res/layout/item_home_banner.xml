@@ -30,6 +30,10 @@
         <variable
             name="point"
             type="Integer" />
+
+        <variable
+            name="viewed"
+            type="Integer" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -56,7 +60,7 @@
             android:orientation="horizontal"
             android:paddingHorizontal="10dp"
             android:paddingVertical="5dp"
-            android:visibility="@{point == null || point &lt;= 0 ? View.GONE : View.VISIBLE}"
+            android:visibility="@{viewed == 1 || point &lt;= 0 ? View.GONE : View.VISIBLE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 

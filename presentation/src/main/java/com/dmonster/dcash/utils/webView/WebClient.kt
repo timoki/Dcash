@@ -4,7 +4,9 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 
-class WebClient : WebViewClient() {
+class WebClient(
+    private val firstLink: String?
+) : WebViewClient() {
 
     private var helper: WebViewSettingHelper? = null
 
@@ -14,8 +16,16 @@ class WebClient : WebViewClient() {
     }
 
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-        helper?.showDialog(request?.url)
+        // 단순 http -> https 로 변환되는 경우는 상관 없도록 체크
+        val firstLinkSplit = firstLink?.split("//")?.get(1)
+        val requestLinkSplit = request?.url.toString().split("//")[1]
 
-        return true
+        if (!firstLinkSplit.equals(requestLinkSplit)) {
+            helper?.showDialog(request?.url)
+
+            return true
+        }
+
+        return false
     }
 }

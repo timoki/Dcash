@@ -87,9 +87,18 @@
             android:defaultValue="@null"
             app:argType="com.dmonster.domain.model.paging.news.NewsListModel"
             app:nullable="true" />
+        <argument
+            android:name="itemPosition"
+            app:argType="integer" />
+        <argument
+            android:name="adapterType"
+            app:argType="com.dmonster.domain.type.NewsViewAdapterType" />
         <action
             android:id="@+id/action_newsDetailFragment_to_newsViewTutorial"
             app:destination="@id/newsViewTutorial" />
+        <action
+            android:id="@+id/action_newsDetailFragment_to_getPoint"
+            app:destination="@id/getPoint" />
     </fragment>
 
     <fragment
@@ -149,6 +158,17 @@
             app:argType="string" />
     </dialog>
 
+    <dialog
+        android:id="@+id/getPoint"
+        android:name="com.dmonster.dcash.view.dialog.getPoint.GetPoint"
+        android:label="GetPoint"
+        tools:layout="@layout/dialog_get_point">
+
+        <argument
+            android:name="point"
+            app:argType="integer" />
+    </dialog>
+
     <action
         android:id="@+id/action_global_basicDialog"
         app:destination="@id/basicDialog" />
@@ -176,4 +196,8 @@
     <action
         android:id="@+id/action_global_searchFragment"
         app:destination="@id/searchFragment" />
+    <action
+        android:id="@+id/action_global_loginFragment"
+        app:destination="@id/loginFragment" />
+
 </navigation>

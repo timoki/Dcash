@@ -11,7 +11,7 @@ interface RemoteKeysDao {
     @Query(
         "SELECT * FROM paging_remote_key WHERE type = :type AND idx = :idx"
     )
-    suspend fun getRemoteKeys(type: String, idx: Long): RemoteKeys
+    suspend fun getRemoteKeys(type: String, idx: Long?): RemoteKeys
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRemoteKeys(keys: List<RemoteKeys>?)
