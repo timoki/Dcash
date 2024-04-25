@@ -6,11 +6,13 @@ import com.dmonster.data.repository.datasource.RemoteDataSource
 import com.dmonster.data.repository.repositoryImpl.HomeRepositoryImpl
 import com.dmonster.data.repository.repositoryImpl.MemberRepositoryImpl
 import com.dmonster.data.repository.repositoryImpl.NewsRepositoryImpl
+import com.dmonster.data.repository.repositoryImpl.PointRepositoryImpl
 import com.dmonster.data.repository.repositoryImpl.TokenRepositoryImpl
 import com.dmonster.data.utils.ErrorCallback
 import com.dmonster.domain.repository.HomeRepository
 import com.dmonster.domain.repository.MemberRepository
 import com.dmonster.domain.repository.NewsRepository
+import com.dmonster.domain.repository.PointRepository
 import com.dmonster.domain.repository.TokenRepository
 import dagger.Module
 import dagger.Provides
@@ -63,5 +65,19 @@ object RepositoryModule {
     ): HomeRepository = HomeRepositoryImpl(
         remoteDataSource,
         errorCallback
+    )
+
+    @Singleton
+    @Provides
+    fun providePointRepository(
+        remoteDataSource: RemoteDataSource,
+        localDataSource: LocalDataSource,
+        database: MyDatabase,
+        errorCallback: ErrorCallback,
+    ): PointRepository = PointRepositoryImpl(
+        remoteDataSource,
+        localDataSource,
+        database,
+        errorCallback,
     )
 }

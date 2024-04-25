@@ -1,5 +1,8 @@
 package com.dmonster.dcash.view.home
 
+import android.os.Build
+import android.view.View
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -12,7 +15,9 @@ import com.dmonster.dcash.utils.observeOnLifecycleStop
 import com.dmonster.dcash.view.dialog.basic.BasicDialog
 import com.dmonster.dcash.view.dialog.basic.BasicDialogModel
 import com.dmonster.dcash.view.home.adapter.HomeAdapter
+import com.dmonster.dcash.view.newsDetail.NewsDetailFragment
 import com.dmonster.domain.model.home.FilterModel
+import com.dmonster.domain.type.NewsViewAdapterType
 import com.google.android.material.tabs.TabLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.onEach
@@ -20,44 +25,78 @@ import kotlinx.coroutines.flow.onEach
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
-    private val bannerAdapter = HomeAdapter(HomeAdapter.TYPE_BANNER) { item ->
+    private val bannerAdapter = HomeAdapter(HomeAdapter.TYPE_BANNER) { item, position ->
         findNavController().safeNavigate(
             HomeFragmentDirections.actionHomeFragmentToNewsDetailFragment(
-                item
+                model = item,
+                itemPosition = position,
+                adapterType = NewsViewAdapterType.BANNER,
             )
         )
     }
 
-    private val recommendHorizontalAdapter = HomeAdapter(HomeAdapter.TYPE_RECOMMEND_BIG) { item ->
+    private val recommendHorizontalAdapter = HomeAdapter(HomeAdapter.TYPE_RECOMMEND_BIG) { item, position ->
         findNavController().safeNavigate(
             HomeFragmentDirections.actionHomeFragmentToNewsDetailFragment(
-                item
+                model = item,
+                itemPosition = position,
+                adapterType = NewsViewAdapterType.RECOMMEND_HORIZONTAL,
             )
         )
     }
 
-    private val recommendVerticalAdapter = HomeAdapter(HomeAdapter.TYPE_RECOMMEND) { item ->
+    private val recommendVerticalAdapter = HomeAdapter(HomeAdapter.TYPE_RECOMMEND) { item, position ->
         findNavController().safeNavigate(
             HomeFragmentDirections.actionHomeFragmentToNewsDetailFragment(
-                item
+                model = item,
+                itemPosition = position,
+                adapterType = NewsViewAdapterType.RECOMMEND_VERTICAL,
             )
         )
     }
 
-    private val customAdapter = HomeAdapter(HomeAdapter.TYPE_CUSTOM) { item ->
+    private val customAdapter = HomeAdapter(HomeAdapter.TYPE_CUSTOM) { item, position ->
         findNavController().safeNavigate(
             HomeFragmentDirections.actionHomeFragmentToNewsDetailFragment(
-                item
+                model = item,
+                itemPosition = position,
+                adapterType = NewsViewAdapterType.CUSTOM,
             )
         )
     }
 
-    private val categoryAdapter = HomeAdapter(HomeAdapter.TYPE_CATEGORY) { item ->
+    private val categoryAdapter = HomeAdapter(HomeAdapter.TYPE_CATEGORY) { item, position ->
         findNavController().safeNavigate(
             HomeFragmentDirections.actionHomeFragmentToNewsDetailFragment(
-                item
+                model = item,
+                itemPosition = position,
+                adapterType = NewsViewAdapterType.CATEGORY,
             )
         )
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setFragmentResultListener(NewsDetailFragment.TAG) { _, result ->
+            val position = result.getInt("position")
+            val adapterType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                result.getSerializable("item", NewsViewAdapterType::class.java)
+            } else {
+                result.getSerializable("item") as NewsViewAdapterType
+            }
+
+            when (adapterType) {
+                NewsViewAdapterType.BANNER -> bannerAdapter
+                NewsViewAdapterType.RECOMMEND_HORIZONTAL -> recommendHorizontalAdapter
+                NewsViewAdapterType.RECOMMEND_VERTICAL -> recommendVerticalAdapter
+                NewsViewAdapterType.CUSTOM -> customAdapter
+                NewsViewAdapterType.CATEGORY -> categoryAdapter
+                else -> return@setFragmentResultListener
+            }.run {
+                currentList[position].viewed = 1
+                notifyItemChanged(position)
+            }
+        }
     }
 
     override fun init() {
@@ -103,11 +142,22 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     override fun initViewModelCallback(): Unit = viewModel.run {
         getHomeDataErrorChannel.onEach {
-            BasicDialogModel(titleText = getString(R.string.str_load_error_title),
-                text = it ?: getString(R.string.str_load_home_data_error),
-                setCancelable = false,
-                setPositiveButton = true to getString(R.string.confirm),
-                buttonClickListener = object : BasicDialog.ButtonClickListener {})
+            findNavController().navigate(
+                HomeFragmentDirections.actionGlobalBasicDialog(
+                    BasicDialogModel(
+                        titleText = getString(R.string.str_load_error_title),
+                        text = it ?: getString(R.string.str_load_home_data_error),
+                        setCancelable = false,
+                        setPositiveButton = true to getString(R.string.confirm),
+                        buttonClickListener = object : BasicDialog.ButtonClickListener {
+                            override fun onPositiveButtonClick(view: View, dialog: BasicDialog) {
+                                super.onPositiveButtonClick(view, dialog)
+                                getHomeData()
+                            }
+                        }
+                    )
+                )
+            )
         }.observeInLifecycleStop(viewLifecycleOwner)
 
         homeData.observeOnLifecycleStop(viewLifecycleOwner) {

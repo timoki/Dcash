@@ -221,17 +221,17 @@ fun setTopMenu(
         when (it) {
             TopMenuType.RightMenu.POINT -> {
                 rightMenuSubIv.visibility = View.INVISIBLE
-                rightMenuIv.load(context.resources.getDrawable(R.drawable.sample_icon, null))
+                rightMenuIv.load(context.resources.getDrawable(R.drawable.ic_coin, null))
             }
 
             TopMenuType.RightMenu.SHARE -> {
                 rightMenuSubIv.visibility = View.INVISIBLE
-                rightMenuIv.load(context.resources.getDrawable(R.drawable.sample_icon, null))
+                rightMenuIv.load(context.resources.getDrawable(R.drawable.ic_share, null))
             }
 
             TopMenuType.RightMenu.NOTIFICATION -> {
                 rightMenuSubIv.visibility = View.INVISIBLE
-                rightMenuIv.load(context.resources.getDrawable(R.drawable.sample_icon, null))
+                rightMenuIv.load(context.resources.getDrawable(R.drawable.ic_alarm, null))
             }
 
             TopMenuType.RightMenu.REMOVE -> {

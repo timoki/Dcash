@@ -5,9 +5,21 @@ import com.dmonster.data.remote.dto.response.TokenDto
 import com.dmonster.data.remote.dto.response.base.BaseResponse
 import com.dmonster.data.remote.dto.response.home.HomeDataDto
 import com.dmonster.data.remote.dto.response.news.NewsDto
+import com.dmonster.data.remote.dto.response.point.PointDto
 import retrofit2.Response
 
 interface RemoteDataSource {
+
+    suspend fun getPointHistory(
+        pg: Int,
+        row: Int,
+        search_filter: String?,
+        search_sdate: String?,
+        search_edate: String?,
+        search_order: String?,
+    ): Response<BaseResponse<PointDto>>
+
+    suspend fun getUserPoint(): Response<BaseResponse<PointDto>>
 
     suspend fun getHomeData(): Response<BaseResponse<HomeDataDto>>
 
@@ -37,4 +49,8 @@ interface RemoteDataSource {
         search_author: String?,
         search_creator: String?,
     ): Response<BaseResponse<NewsDto>>
+
+    suspend fun viewNews(
+        guid: Long,
+    ): Response<BaseResponse<Any>>
 }

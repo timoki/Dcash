@@ -21,11 +21,11 @@ class NewsViewModel @Inject constructor(
 
     val loadingType = MutableStateFlow(PagingLoadingType.LOADING)
 
-    var selectOrder = MutableStateFlow(SelectDialogData("desc", "최신순", true))
+    var selectOrder = MutableStateFlow(SelectDialogData("asc", "최신순", true))
 
     val searchFilter = MutableStateFlow<String?>(null)
     val searchValue = MutableStateFlow<String?>(null)
-    val searchOrder = MutableStateFlow("desc")
+    val searchOrder = MutableStateFlow("asc")
     val searchCategory = MutableStateFlow<String?>(null)
     private val searchCreator = MutableStateFlow<String?>(null)
     private val searchAuthor = MutableStateFlow<String?>(null)

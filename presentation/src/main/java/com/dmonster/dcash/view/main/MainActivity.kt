@@ -231,6 +231,10 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(
                 settingDetails.launch(intent)
             }
         }.observeInLifecycleStop(this@MainActivity)
+
+        setTopRightMenuChannel.onEach {
+            topViewModel.setRightMenuMode(it)
+        }.observeInLifecycleStop(this@MainActivity)
     }
 
     override fun initNetworkViewModelCallback(): Unit = with(networkViewModel) {
@@ -262,6 +266,10 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(
                 TopMenuType.RightMenu.SEARCH_AND_NOTIFICATION -> {
 
                 }
+
+                TopMenuType.RightMenu.SHARE, TopMenuType.RightMenu.POINT_AND_SHARE -> {
+                    viewModel.actionShare()
+                }
             }
         }.observeInLifecycleStop(this@MainActivity)
 
@@ -282,7 +290,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(
         }.observeInLifecycleDestroy(this@MainActivity)
 
         tokenExpiration.onEach {
-
+            getNewAccessToken()
         }.observeInLifecycleDestroy(this@MainActivity)
     }
 
@@ -417,6 +425,25 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(
                     }
                 }
             }
+        } ?: kotlin.run {
+            navController.navigate(
+                NavigationDirections.actionGlobalBasicDialog(
+                    BasicDialogModel(
+                        titleText = getString(R.string.str_expire_token_title),
+                        text = getString(R.string.str_expire_token_contents),
+                        setCancelable = false,
+                        setPositiveButton = true to getString(R.string.str_login),
+                        buttonClickListener = object : BasicDialog.ButtonClickListener {
+                            override fun onPositiveButtonClick(view: View, dialog: BasicDialog) {
+                                super.onPositiveButtonClick(view, dialog)
+                                navController.navigate(
+                                    NavigationDirections.actionGlobalLoginFragment()
+                                )
+                            }
+                        }
+                    )
+                )
+            )
         }
     }
 }

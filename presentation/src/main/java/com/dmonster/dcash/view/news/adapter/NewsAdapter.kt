@@ -9,7 +9,7 @@ import com.dmonster.dcash.databinding.ItemNewsListBinding
 import com.dmonster.domain.model.paging.news.NewsListModel
 
 class NewsAdapter(
-    private val onItemClick: (item: NewsListModel) -> Unit
+    private val onItemClick: (item: NewsListModel, position: Int) -> Unit
 ) : PagingDataAdapter<NewsListModel, NewsAdapter.ViewHolder>(diffUtil) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -26,12 +26,13 @@ class NewsAdapter(
         private val binding: ItemNewsListBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(
-            model: NewsListModel, onItemClick: (item: NewsListModel) -> Unit
+            model: NewsListModel, onItemClick: (item: NewsListModel, position: Int) -> Unit
         ) {
             binding.data = model
             binding.root.setOnClickListener {
                 onItemClick.invoke(
-                    model
+                    model,
+                    absoluteAdapterPosition
                 )
             }
         }

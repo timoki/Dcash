@@ -12,4 +12,5 @@ data class NewsListDto(
     @SerializedName("creator") val creator: String? = null,
     @SerializedName("pubDate") val pubDate: String? = null,
     @SerializedName("point") val point: Int? = null,
+    @SerializedName("viewed") val viewed: Int? = null,
 )

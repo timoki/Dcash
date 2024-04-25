@@ -30,7 +30,7 @@ class LoadingDialog(
 
     fun create(): AlertDialog {
         builder.setView(binding.root)
-        dialog = builder.create()
+        dialog = builder.setCancelable(false).create()
 
         return dialog!!
     }

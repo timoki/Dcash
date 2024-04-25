@@ -70,6 +70,7 @@ class HomeViewModel @Inject constructor(
                 }
 
                 is Result.NetworkError -> {
+                    hideLoadingDialog()
                     _getHomeDataErrorChannel.send(result.message)
                 }
             }

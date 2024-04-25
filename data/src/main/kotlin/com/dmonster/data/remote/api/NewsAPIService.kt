@@ -10,10 +10,11 @@ import retrofit2.http.POST
 interface NewsAPIService {
     companion object {
         private const val API_ROUTE = "news"
+        private const val API_ROUTE_VIEW = "view"
     }
 
     @FormUrlEncoded
-    @POST("$API_ROUTE")
+    @POST(API_ROUTE)
     suspend fun getNewsList(
         @Field("pg") pg: Int,
         @Field("row") row: Int,
@@ -26,4 +27,10 @@ interface NewsAPIService {
         @Field("search_author") search_author: String?,
         @Field("search_creator") search_creator: String?,
     ): Response<BaseResponse<NewsDto>>
+
+    @FormUrlEncoded
+    @POST(API_ROUTE_VIEW)
+    suspend fun viewNews(
+        @Field("guid") guid: Long,
+    ): Response<BaseResponse<Any>>
 }

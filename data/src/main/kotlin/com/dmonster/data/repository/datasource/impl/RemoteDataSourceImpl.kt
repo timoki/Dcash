@@ -4,12 +4,14 @@ import com.dmonster.data.remote.api.HomeAPIService
 import com.dmonster.data.remote.api.LoginAPIService
 import com.dmonster.data.remote.api.MemberAPIService
 import com.dmonster.data.remote.api.NewsAPIService
+import com.dmonster.data.remote.api.PointAPIService
 import com.dmonster.data.remote.api.TokenAPIService
 import com.dmonster.data.remote.dto.response.MemberInfoDto
 import com.dmonster.data.remote.dto.response.TokenDto
 import com.dmonster.data.remote.dto.response.base.BaseResponse
 import com.dmonster.data.remote.dto.response.home.HomeDataDto
 import com.dmonster.data.remote.dto.response.news.NewsDto
+import com.dmonster.data.remote.dto.response.point.PointDto
 import com.dmonster.data.repository.datasource.RemoteDataSource
 import retrofit2.Response
 import javax.inject.Inject
@@ -20,7 +22,30 @@ class RemoteDataSourceImpl @Inject constructor(
     private val memberAPIService: MemberAPIService,
     private val newsAPIService: NewsAPIService,
     private val homeAPIService: HomeAPIService,
+    private val pointAPIService: PointAPIService,
 ) : RemoteDataSource {
+    override suspend fun getPointHistory(
+        pg: Int,
+        row: Int,
+        search_filter: String?,
+        search_sdate: String?,
+        search_edate: String?,
+        search_order: String?
+    ): Response<BaseResponse<PointDto>> {
+        return pointAPIService.getPointHistory(
+            pg,
+            row,
+            search_filter,
+            search_sdate,
+            search_edate,
+            search_order,
+        )
+    }
+
+    override suspend fun getUserPoint(): Response<BaseResponse<PointDto>> {
+        return pointAPIService.getUserPoint()
+    }
+
     override suspend fun getHomeData(): Response<BaseResponse<HomeDataDto>> {
         return homeAPIService.getHomeData()
     }
@@ -65,5 +90,9 @@ class RemoteDataSourceImpl @Inject constructor(
             search_author,
             search_creator,
         )
+    }
+
+    override suspend fun viewNews(guid: Long): Response<BaseResponse<Any>> {
+        return newsAPIService.viewNews(guid)
     }
 }

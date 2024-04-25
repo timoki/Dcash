@@ -18,6 +18,9 @@ import com.dmonster.dcash.utils.observeOnLifecycleStop
 import com.dmonster.dcash.view.dialog.select.adapter.SelectDialogData
 import com.dmonster.dcash.view.news.adapter.FilterAdapter
 import com.dmonster.dcash.view.news.adapter.NewsAdapter
+import com.dmonster.dcash.view.newsDetail.NewsDetailFragment
+import com.dmonster.domain.model.paging.news.NewsListModel
+import com.dmonster.domain.type.NewsViewAdapterType
 import com.google.android.material.tabs.TabLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.onEach
@@ -26,10 +29,12 @@ import kotlinx.coroutines.flow.onEach
 class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>(),
     SwipeRefreshLayout.OnRefreshListener {
 
-    private val newsAdapter: NewsAdapter = NewsAdapter { item ->
+    private val newsAdapter: NewsAdapter = NewsAdapter { item, position ->
         findNavController().safeNavigate(
             NewsFragmentDirections.actionNewsFragmentToNewsDetailFragment(
-                item
+                model = item,
+                itemPosition = position,
+                adapterType = NewsViewAdapterType.NEWS,
             )
         )
     }
@@ -48,10 +53,34 @@ class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>(),
         newsAdapter.refresh()
     }
 
-    private val scrollListener: ScrollListener by lazy {
-        ScrollListener(
+    private var scrollListener: ScrollListener? = null
+
+    override fun onResume() {
+        super.onResume()
+        setFragmentResultListener(NewsDetailFragment.TAG) { _, result ->
+            val model = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                result.getSerializable("item", NewsListModel::class.java)
+            } else {
+                result.getSerializable("item") as NewsListModel
+            }
+            val position = result.getInt("position")
+
+            newsAdapter.snapshot()[position]?.viewed = 1
+            newsAdapter.notifyItemChanged(position)
+        }
+
+        scrollListener = ScrollListener(
             binding.listRv.layoutManager as LinearLayoutManager, mainViewModel
         )
+        binding.listRv.addOnScrollListener(scrollListener!!)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        scrollListener?.let {
+            binding.listRv.removeOnScrollListener(it)
+        }
+        scrollListener = null
     }
 
     override fun init() {
@@ -59,10 +88,7 @@ class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>(),
         binding.lifecycleOwner = viewLifecycleOwner
         binding.refreshListener = this
 
-        binding.listRv.let { rv ->
-            rv.adapter = newsAdapter.withLoadStateFooter(MyLoadStateAdapter { newsAdapter.retry() })
-            rv.addOnScrollListener(scrollListener)
-        }
+        binding.listRv.adapter = newsAdapter.withLoadStateFooter(MyLoadStateAdapter { newsAdapter.retry() })
 
         mainViewModel.newsCategory.value?.let {
             it.forEach { filter ->
@@ -151,7 +177,6 @@ class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>(),
         }
 
         isFilter.observeOnLifecycleStop(viewLifecycleOwner) {
-            Log.d("아외안되", "isSelectFilter $it")
             binding.isFilter = it
         }
 
@@ -160,8 +185,8 @@ class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>(),
                 NewsFragmentDirections.actionGlobalSelectDialog(
                     title = "정렬",
                     list = arrayOf(
-                        SelectDialogData("desc", "최신순", searchOrder.value == "desc"),
-                        SelectDialogData("asc", "과거순", searchOrder.value == "asc")
+                        SelectDialogData("asc", "최신순", searchOrder.value == "asc"),
+                        SelectDialogData("desc", "과거순", searchOrder.value == "desc")
                     ),
                     requestTag = TAG,
                 )

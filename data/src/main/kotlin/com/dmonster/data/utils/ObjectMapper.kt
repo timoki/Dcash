@@ -1,6 +1,7 @@
 package com.dmonster.data.utils
 
 import com.dmonster.data.local.entity.paging.news.NewsListEntity
+import com.dmonster.data.local.entity.paging.point.PointHistoryEntity
 import com.dmonster.data.remote.dto.response.MemberInfoDto
 import com.dmonster.data.remote.dto.response.PageDto
 import com.dmonster.data.remote.dto.response.TokenDto
@@ -11,6 +12,8 @@ import com.dmonster.data.remote.dto.response.home.CreatorDto
 import com.dmonster.data.remote.dto.response.home.HomeDataDto
 import com.dmonster.data.remote.dto.response.news.NewsDto
 import com.dmonster.data.remote.dto.response.news.NewsListDto
+import com.dmonster.data.remote.dto.response.point.PointDto
+import com.dmonster.data.remote.dto.response.point.PointHistoryDto
 import com.dmonster.domain.model.MemberInfoModel
 import com.dmonster.domain.model.TokenModel
 import com.dmonster.domain.model.home.CategoryNewsModel
@@ -19,6 +22,8 @@ import com.dmonster.domain.model.home.HomeDataModel
 import com.dmonster.domain.model.paging.PageModel
 import com.dmonster.domain.model.paging.news.NewsListModel
 import com.dmonster.domain.model.paging.news.NewsModel
+import com.dmonster.domain.model.paging.point.PointHistoryModel
+import com.dmonster.domain.model.paging.point.PointModel
 
 object ObjectMapper {
     fun TokenDto.toModel(): TokenModel = TokenModel(
@@ -48,6 +53,7 @@ object ObjectMapper {
         creator = this.creator,
         pubDate = this.pubDate,
         point = this.point,
+        viewed = this.viewed,
     )
 
     fun NewsDto.toModel(): NewsModel = NewsModel(
@@ -88,6 +94,7 @@ object ObjectMapper {
         creator = this.creator,
         pubDate = this.pubDate,
         point = this.point,
+        viewed = this.viewed,
     )
 
     fun List<NewsListEntity>.entityToNewsListModelList(): List<NewsListModel> = map {
@@ -104,6 +111,7 @@ object ObjectMapper {
         creator = this.creator,
         pubDate = this.pubDate,
         point = this.point,
+        viewed = this.viewed,
     )
 
     private fun AuthorDto.toModel(): FilterModel = FilterModel(
@@ -153,5 +161,45 @@ object ObjectMapper {
         banner = this.banner?.dtoToNewsListModelList(),
         categoryNews = this.categoryNews?.dtoToCategoryNewsModelList(),
         recommend = this.recommend?.dtoToNewsListModelList(),
+    )
+
+    private fun List<PointHistoryDto>.dtoToPointHistoryModelList(): List<PointHistoryModel> = map {
+        it.toModel()
+    }
+
+    private fun PointHistoryDto.toModel() = PointHistoryModel(
+        mtIdx = this.mtIdx,
+        ptType = this.ptType,
+        ptName = this.ptName,
+        ptPoint = this.ptPoint,
+        ptWdate = this.ptWdate,
+        guid = this.guid,
+    )
+
+    fun PointDto.toModel() = PointModel(
+        point = this.point,
+        hisotry = this.hisotry?.dtoToPointHistoryModelList(),
+    )
+
+    private fun PointHistoryDto.toEntity() = PointHistoryEntity(
+        mtIdx = this.mtIdx,
+        ptType = this.ptType,
+        ptName = this.ptName,
+        ptPoint = this.ptPoint,
+        ptWdate = this.ptWdate,
+        guid = this.guid,
+    )
+
+    fun List<PointHistoryDto>.dtoToPointHistoryEntityList(): List<PointHistoryEntity> = map {
+        it.toEntity()
+    }
+
+    fun PointHistoryEntity.toModel() = PointHistoryModel(
+        mtIdx = this.mtIdx,
+        ptType = this.ptType,
+        ptName = this.ptName,
+        ptPoint = this.ptPoint,
+        ptWdate = this.ptWdate,
+        guid = this.guid,
     )
 }
