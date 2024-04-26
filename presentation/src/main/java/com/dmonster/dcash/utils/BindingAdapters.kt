@@ -53,7 +53,7 @@ fun onSingleClick(
     }
 }
 
-@BindingAdapter("app:font")
+@BindingAdapter("font")
 fun setFont(
     textView: TextView,
     fontName: String
