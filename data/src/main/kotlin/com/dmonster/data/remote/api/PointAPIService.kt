@@ -4,6 +4,7 @@ import com.dmonster.data.remote.dto.response.base.BaseResponse
 import com.dmonster.data.remote.dto.response.point.PointDto
 import retrofit2.Response
 import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
 
 interface PointAPIService {
@@ -14,6 +15,7 @@ interface PointAPIService {
     @POST(API_ROUTE)
     suspend fun getUserPoint(): Response<BaseResponse<PointDto>>
 
+    @FormUrlEncoded
     @POST("$API_ROUTE-history")
     suspend fun getPointHistory(
         @Field("pg") pg: Int,

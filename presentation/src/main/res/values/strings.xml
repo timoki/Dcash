@@ -93,4 +93,13 @@
     <string name="str_search">검색하기</string>
     <string name="str_numbering">%d.</string>
     <string name="str_action_share">공유하기</string>
+
+    <!-- 포인트 -->
+    <string name="str_current_point_title">나의 현재 포인트는</string>
+    <string name="str_p">P</string>
+    <string name="str_use_point_title">포인트 사용하기</string>
+    <string name="str_use_point_not_yet">포인트 사용하기는 현재 준비중인 컨텐츠 입니다.</string>
+    <string name="str_free_point">무료 포인트</string>
+    <string name="str_all_history">전체내역 보기</string>
+    <string name="str_recent_point_history">최근 포인트 내역(20건)</string>
 </resources>

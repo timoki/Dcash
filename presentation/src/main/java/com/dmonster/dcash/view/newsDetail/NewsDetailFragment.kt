@@ -2,7 +2,6 @@ package com.dmonster.dcash.view.newsDetail
 
 import android.content.Intent
 import android.os.CountDownTimer
-import android.util.Log
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
@@ -142,7 +141,6 @@ class NewsDetailFragment : BaseFragment<FragmentNewsDetailBinding, NewsDetailVie
         }
 
         helper.showDialog.onEach { uri ->
-            Log.d("아외안되", "origin : ${args.model?.link}\nnew : $uri")
             checkNewsLoadJob?.cancel()
             checkNewsLoadJob = null
             findNavController().safeNavigate(

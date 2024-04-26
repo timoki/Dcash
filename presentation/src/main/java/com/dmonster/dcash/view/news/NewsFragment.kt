@@ -1,7 +1,6 @@
 package com.dmonster.dcash.view.news
 
 import android.os.Build
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
@@ -75,14 +74,6 @@ class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>(),
         binding.listRv.addOnScrollListener(scrollListener!!)
     }
 
-    override fun onPause() {
-        super.onPause()
-        scrollListener?.let {
-            binding.listRv.removeOnScrollListener(it)
-        }
-        scrollListener = null
-    }
-
     override fun init() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
@@ -152,7 +143,6 @@ class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>(),
         }
 
         setFragmentResultListener(TAG) { tag, result ->
-            Log.d("아외안되", "tag / $tag")
             val selectItem = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 result.getParcelable("selectItem", SelectDialogData::class.java)
             } else {
@@ -247,6 +237,14 @@ class NewsFragment : BaseFragment<FragmentNewsBinding, NewsViewModel>(),
     override fun onRefresh() {
         binding.refreshView.isRefreshing = false
         newsAdapter.refresh()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        scrollListener?.let {
+            binding.listRv.removeOnScrollListener(it)
+        }
+        scrollListener = null
     }
 
     companion object {

@@ -15,6 +15,7 @@
     <color name="news_category_background">#F9F9F9</color>
 
     <color name="main_color">#45C4B0</color>
+    <color name="main_color_alpha08">#1445C4B0</color>
     <color name="sub_color">#26A8A9</color>
     <color name="text_color">#222222</color>
     <color name="text_color_white">#e5e5e5</color>
@@ -27,6 +28,7 @@
     <color name="default_grey">#999999</color>
     <color name="line_grey">#e3e3e3</color>
     <color name="light_grey">#e6e6e6</color>
+    <color name="extra_light_grey">#ececec</color>
     <color name="color_pressed_white">#11ffffff</color>
 
     <color name="loading_shimmer">#33888888</color>
